@@ -52,76 +52,87 @@ const google = {
   script: {
     run: new Proxy({}, {
       get: function (target, prop) {
-        // State for this execution chain
+        // This is the initial access (e.g., google.script.run.withSuccessHandler)
+
+        // State for this chain
         const state = {
           successHandler: null,
           failureHandler: null
         };
 
-        // Create a runner proxy that handles the chaining
-        const runner = new Proxy({}, {
-          get: function (runnerTarget, functionName) {
+        // Helper to execute API call
+        const executeCall = async (functionName, args) => {
+          try {
+            let data = {};
+            if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) {
+              if (args[0].tagName === 'FORM') {
+                data = args[0]; // Form element, pass as is (not fully supported in this shim yet)
+              } else {
+                data = args[0];
+              }
+            } else if (args.length > 1) {
+              data = { args: args };
+            } else if (args.length === 1) {
+              data = { value: args[0] };
+            }
 
-            // Handle standard configuration methods
-            if (functionName === 'withSuccessHandler') {
+            const result = await callGASAPI(functionName, data);
+
+            if (state.successHandler) {
+              state.successHandler(result);
+            }
+            return result;
+          } catch (error) {
+            if (state.failureHandler) {
+              state.failureHandler(error);
+            } else {
+              console.error(`GAS API Error (${functionName}):`, error);
+            }
+            throw error;
+          }
+        };
+
+        // Create the chainer object
+        const chainer = new Proxy({}, {
+          get: function (target, key) {
+            if (key === 'withSuccessHandler') {
               return function (callback) {
                 state.successHandler = callback;
-                return runner; // Return proxy to continue chain
+                return chainer; // Return strict reference to self for chaining
               };
             }
-
-            if (functionName === 'withFailureHandler') {
+            if (key === 'withFailureHandler') {
               return function (callback) {
                 state.failureHandler = callback;
-                return runner; // Return proxy to continue chain
+                return chainer; // Return strict reference to self for chaining
               };
             }
 
-            // Handle server-side function call
+            // If it's not a handler setter, it's the target function call
             return async function (...args) {
-              try {
-                // Prepare data object
-                let data = {};
-                if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) {
-                  // Check if it's a form element (common in GAS)
-                  if (args[0].tagName === 'FORM') {
-                    // For form elements, we might need manual serialization if passing directly
-                    // But usually standard JS objects are passed. 
-                    // Let's assume standard object for now or let the caller handle form serialization
-                    // If it's a DOM element, it might fail serialization. 
-                    // For now, pass as is if it looks like a plain object, 
-                    // or wrap in 'args' if it's multiple or primitive.
-                    data = args[0];
-                  } else {
-                    data = args[0];
-                  }
-                } else if (args.length > 1) {
-                  data = { args: args };
-                } else if (args.length === 1) {
-                  data = { value: args[0] };
-                }
-
-                const result = await callGASAPI(functionName, data);
-
-                if (state.successHandler) {
-                  state.successHandler(result);
-                }
-                return result;
-
-              } catch (error) {
-                if (state.failureHandler) {
-                  state.failureHandler(error);
-                } else {
-                  console.error(`GAS API Error (${functionName}):`, error);
-                }
-                throw error; // Re-throw to ensure promise rejection
-              }
+              return executeCall(key, args);
             };
           }
         });
 
-        // Redirect the initial access to the runner
-        return runner[prop];
+        // 🟢 Crucial fix: Check if the *first* property accessed is a handler or a function
+        if (prop === 'withSuccessHandler') {
+          return function (callback) {
+            state.successHandler = callback;
+            return chainer;
+          };
+        }
+        if (prop === 'withFailureHandler') {
+          return function (callback) {
+            state.failureHandler = callback;
+            return chainer;
+          };
+        }
+
+        // Otherwise, it's a direct function call (e.g. google.script.run.myFunction())
+        return async function (...args) {
+          return executeCall(prop, args);
+        };
       }
     })
   }
