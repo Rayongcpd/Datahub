@@ -51,75 +51,77 @@ async function callGASAPI(action, data = {}) {
 const google = {
   script: {
     run: new Proxy({}, {
-      get: function (target, functionName) {
-        // สร้าง object ที่มี method chain เหมือน google.script.run
-        let successHandler = null;
-        let failureHandler = null;
-
-        const handler = {
-          withSuccessHandler: function (callback) {
-            successHandler = callback;
-            return handler;
-          },
-          withFailureHandler: function (callback) {
-            failureHandler = callback;
-            return handler;
-          }
+      get: function (target, prop) {
+        // State for this execution chain
+        const state = {
+          successHandler: null,
+          failureHandler: null
         };
 
-        // เพิ่ม function name เป็น method ที่เรียกได้
-        handler[functionName] = async function (...args) {
-          try {
-            // แปลง arguments เป็น data object
-            let data = {};
-            if (args.length === 1 && typeof args[0] === 'object') {
-              data = args[0];
-            } else if (args.length > 1) {
-              // สำหรับ function ที่รับหลาย arguments
-              data = { args: args };
-            } else if (args.length === 1) {
-              data = { value: args[0] };
+        // Create a runner proxy that handles the chaining
+        const runner = new Proxy({}, {
+          get: function (runnerTarget, functionName) {
+
+            // Handle standard configuration methods
+            if (functionName === 'withSuccessHandler') {
+              return function (callback) {
+                state.successHandler = callback;
+                return runner; // Return proxy to continue chain
+              };
             }
 
-            // เรียก API
-            const result = await callGASAPI(functionName, data);
-
-            // เรียก success handler
-            if (successHandler) {
-              successHandler(result);
+            if (functionName === 'withFailureHandler') {
+              return function (callback) {
+                state.failureHandler = callback;
+                return runner; // Return proxy to continue chain
+              };
             }
 
-            return result;
-          } catch (error) {
-            // เรียก failure handler
-            if (failureHandler) {
-              failureHandler(error);
-            } else {
-              console.error(`${functionName} failed:`, error);
-            }
-            throw error;
+            // Handle server-side function call
+            return async function (...args) {
+              try {
+                // Prepare data object
+                let data = {};
+                if (args.length === 1 && typeof args[0] === 'object' && args[0] !== null) {
+                  // Check if it's a form element (common in GAS)
+                  if (args[0].tagName === 'FORM') {
+                    // For form elements, we might need manual serialization if passing directly
+                    // But usually standard JS objects are passed. 
+                    // Let's assume standard object for now or let the caller handle form serialization
+                    // If it's a DOM element, it might fail serialization. 
+                    // For now, pass as is if it looks like a plain object, 
+                    // or wrap in 'args' if it's multiple or primitive.
+                    data = args[0];
+                  } else {
+                    data = args[0];
+                  }
+                } else if (args.length > 1) {
+                  data = { args: args };
+                } else if (args.length === 1) {
+                  data = { value: args[0] };
+                }
+
+                const result = await callGASAPI(functionName, data);
+
+                if (state.successHandler) {
+                  state.successHandler(result);
+                }
+                return result;
+
+              } catch (error) {
+                if (state.failureHandler) {
+                  state.failureHandler(error);
+                } else {
+                  console.error(`GAS API Error (${functionName}):`, error);
+                }
+                throw error; // Re-throw to ensure promise rejection
+              }
+            };
           }
-        };
+        });
 
-        // สำหรับการเรียกโดยตรงไม่ใช้ handler
-        const directCall = async function (...args) {
-          let data = {};
-          if (args.length === 1 && typeof args[0] === 'object') {
-            data = args[0];
-          } else if (args.length > 1) {
-            data = { args: args };
-          } else if (args.length === 1) {
-            data = { value: args[0] };
-          }
-          return await callGASAPI(functionName, data);
-        };
-
-        // ผสม handler กับ direct call
-        Object.assign(directCall, handler);
-        directCall.withSuccessHandler = handler.withSuccessHandler;
-        directCall.withFailureHandler = handler.withFailureHandler;
-
-        return directCall;
+        // Redirect the initial access to the runner
+        return runner[prop];
       }
     })
   }
