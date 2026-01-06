@@ -2264,7 +2264,6 @@
         // =================================================================
         const appState = {
             currentUser: null,
-            sessionToken: null, // ✅ Add Token State
             allFiles: [],
             allGroups: [],
             allUsers: [],
@@ -2346,7 +2345,7 @@
             appState.allCoops.forEach(c => {
                 // เราจะแสดงชื่อเต็มให้ผู้ใช้เลือก แต่มี CoopID ใน data attribute (datalist doesn't preserve data-id on selection)
                 // ดังนั้น เราจะ lookup โดยชื่อเมื่ออ่านค่าจาก input
-                const option = `<option value="${escapeHtml(c.CoopName)}">`;
+                const option = `<option value="${c.CoopName}">`;
                 if (adminList) adminList.innerHTML += option;
                 if (userList) userList.innerHTML += option;
             });
@@ -2381,8 +2380,8 @@
                 mobileMenuHtml += `<a href="#" data-page="home" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>`;
 
                 appState.allGroups.forEach(group => {
-                    menuHtml += `<a href="#" data-page="group" data-groupid="${escapeHtml(group.GroupID)}" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">${escapeHtml(group.GroupName)}</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${escapeHtml(group.GroupID)}" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">${escapeHtml(group.GroupName)}</a>`;
+                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">${group.GroupName}</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">${group.GroupName}</a>`;
                 });
 
                 menuHtml += `<a href="#" data-page="stats" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>`;
@@ -2405,7 +2404,7 @@
                     mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Activity Log</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
                 } else if (appState.currentUser.Role === 'subadmin') {
                     // Subadmin: Dashboard, ไฟล์ทั้งหมด, Activity Log (ไม่มีสิทธิ์เข้าหน้าคำขอลบ, ถังขยะ, จัดการผู้ใช้/กลุ่ม)
                     menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
@@ -2413,7 +2412,7 @@
                     menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
                     mobileMenuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium">Activity Log</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
                 } else if (appState.currentUser.Role === 'officer') {
                     menuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>`;
                     menuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
@@ -2436,7 +2435,7 @@
 
             if (appState.currentUser) {
                 authHtml = `
-                <span class="bg-green-500 text-white inline-block px-2 py-1 rounded text-sm mr-4 hover:text-blue-300 transition-colors duration-200">สวัสดี, ${escapeHtml(appState.currentUser.FullName)}</span>
+                <span class="bg-green-500 text-white inline-block px-2 py-1 rounded text-sm mr-4 hover:text-blue-300 transition-colors duration-200">สวัสดี, ${appState.currentUser.FullName}</span>
                 <button id="logout-btn" class="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600">ออกจากระบบ</button>
             `;
             } else {
@@ -2577,7 +2576,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
             </svg>
             <div>
-                <h3 class="text-lg font-medium ${color.text}">${escapeHtml(group.GroupName)}</h3>
+                <h3 class="text-lg font-medium ${color.text}">${group.GroupName}</h3>
                 <p class="mt-1 text-4xl font-semibold ${color.main}">${count}</p>
             </div>
         </div>`;
@@ -2625,7 +2624,7 @@
             paginatedFiles.forEach((file, index) => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${escapeHtml(file.FileID)}" data-drivefileid="${escapeHtml(f.driveFileId)}"
+                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
         class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600 mb-1 block">
         <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2639,7 +2638,7 @@
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
                 const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${escapeHtml(file.GroupName)}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
 
                 // Check pending status (though usually home shows all; ensure logic handles it if home displays pending)
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -2651,12 +2650,12 @@
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="#">${start + index + 1}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
           <span class="card-number-badge">ลำดับ ${start + index + 1}</span>
-          <div class="file-title">${escapeHtml(file.Title)} ${pendingBadge}</div>
-          ${file.SubTitle ? `<div class="file-subtitle">${escapeHtml(file.SubTitle)}</div>` : ''}
+          <div class="file-title">${file.Title} ${pendingBadge}</div>
+          ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
           ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${escapeHtml(file.HoldType)} ${formatDateThaiJS(file.HoldDate)})</div>`
+                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
-          ${file.TypeName ? `<div class="file-type">${escapeHtml(file.TypeName)}</div>` : ''} 
+          ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''} 
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
@@ -2675,7 +2674,7 @@
                 return;
             }
 
-            document.getElementById('group-page-title').textContent = `ไฟล์ในกลุ่มงาน: ${escapeHtml(group.GroupName)}`;
+            document.getElementById('group-page-title').textContent = `ไฟล์ในกลุ่มงาน: ${group.GroupName}`;
             const searchText = (document.getElementById('group-search-input')?.value || '').toLowerCase();
             const type = document.getElementById('group-type-filter')?.value || 'all';
 
@@ -2703,7 +2702,7 @@
             paginatedFiles.forEach((file, index) => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${escapeHtml(file.FileID)}" data-drivefileid="${escapeHtml(f.driveFileId)}"
+                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
         class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600 mb-1 block">
         <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2724,12 +2723,12 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="#">${start + index + 1}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
                   <span class="card-number-badge">ลำดับ ${start + index + 1}</span>
-                  <div class="file-title">${escapeHtml(file.Title)} ${pendingBadge}</div>
-                  ${file.SubTitle ? `<div class="file-subtitle">${escapeHtml(file.SubTitle)}</div>` : ''}
+                  <div class="file-title">${file.Title} ${pendingBadge}</div>
+                  ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
                   ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${escapeHtml(file.HoldType)} ${formatDateThaiJS(file.HoldDate)})</div>`
+                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
-                  ${file.TypeName ? `<div class="file-type">${escapeHtml(file.TypeName)}</div>` : ''}
+                  ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
@@ -2937,20 +2936,20 @@
         function renderAppearanceRow(label, idPrefix) {
             return `
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 text-sm mb-2 border-b border-gray-100 pb-2 last:border-0">
-        <span class="font-medium w-full md:w-24 shrink-0 text-gray-700">${escapeHtml(label)}</span>
+        <span class="font-medium w-full md:w-24 shrink-0 text-gray-700">${label}</span>
         <div class="grid grid-cols-[1fr,1fr,auto] gap-2 w-full md:w-auto flex-1">
-            <select id="setting-${escapeHtml(idPrefix)}-size" class="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
+            <select id="setting-${idPrefix}-size" class="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
                 <option value="0.75rem">เล็ก</option>
                 <option value="0.875rem">ปกติ</option>
                 <option value="1rem">กลาง</option>
                 <option value="1.125rem">ใหญ่</option>
                 <option value="1.25rem">ใหญ่+</option>
             </select>
-            <select id="setting-${escapeHtml(idPrefix)}-weight" class="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
+            <select id="setting-${idPrefix}-weight" class="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
                 <option value="normal">ปกติ</option>
                 <option value="bold">ตัวหนา</option>
             </select>
-            <input type="color" id="setting-${escapeHtml(idPrefix)}-color" class="w-8 h-8 p-0 border border-gray-300 rounded cursor-pointer">
+            <input type="color" id="setting-${idPrefix}-color" class="w-8 h-8 p-0 border border-gray-300 rounded cursor-pointer">
         </div>
     </div>`;
         }
@@ -3024,7 +3023,7 @@
                     }
                 })
                 .withFailureHandler(onFailure)
-                .saveThemeSetting(theme, appState.sessionToken);
+                .saveThemeSetting(theme, appState.currentUser.UserID);
         }
 
         function initTheme(theme) {
@@ -3170,13 +3169,13 @@
                         appState.allUsers.forEach(user => {
                             const row = `
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${escapeHtml(user.FullName)}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${escapeHtml(user.Username)}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.Role === 'admin' ? 'bg-red-100 text-red-800' : user.Role === 'subadmin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">${escapeHtml(user.Role)}</span></td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${escapeHtml(user.DateCreated)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.FullName}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.Username}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.Role === 'admin' ? 'bg-red-100 text-red-800' : user.Role === 'subadmin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">${user.Role}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.DateCreated}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                    <button data-userid="${escapeHtml(user.UserID)}" class="edit-user-btn text-indigo-600 hover:text-indigo-900 mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
-                                    <button data-userid="${escapeHtml(user.UserID)}" class="delete-user-btn text-red-600 hover:text-red-900"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                    <button data-userid="${user.UserID}" class="edit-user-btn text-indigo-600 hover:text-indigo-900 mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
+                                    <button data-userid="${user.UserID}" class="delete-user-btn text-red-600 hover:text-red-900"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                                 </td>
                             </tr>
                         `;
@@ -3207,15 +3206,15 @@
 
             appState.allGroups.forEach((group, index) => {
                 const color = colors[index % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${escapeHtml(group.GroupName)}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${group.GroupName}</span>`;
 
                 const row = `
             <tr>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${groupBadge}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${escapeHtml(group.DateCreated)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${group.DateCreated}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <button data-groupid="${escapeHtml(group.GroupID)}" class="edit-group-btn text-indigo-600 hover:text-indigo-900 mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
-                    <button data-groupid="${escapeHtml(group.GroupID)}" class="delete-group-btn text-red-600 hover:text-red-900"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                    <button data-groupid="${group.GroupID}" class="edit-group-btn text-indigo-600 hover:text-indigo-900 mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
+                    <button data-groupid="${group.GroupID}" class="delete-group-btn text-red-600 hover:text-red-900"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                 </td>
             </tr>
         `;
@@ -3274,18 +3273,18 @@
             paginatedFiles.forEach(file => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${escapeHtml(file.FileID)}" data-drivefileid="${escapeHtml(f.driveFileId)}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 mb-1 block flex items-center space-x-2">
+                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 mb-1 block flex items-center space-x-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
-                <span>${escapeHtml(f.fileName)}</span>
+                <span>${f.fileName}</span>
             </button>`
                 ).join('');
 
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === file.GroupName);
                 const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${escapeHtml(file.GroupName)}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
 
                 // ✅ ตรวจสอบสถานะ pending
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -3295,22 +3294,22 @@
                 const row = `
     <tr>
         <td class="px-6 py-4 text-center">
-            <input type="checkbox" class="file-checkbox w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" value="${escapeHtml(file.FileID)}">
+            <input type="checkbox" class="file-checkbox w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" value="${file.FileID}">
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
-          <div class="file-title">${escapeHtml(file.Title)} ${pendingBadge}</div>
-          ${file.SubTitle ? `<div class="file-subtitle">${escapeHtml(file.SubTitle)}</div>` : ''}
+          <div class="file-title">${file.Title} ${pendingBadge}</div>
+          ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
           ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${escapeHtml(file.HoldType)} ${formatDateThaiJS(file.HoldDate)})</div>`
+                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
-          ${file.TypeName ? `<div class="file-type">${escapeHtml(file.TypeName)}</div>` : ''}
+          ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ผู้บันทึก">${escapeHtml(file.UploaderName)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ผู้บันทึก">${file.UploaderName}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium" data-label="จัดการ">
-            <button data-fileid="${escapeHtml(file.FileID)}" class="delete-file-btn text-red-600 hover:text-red-900">
+            <button data-fileid="${file.FileID}" class="delete-file-btn text-red-600 hover:text-red-900">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a1 1 0 011 1v1H9V4a1 1 0 011-1zm-5 4h12"></path>
                 </svg>
@@ -3404,20 +3403,20 @@
             paginatedFiles.forEach(file => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${escapeHtml(file.FileID)}" data-drivefileid="${escapeHtml(f.driveFileId)}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 mb-1 block flex items-center space-x-2">
+                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 mb-1 block flex items-center space-x-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
           </svg>
-          <span>${escapeHtml(f.fileName)}</span>
+          <span>${f.fileName}</span>
       </button>`
                 ).join('');
 
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
                 const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${escapeHtml(file.GroupName)}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
 
                 const deleteButton = `
-    <button data-fileid="${escapeHtml(file.FileID)}" class="request-delete-btn text-red-600 hover:text-red-900">
+    <button data-fileid="${file.FileID}" class="request-delete-btn text-red-600 hover:text-red-900">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7
@@ -3433,19 +3432,19 @@
                 const row = `
       <tr>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
-          <div class="file-title">${escapeHtml(file.Title)} ${pendingBadge}</div>
-          ${file.SubTitle ? `<div class="file-subtitle">${escapeHtml(file.SubTitle)}</div>` : ''}
+          <div class="file-title">${file.Title} ${pendingBadge}</div>
+          ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
           ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${escapeHtml(file.HoldType)} ${formatDateThaiJS(file.HoldDate)})</div>`
+                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
-          ${file.TypeName ? `<div class="file-type">${escapeHtml(file.TypeName)}</div>` : ''}
+          ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
           
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium" data-label="จัดการ">
-          <button data-fileid="${escapeHtml(file.FileID)}" class="edit-file-btn text-indigo-600 hover:text-indigo-900 mr-4">
+          <button data-fileid="${file.FileID}" class="edit-file-btn text-indigo-600 hover:text-indigo-900 mr-4">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
@@ -3521,7 +3520,7 @@
             appState.charts.subadminFilesPerGroup = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => escapeHtml(d.groupName)),
+                    labels: data.map(d => d.groupName),
                     datasets: [{
                         label: 'จำนวนไฟล์',
                         data: data.map(d => d.count),
@@ -3579,14 +3578,14 @@
             paginatedFiles.forEach((file, index) => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
                 const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${escapeHtml(file.GroupName)}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
 
                 // Find uploader name
                 const uploader = appState.allUsers.find(u => u.UserID === file.UserID);
                 const uploaderName = uploader ? uploader.FullName : 'ไม่ระบุ';
 
                 // Subadmin can always edit and request delete
-                const editButton = `<button data-fileid="${escapeHtml(file.FileID)}" class="subadmin-edit-file-btn text-indigo-600 hover:text-indigo-900 mr-2" title="แก้ไข">
+                const editButton = `<button data-fileid="${file.FileID}" class="subadmin-edit-file-btn text-indigo-600 hover:text-indigo-900 mr-2" title="แก้ไข">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
@@ -3595,7 +3594,7 @@
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
                 const pendingBadge = isPending ? '<span class="badge-pending px-2 py-0.5 rounded-full ml-1 text-xs">รออนุมัติลบ</span>' : '';
 
-                const deleteButton = isPending ? '' : `<button data-fileid="${escapeHtml(file.FileID)}" class="subadmin-request-delete-btn text-red-600 hover:text-red-900" title="ขอลบ">
+                const deleteButton = isPending ? '' : `<button data-fileid="${file.FileID}" class="subadmin-request-delete-btn text-red-600 hover:text-red-900" title="ขอลบ">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a1 1 0 011 1v1H9V4a1 1 0 011-1zm-5 4h12" />
                     </svg>
@@ -3605,13 +3604,13 @@
         <tr>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${start + index + 1}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight">
-                <div class="file-title">${escapeHtml(file.Title)} ${pendingBadge}</div>
-                ${file.SubTitle ? `<div class="file-subtitle text-gray-500">${escapeHtml(file.SubTitle)}</div>` : ''}
-                ${file.HoldType && file.HoldDate ? `<div class="file-hold text-gray-500 text-xs">(${escapeHtml(file.HoldType)} ${formatDateThaiJS(file.HoldDate)})</div>` : ''}
-                ${file.TypeName ? `<div class="file-type text-purple-600 text-xs">${escapeHtml(file.TypeName)}</div>` : ''}
+                <div class="file-title">${file.Title} ${pendingBadge}</div>
+                ${file.SubTitle ? `<div class="file-subtitle text-gray-500">${file.SubTitle}</div>` : ''}
+                ${file.HoldType && file.HoldDate ? `<div class="file-hold text-gray-500 text-xs">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>` : ''}
+                ${file.TypeName ? `<div class="file-type text-purple-600 text-xs">${file.TypeName}</div>` : ''}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">${groupBadge}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${escapeHtml(uploaderName)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${uploaderName}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${file.DownloadCount}</td>
             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                 ${editButton}
@@ -3632,10 +3631,10 @@
             if (!file) return;
 
             // Populate form fields
-            document.getElementById('subadmin-file-id').value = escapeHtml(file.FileID);
-            document.getElementById('subadmin-file-title').value = escapeHtml(file.Title || '');
-            document.getElementById('subadmin-file-subtitle').value = escapeHtml(file.SubTitle || '');
-            document.getElementById('subadmin-file-coop').value = escapeHtml(file.CoopName || '');
+            document.getElementById('subadmin-file-id').value = file.FileID;
+            document.getElementById('subadmin-file-title').value = file.Title || '';
+            document.getElementById('subadmin-file-subtitle').value = file.SubTitle || '';
+            document.getElementById('subadmin-file-coop').value = file.CoopName || '';
 
             // Populate dropdowns
             populateGroupDropdown(document.getElementById('subadmin-file-group'));
@@ -3643,8 +3642,8 @@
 
             // Set selected values after population
             setTimeout(() => {
-                document.getElementById('subadmin-file-group').value = escapeHtml(file.GroupID || '');
-                document.getElementById('subadmin-file-type').value = escapeHtml(file.TypeID || '');
+                document.getElementById('subadmin-file-group').value = file.GroupID || '';
+                document.getElementById('subadmin-file-type').value = file.TypeID || '';
             }, 50);
 
             // Handle hold type
@@ -3652,13 +3651,13 @@
             const customInput = document.getElementById('subadmin-file-holdtype-custom');
             const standardValues = ["", "รับจดทะเบียน", "ถือใช้", "ลงวันที่", "ประกาศ ณ วันที่"];
             if (standardValues.includes(file.HoldType)) {
-                holdTypeSelect.value = escapeHtml(file.HoldType || '');
+                holdTypeSelect.value = file.HoldType || '';
                 customInput.classList.add('hidden');
                 customInput.value = '';
             } else if (file.HoldType) {
                 holdTypeSelect.value = 'อื่นๆ';
                 customInput.classList.remove('hidden');
-                customInput.value = escapeHtml(file.HoldType);
+                customInput.value = file.HoldType;
             } else {
                 holdTypeSelect.value = '';
                 customInput.classList.add('hidden');
@@ -3805,7 +3804,7 @@
             appState.charts.filesPerGroup = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => escapeHtml(d.groupName)),
+                    labels: data.map(d => d.groupName),
                     datasets: [{
                         label: 'จำนวนไฟล์',
                         data: data.map(d => d.count),
@@ -3855,12 +3854,12 @@
             if (appState.charts.filesPerCoop) appState.charts.filesPerCoop.destroy();
 
             const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1'];
-            const fullNames = data.map(d => escapeHtml(d.coopName)); // เก็บชื่อเต็มสำหรับ tooltip
+            const fullNames = data.map(d => d.coopName); // เก็บชื่อเต็มสำหรับ tooltip
 
             appState.charts.filesPerCoop = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => escapeHtml(d.coopName.length > 20 ? d.coopName.substring(0, 20) + '...' : d.coopName)),
+                    labels: data.map(d => d.coopName.length > 20 ? d.coopName.substring(0, 20) + '...' : d.coopName),
                     datasets: [{
                         label: 'จำนวนไฟล์',
                         data: data.map(d => d.count),
@@ -3900,12 +3899,12 @@
 
             const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1'];
             const sortedData = [...data].sort((a, b) => b.downloads - a.downloads).slice(0, 10);
-            const fullNames = sortedData.map(d => escapeHtml(d.coopName)); // เก็บชื่อเต็มสำหรับ tooltip
+            const fullNames = sortedData.map(d => d.coopName); // เก็บชื่อเต็มสำหรับ tooltip
 
             appState.charts.downloadsPerCoop = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: sortedData.map(d => escapeHtml(d.coopName.length > 20 ? d.coopName.substring(0, 20) + '...' : d.coopName)),
+                    labels: sortedData.map(d => d.coopName.length > 20 ? d.coopName.substring(0, 20) + '...' : d.coopName),
                     datasets: [{
                         label: 'ยอดดาวน์โหลด',
                         data: sortedData.map(d => d.downloads),
@@ -3986,11 +3985,11 @@
                     <tr class="hover:bg-gray-50">
                         <td class="px-4 py-3 text-gray-600" data-label="ลำดับ">${index + 1}</td>
                         <td class="px-4 py-3 font-medium text-gray-800" data-label="ชื่อ">
-                            ${typeBadge}${escapeHtml(coop.coopName)}
+                            ${typeBadge}${coop.coopName}
                         </td>
                         <td class="px-4 py-3 text-center" data-label="จำนวนไฟล์">
                             <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold">${coop.count.toLocaleString()}</span>
-                            <button onclick="showFileTypeBreakdown('${escapeHtml(coop.coopId || coop.coopName)}', '${escapeHtml(coop.coopName.replace(/'/g, "\\'"))}')" 
+                            <button onclick="showFileTypeBreakdown('${coop.coopId || coop.coopName}', '${coop.coopName.replace(/'/g, "\\'")}')" 
                                 class="ml-2 text-amber-500 hover:text-amber-700 hover:bg-amber-100 p-1 rounded-full transition-all" 
                                 title="ดูรายละเอียดประเภทไฟล์">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4038,7 +4037,7 @@
             const contentEl = document.getElementById('file-type-modal-content');
 
             // Show modal with loading state
-            coopNameEl.textContent = escapeHtml(coopName);
+            coopNameEl.textContent = coopName;
             contentEl.innerHTML = `
                 <div class="flex justify-center items-center py-8">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -4054,7 +4053,7 @@
                     } else {
                         contentEl.innerHTML = `
                             <div class="text-center py-8 text-red-500">
-                                <p>เกิดข้อผิดพลาด: ${escapeHtml(response.message)}</p>
+                                <p>เกิดข้อผิดพลาด: ${response.message}</p>
                             </div>
                         `;
                     }
@@ -4062,7 +4061,7 @@
                 .withFailureHandler(error => {
                     contentEl.innerHTML = `
                         <div class="text-center py-8 text-red-500">
-                            <p>เกิดข้อผิดพลาด: ${escapeHtml(error.message)}</p>
+                            <p>เกิดข้อผิดพลาด: ${error.message}</p>
                         </div>
                     `;
                 })
@@ -4172,7 +4171,7 @@
                     <div class="flex items-center justify-between p-3 rounded-lg border ${bgColor} transition-all hover:shadow-sm">
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <p class="text-sm font-medium ${hasFiles ? 'text-gray-700' : 'text-gray-400'}">${escapeHtml(item.typeName)}</p>
+                                <p class="text-sm font-medium ${hasFiles ? 'text-gray-700' : 'text-gray-400'}">${item.typeName}</p>
                                 <span class="text-xs" title="ค่าเฉลี่ย: ${average} ไฟล์">${statusIcon}</span>
                             </div>
                             <div class="mt-1 w-full bg-gray-200 rounded-full h-1.5">
@@ -4225,7 +4224,7 @@
             appState.charts.adminFiles = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.map(d => escapeHtml(d.groupName)),
+                    labels: data.map(d => d.groupName),
                     datasets: [{
                         label: 'จำนวนไฟล์',
                         data: data.map(d => d.count),
@@ -4262,7 +4261,7 @@
             appState.charts.officerFiles = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => escapeHtml(d.groupName)),
+                    labels: data.map(d => d.groupName),
                     datasets: [{
                         label: 'จำนวนไฟล์',
                         data: data.map(d => d.count),
@@ -4303,7 +4302,7 @@
                 if (!select) return;
                 select.innerHTML = '<option value="all">ทุกกลุ่มงาน</option>';
                 appState.allGroups.forEach(group => {
-                    select.innerHTML += `<option value="${escapeHtml(group.GroupID)}">${escapeHtml(group.GroupName)}</option>`;
+                    select.innerHTML += `<option value="${group.GroupID}">${group.GroupName}</option>`;
                 });
             });
         }
@@ -4318,7 +4317,7 @@
                 if (!select) return;
                 select.innerHTML = '<option value="all">ทุกประเภทเอกสาร</option>';
                 appState.allTypes.forEach(type => {
-                    select.innerHTML += `<option value="${escapeHtml(type.ID)}">${escapeHtml(type.ประเภท)}</option>`;
+                    select.innerHTML += `<option value="${type.ID}">${type.ประเภท}</option>`;
                 });
             });
         }
@@ -4327,7 +4326,15 @@
             if (!selectElement) return;
             selectElement.innerHTML = '<option value="">-- เลือกกลุ่มงาน --</option>';
             appState.allGroups.forEach(group => {
-                selectElement.innerHTML += `<option value="${escapeHtml(group.GroupID)}">${escapeHtml(group.GroupName)}</option>`;
+                selectElement.innerHTML += `<option value="${group.GroupID}">${group.GroupName}</option>`;
+            });
+        }
+
+        function populateTypeDropdown(selectElement) {
+            if (!selectElement) return;
+            selectElement.innerHTML = '<option value="">-- เลือกประเภทเอกสาร --</option>';
+            appState.allTypes.forEach(type => {
+                selectElement.innerHTML += `<option value="${type.ID}">${type.ประเภท}</option>`;
             });
         }
 
@@ -4345,14 +4352,14 @@
                 appState.allTypes
                     .filter(type => allowedTypes.includes(type.ID))
                     .forEach(type => {
-                        selectElement.innerHTML += `<option value="${escapeHtml(type.ID)}">${escapeHtml(type.ประเภท)}</option>`;
+                        selectElement.innerHTML += `<option value="${type.ID}">${type.ประเภท}</option>`;
                     });
                 return;
             }
 
             // ✅ ถ้าเป็น admin ให้เห็นทุกประเภท
             appState.allTypes.forEach(type => {
-                selectElement.innerHTML += `<option value="${escapeHtml(type.ID)}">${escapeHtml(type.ประเภท)}</option>`;
+                selectElement.innerHTML += `<option value="${type.ID}">${type.ประเภท}</option>`;
             });
         }
 
@@ -4411,6 +4418,11 @@
                 if (e.target.matches('#logout-btn, #mobile-logout-btn')) {
                     handleLogout();
                 }
+            });
+
+            // Login Modal
+            document.getElementById('close-login-modal').addEventListener('click', () => {
+                document.getElementById('login-modal').classList.remove('flex');
             });
             document.getElementById('login-form').addEventListener('submit', handleLogin);
 
@@ -4725,7 +4737,7 @@
             const selectedCoopName = document.getElementById('file-coop').value.trim();
             const coop = appState.allCoops.find(c => c.CoopName === selectedCoopName);
             if (coop && coop.GroupID) {
-                document.getElementById('file-group').value = escapeHtml(coop.GroupID);
+                document.getElementById('file-group').value = coop.GroupID;
             }
         });
 
@@ -4733,7 +4745,7 @@
             const selectedCoopName = document.getElementById('import-coop-name').value.trim();
             const coop = appState.allCoops.find(c => c.CoopName === selectedCoopName);
             if (coop && coop.GroupID) {
-                document.getElementById('import-group').value = escapeHtml(coop.GroupID);
+                document.getElementById('import-group').value = coop.GroupID;
             }
         });
 
@@ -4753,7 +4765,6 @@
                     hideLoading();
                     if (response.success) {
                         appState.currentUser = response.user;
-                        appState.sessionToken = response.token; // ✅ Store Token
                         document.getElementById('login-modal').classList.remove('flex');
                         document.getElementById('login-form').reset();
                         showToast('เข้าสู่ระบบสำเร็จ!', 'success');
@@ -4789,7 +4800,6 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     appState.currentUser = null;
-                    appState.sessionToken = null; // ✅ Clear Token
                     appState.currentPage = 'home'; // Reset to home page on logout
                     showToast('ออกจากระบบแล้ว', 'info');
                     renderAll();
@@ -4832,10 +4842,10 @@
             const user = appState.allUsers.find(u => u.UserID === userId);
             if (user) {
                 document.getElementById('user-form').reset();
-                document.getElementById('user-id').value = escapeHtml(user.UserID);
-                document.getElementById('user-fullname').value = escapeHtml(user.FullName);
-                document.getElementById('user-username').value = escapeHtml(user.Username);
-                document.getElementById('user-role').value = escapeHtml(user.Role);
+                document.getElementById('user-id').value = user.UserID;
+                document.getElementById('user-fullname').value = user.FullName;
+                document.getElementById('user-username').value = user.Username;
+                document.getElementById('user-role').value = user.Role;
                 document.getElementById('user-modal-title').textContent = 'แก้ไขข้อมูลผู้ใช้';
                 document.getElementById('user-password').removeAttribute('required');
                 document.getElementById('user-modal').classList.add('flex');
@@ -4862,7 +4872,7 @@
                     }
                 })
                 .withFailureHandler(onFailure)
-                .saveUser(userData, appState.sessionToken);
+                .saveUser(userData, appState.currentUser.UserID);
         }
 
         function handleDeleteUser(userId) {
@@ -4887,7 +4897,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .deleteUser(userId, appState.sessionToken);
+                        .deleteUser(userId);
                 }
             });
         }
@@ -4904,8 +4914,8 @@
             const group = appState.allGroups.find(g => g.GroupID === groupId);
             if (group) {
                 document.getElementById('group-form').reset();
-                document.getElementById('group-id').value = escapeHtml(group.GroupID);
-                document.getElementById('group-name').value = escapeHtml(group.GroupName);
+                document.getElementById('group-id').value = group.GroupID;
+                document.getElementById('group-name').value = group.GroupName;
                 document.getElementById('group-modal-title').textContent = 'แก้ไขชื่อกลุ่มงาน';
                 document.getElementById('group-modal').classList.add('flex');
             }
@@ -4929,7 +4939,7 @@
                     }
                 })
                 .withFailureHandler(onFailure)
-                .saveGroup(groupData, appState.sessionToken);
+                .saveGroup(groupData, appState.currentUser.UserID);
         }
 
         function handleDeleteGroup(groupId) {
@@ -4954,7 +4964,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .deleteGroup(groupId, appState.sessionToken);
+                        .deleteGroup(groupId);
                 }
             });
         }
@@ -4982,7 +4992,7 @@
                     }
                 })
                 .withFailureHandler(onFailure)
-                .saveUser(userData, appState.sessionToken);
+                .saveUser(userData, appState.currentUser.UserID);
         }
 
         // File Handlers
@@ -5028,7 +5038,7 @@
             if (filesToUpload.length > 0) {
                 let listHtml = '<strong>ไฟล์ที่เลือก:</strong><ul>';
                 filesToUpload.forEach(file => {
-                    listHtml += `<li>${escapeHtml(file.name)} (${(file.size / 1024).toFixed(2)} KB)</li>`;
+                    listHtml += `<li>${file.name} (${(file.size / 1024).toFixed(2)} KB)</li>`;
                 });
                 listHtml += '</ul>';
                 fileListContainer.innerHTML = listHtml;
@@ -5119,11 +5129,11 @@
             const file = appState.allFiles.find(f => f.FileID === fileId);
             if (file) {
                 document.getElementById('file-form-title').textContent = 'แก้ไขข้อมูล และ/หรือ เพิ่มไฟล์แนบ';
-                document.getElementById('file-id').value = escapeHtml(file.FileID);
-                document.getElementById('file-title').value = escapeHtml(file.Title);
-                document.getElementById('file-subtitle').value = escapeHtml(file.SubTitle || '');
-                document.getElementById('file-group').value = escapeHtml(file.GroupID);
-                document.getElementById('file-type').value = escapeHtml(file.TypeID || '');
+                document.getElementById('file-id').value = file.FileID;
+                document.getElementById('file-title').value = file.Title;
+                document.getElementById('file-subtitle').value = file.SubTitle || '';
+                document.getElementById('file-group').value = file.GroupID;
+                document.getElementById('file-type').value = file.TypeID || '';
 
                 // ✅ Handle Edit Mode for Custom Hold Type
                 const holdTypeSelect = document.getElementById('file-holdtype');
@@ -5132,14 +5142,14 @@
                 const standardValues = ["", "รับจดทะเบียน", "ถือใช้", "ลงวันที่", "ประกาศ ณ วันที่"];
 
                 if (standardValues.includes(file.HoldType)) {
-                    holdTypeSelect.value = escapeHtml(file.HoldType);
+                    holdTypeSelect.value = file.HoldType;
                     customInput.classList.add('hidden');
                     customInput.value = '';
                 } else if (file.HoldType) {
                     // If value exists but not in standard list -> It's a custom value
                     holdTypeSelect.value = 'อื่นๆ';
                     customInput.classList.remove('hidden');
-                    customInput.value = escapeHtml(file.HoldType);
+                    customInput.value = file.HoldType;
                 } else {
                     holdTypeSelect.value = '';
                     customInput.classList.add('hidden');
@@ -5161,7 +5171,7 @@
                             document.getElementById('file-holddate').value = `${year}-${month}-${day}`; // yyyy-mm-dd
                         } else {
                             // ถ้าเป็น ISO แล้วก็ใส่ตรง ๆ
-                            document.getElementById('file-holddate').value = escapeHtml(file.HoldDate);
+                            document.getElementById('file-holddate').value = file.HoldDate;
                         }
                     } catch (err) {
                         document.getElementById('file-holddate').value = '';
@@ -5172,7 +5182,7 @@
 
                 // ✅ ดึงชื่อสหกรณ์ขึ้นมาด้วย
                 const coopName = file.CoopName || '';
-                document.getElementById('file-coop').value = escapeHtml(coopName);
+                document.getElementById('file-coop').value = coopName;
                 document.getElementById('cancel-edit-file-btn').classList.remove('hidden');
 
                 // ✅ เปิดฟอร์มอัตโนมัติถ้ายังซ่อนอยู่
@@ -5243,7 +5253,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .deleteFile(fileId, appState.currentUser.FullName, appState.sessionToken);
+                        .deleteFile(fileId, appState.currentUser.FullName, appState.currentUser.UserID);
                 }
             });
         }
@@ -5302,7 +5312,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .deleteMultipleFiles(fileIds, appState.currentUser.FullName, appState.sessionToken);
+                        .deleteMultipleFiles(fileIds, appState.currentUser.FullName, appState.currentUser.UserID);
                 }
             });
         }
@@ -5336,7 +5346,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .requestDeleteFile(fileId, appState.currentUser.UserID, result.value, appState.sessionToken);
+                        .requestDeleteFile(fileId, appState.currentUser.UserID, result.value);
                 }
             });
         }
@@ -5351,7 +5361,7 @@
             if (!select) return;
             select.innerHTML = '<option value="">-- เลือกกลุ่มงาน --</option>';
             appState.allGroups.forEach(group => {
-                select.innerHTML += `<option value="${escapeHtml(group.GroupID)}">${escapeHtml(group.GroupName)}</option>`;
+                select.innerHTML += `<option value="${group.GroupID}">${group.GroupName}</option>`;
             });
         }
 
@@ -5360,7 +5370,7 @@
             if (!select) return;
             select.innerHTML = '<option value="">-- เลือกผู้บันทึก --</option>';
             appState.allUsers.forEach(user => {
-                select.innerHTML += `<option value="${escapeHtml(user.UserID)}">${escapeHtml(user.FullName)} (${escapeHtml(user.Role)})</option>`;
+                select.innerHTML += `<option value="${user.UserID}">${user.FullName} (${user.Role})</option>`;
             });
         }
 
@@ -5408,7 +5418,7 @@
 
             Swal.fire({
                 title: 'ยืนยันการนำเข้า?',
-                text: `ระบบจะนำเข้าไฟล์ทั้งหมดจากโฟลเดอร์ "${escapeHtml(selectedCoopName)}"`,
+                text: `ระบบจะนำเข้าไฟล์ทั้งหมดจากโฟลเดอร์ "${selectedCoopName}"`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#16a34a',
@@ -5479,7 +5489,7 @@
                                 showToast('ไม่สามารถตรวจสอบสถานะได้', 'error');
                                 console.error(err);
                             })
-                            .getImportProgress(importSessionId, appState.sessionToken);
+                            .getImportProgress(importSessionId);
                     }, 2000);
                 }
 
@@ -5512,20 +5522,20 @@
 
                         const row = `
           <tr>
-            <td class="px-6 py-4 text-sm">${escapeHtml(coopDisplayName)}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(log.GroupName || '-')}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(log.UserName || '-')}</td>
+            <td class="px-6 py-4 text-sm">${coopDisplayName}</td>
+            <td class="px-6 py-4 text-sm">${log.GroupName || '-'}</td>
+            <td class="px-6 py-4 text-sm">${log.UserName || '-'}</td>
             <td class="px-6 py-4 text-sm text-center">${log.FileCount || 0}</td>
-            <td class="px-6 py-4 text-sm">${escapeHtml(log.DateImported || '')}</td>
+            <td class="px-6 py-4 text-sm">${log.DateImported || ''}</td>
             <td class="px-6 py-4 text-sm">
-              <a href="${escapeHtml(log.FolderUrl)}" target="_blank" class="text-blue-600 hover:underline">เปิดโฟลเดอร์</a>
+              <a href="${log.FolderUrl}" target="_blank" class="text-blue-600 hover:underline">เปิดโฟลเดอร์</a>
             </td>
           </tr>`;
                         tbody.innerHTML += row;
                     });
                 })
                 .withFailureHandler(onFailure)
-                .getImportLogs(appState.sessionToken);
+                .getImportLogs();
         }
 
         // =================================================================
@@ -5555,24 +5565,24 @@
 
                         const row = `
           <tr>
-            <td class="px-4 py-2">${file ? escapeHtml(file.Title) : '(ไม่พบไฟล์ในระบบ)'}</td>
-            <td class="px-4 py-2">${user ? escapeHtml(user.FullName) : '-'}</td>
-            <td class="px-4 py-2">${escapeHtml(req.Reason || '-')}</td>
-            <td class="px-4 py-2">${escapeHtml(req.RequestDate || '-')}</td>
+            <td class="px-4 py-2">${file ? file.Title : '(ไม่พบไฟล์ในระบบ)'}</td>
+            <td class="px-4 py-2">${user ? user.FullName : '-'}</td>
+            <td class="px-4 py-2">${req.Reason || '-'}</td>
+            <td class="px-4 py-2">${req.RequestDate || '-'}</td>
             <td class="px-4 py-2 text-center">
               <span class="inline-block px-2 py-1 rounded text-xs font-medium ${req.Status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                 req.Status === 'approved' ? 'bg-green-100 text-green-800' :
                                     req.Status === 'rejected' ? 'bg-red-100 text-red-800' :
                                         'bg-gray-100 text-gray-800'
-                            }">${escapeHtml(req.Status)}</span>
+                            }">${req.Status}</span>
             </td>
             <td class="px-4 py-2 text-center">
               ${req.Status === 'pending'
                                 ? `
-                    <button class="approve-btn text-green-600 hover:text-green-900 mr-3 font-medium" data-id="${escapeHtml(req.RequestID)}">
+                    <button class="approve-btn text-green-600 hover:text-green-900 mr-3 font-medium" data-id="${req.RequestID}">
                       ✅ อนุมัติ
                     </button>
-                    <button class="reject-btn text-red-600 hover:text-red-900 font-medium" data-id="${escapeHtml(req.RequestID)}">
+                    <button class="reject-btn text-red-600 hover:text-red-900 font-medium" data-id="${req.RequestID}">
                       ❌ ปฏิเสธ
                     </button>`
                                 : '-'
@@ -5583,7 +5593,7 @@
                     });
                 })
                 .withFailureHandler(onFailure)
-                .getDeleteRequests(appState.sessionToken);
+                .getDeleteRequests();
         }
 
 
@@ -5609,7 +5619,7 @@
                                     <div class="flex flex-col items-center">
                                         <span class="text-4xl mb-2">🗑️</span>
                                         <p>ถังขยะว่างเปล่า</p>
-                                        ${res && res.message ? `<p class="text-red-500 text-sm mt-2">${escapeHtml(res.message)}</p>` : ''}
+                                        ${res && res.message ? `<p class="text-red-500 text-sm mt-2">${res.message}</p>` : ''}
                                     </div>
                                 </td>
                             </tr>`;
@@ -5638,25 +5648,25 @@
                             <tr class="hover:bg-red-50 border-b">
                                 <td class="px-3 py-3">
                                     <input type="checkbox" class="recycle-checkbox w-4 h-4 text-red-600 border-gray-300 rounded" 
-                                        value="${escapeHtml(file.RecycleID)}" onchange="updateRecycleBulkButtons()">
+                                        value="${file.RecycleID}" onchange="updateRecycleBulkButtons()">
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-gray-900">${escapeHtml(file.Title)}</div>
-                                    ${file.SubTitle ? `<div class="text-sm text-gray-500">${escapeHtml(file.SubTitle)}</div>` : ''}
+                                    <div class="font-medium text-gray-900">${file.Title}</div>
+                                    ${file.SubTitle ? `<div class="text-sm text-gray-500">${file.SubTitle}</div>` : ''}
                                 </td>
-                                <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(file.GroupName || '-')}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(file.DeletedBy || '-')}</td>
-                                <td class="px-4 py-3 text-sm text-gray-600">${escapeHtml(file.DeletedDate || '-')}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">${file.GroupName || '-'}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">${file.DeletedBy || '-'}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">${file.DeletedDate || '-'}</td>
                                 <td class="px-4 py-3">
-                                    <span class="px-2 py-1 text-xs font-medium ${file.DeleteSource === 'auto_delete' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'} rounded">${escapeHtml(sourceLabel)}</span>
+                                    <span class="px-2 py-1 text-xs font-medium ${file.DeleteSource === 'auto_delete' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'} rounded">${sourceLabel}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center">${expiryBadge}</td>
                                 <td class="px-4 py-3 text-center">
-                                    <button onclick="handleRestoreFile('${escapeHtml(file.RecycleID)}')" 
+                                    <button onclick="handleRestoreFile('${file.RecycleID}')" 
                                         class="text-green-600 hover:text-green-800 font-medium mr-3" title="กู้คืน">
                                         🔄 กู้คืน
                                     </button>
-                                    <button onclick="handlePermanentDelete('${escapeHtml(file.RecycleID)}')" 
+                                    <button onclick="handlePermanentDelete('${file.RecycleID}')" 
                                         class="text-red-600 hover:text-red-800 font-medium" title="ลบถาวร">
                                         ❌ ลบถาวร
                                     </button>
@@ -5666,7 +5676,7 @@
                     });
                 })
                 .withFailureHandler(onFailure)
-                .getRecycleBinFiles(appState.sessionToken);
+                .getRecycleBinFiles();
         }
 
         function toggleSelectAllRecycle(checkbox) {
@@ -5716,7 +5726,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .restoreFile(recycleId, appState.sessionToken);
+                        .restoreFile(recycleId, appState.currentUser.UserID);
                 }
             });
         }
@@ -5743,7 +5753,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .permanentDeleteFile(recycleId, appState.sessionToken);
+                        .permanentDeleteFile(recycleId, appState.currentUser.UserID);
                 }
             });
         }
@@ -5776,7 +5786,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .restoreMultipleFiles(recycleIds, appState.sessionToken);
+                        .restoreMultipleFiles(recycleIds);
                 }
             });
         }
@@ -5808,7 +5818,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .permanentDeleteMultipleFiles(recycleIds, appState.sessionToken);
+                        .permanentDeleteMultipleFiles(recycleIds, appState.currentUser.UserID);
                 }
             });
         }
@@ -5847,7 +5857,7 @@
                                     }
                                 })
                                 .withFailureHandler(onFailure)
-                                .emptyRecycleBin(appState.sessionToken);
+                                .emptyRecycleBin(appState.currentUser.UserID);
                         }
                     });
                 }
@@ -6013,9 +6023,9 @@
             const user = appState.currentUser;
 
             // เติมค่าลงในฟอร์ม
-            document.getElementById('profile-userid').value = escapeHtml(user.UserID || '');
-            document.getElementById('profile-fullname').value = escapeHtml(user.FullName || '');
-            document.getElementById('profile-username').value = escapeHtml(user.Username || '');
+            document.getElementById('profile-userid').value = user.UserID || '';
+            document.getElementById('profile-fullname').value = user.FullName || '';
+            document.getElementById('profile-username').value = user.Username || '';
             document.getElementById('profile-password').value = ''; // ไม่เติมรหัสผ่านเดิม
 
             // Profile form populated
@@ -6046,17 +6056,6 @@
             let year = d.getFullYear() + 543;
 
             return `${day} ${month} ${year}`;
-        }
-
-        // ✅ XSS Prevention
-        function escapeHtml(text) {
-            if (!text) return '';
-            return String(text)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
         }
 
         // =================================================================
