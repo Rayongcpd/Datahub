@@ -239,6 +239,12 @@ window.google.script = window.google.script || {};
                             case 'saveGroup':
                                 params = { groupData: args[0], callerId: args[1] };
                                 break;
+                            case 'deleteUser':
+                                params = { UserId: args[0], callerId: args[1] };
+                                break;
+                            case 'deleteGroup':
+                                params = { GroupId: args[0], callerId: args[1] };
+                                break;
                             case 'deleteFile':
                                 params = { fileId: args[0], deletedBy: args[1], callerId: args[2] };
                                 break;
@@ -255,7 +261,7 @@ window.google.script = window.google.script || {};
                                 params = { callerId: args[0] };
                                 break;
                             case 'restoreFile':
-                                params = { recycleId: args[0] };
+                                params = { recycleId: args[0], callerId: args[1] };
                                 break;
                             case 'requestDeleteFile':
                                 params = { fileId: args[0], requestedBy: args[1], reason: args[2] };
