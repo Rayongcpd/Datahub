@@ -5606,14 +5606,13 @@
             google.script.run
                 .withSuccessHandler(res => {
                     hideLoading();
-                    console.log('📦 RecycleBin Response:', res);
-                    console.log('📦 RecycleBin Data:', res ? res.data : 'NO RES');
+                    // Security: console logs removed
                     const tbody = document.getElementById('recycle-bin-table-body');
                     tbody.innerHTML = '';
 
                     // Safe check for response
                     if (!res || !res.success || !res.data || res.data.length === 0) {
-                        console.log('📦 RecycleBin EMPTY - res:', res);
+                        // Security: console log removed
                         tbody.innerHTML = `
                             <tr>
                                 <td colspan="8" class="text-center py-8 text-gray-500">
@@ -6029,7 +6028,7 @@
             document.getElementById('profile-username').value = user.Username || '';
             document.getElementById('profile-password').value = ''; // ไม่เติมรหัสผ่านเดิม
 
-            console.log("✅ populateProfileForm(): User data loaded into form");
+            // Profile form populated
         }
 
         function formatDateThaiJS(dateString) {
@@ -6119,28 +6118,28 @@
         }
 
         function loadActivityDetails(filters) {
-            console.log('loadActivityDetails called with filters:', filters);
+            // Security: console log removed
             google.script.run
                 .withSuccessHandler(response => {
-                    console.log('getActivityLogs response:', response);
+                    // Security: console log removed
                     if (!response) {
-                        console.log('Response is null/undefined');
+                        // Response is null/undefined
                         hideLoading();
                         return;
                     }
                     if (response.success) {
                         activityLogData.detailLogs = response.data || [];
-                        console.log('detailLogs set to:', activityLogData.detailLogs.length, 'items');
+                        // detailLogs loaded
                         activityCurrentPage = 1; // Reset to first page
                         renderActivityDetailTable();
                     } else {
-                        console.log('Response not successful:', response.message);
+                        // Response not successful
                     }
                     hideLoading();
                     lucide.createIcons();
                 })
                 .withFailureHandler(err => {
-                    console.log('getActivityLogs error:', err);
+                    // Activity logs error
                     hideLoading();
                     showToast('Error loading details: ' + (err.message || 'Unknown error'), 'error');
                 })
@@ -6488,7 +6487,7 @@
                 // 🔍 ตรวจสอบว่าอยู่ในช่วงวันที่หรือไม่
                 if (now >= mourningStart && now <= mourningEnd) {
                     document.body.classList.add("mourning-mode");
-                    console.log("✅ Mourning mode enabled");
+                    // Mourning mode enabled
                 } else {
                     // Normal mode - no action needed
                 }
