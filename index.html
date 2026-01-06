@@ -3,7 +3,7 @@
 
 <head>
     <base target="_top">
-    <title>ระบบคลังไฟล์เอกสารสหกรณ์ (GitHub)</title>
+    <title>ระบบคลังไฟล์เอกสารสหกรณ์</title>
     <!-- Mobile Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Tailwind CSS -->
@@ -5726,7 +5726,7 @@
                             }
                         })
                         .withFailureHandler(onFailure)
-                        .restoreFile(recycleId);
+                        .restoreFile(recycleId, currentUser.UserID);
                 }
             });
         }
