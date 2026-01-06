@@ -129,24 +129,24 @@ async function apiGetPendingDeleteRequestsByFileIds(fileIds) {
     return await callAPI('getPendingDeleteRequestsByFileIds', { fileIds });
 }
 
-async function apiSaveUser(userData, callerId) {
-    return await callAPI('saveUser', { userData, callerId });
+async function apiSaveUser(userData, token) {
+    return await callAPI('saveUser', { userData, token });
 }
 
-async function apiSaveGroup(groupData, callerId) {
-    return await callAPI('saveGroup', { groupData, callerId });
+async function apiSaveGroup(groupData, token) {
+    return await callAPI('saveGroup', { groupData, token });
 }
 
-async function apiSaveThemeSetting(theme, callerId) {
-    return await callAPI('saveThemeSetting', { theme, callerId });
+async function apiSaveThemeSetting(theme, token) {
+    return await callAPI('saveThemeSetting', { theme, token });
 }
 
-async function apiSaveTableMode(mode, callerId) {
-    return await callAPI('saveTableMode', { mode, callerId });
+async function apiSaveTableMode(mode, token) {
+    return await callAPI('saveTableMode', { mode, token });
 }
 
-async function apiSaveTableAppearance(settings, callerId) {
-    return await callAPI('saveTableAppearance', { settings, callerId });
+async function apiSaveTableAppearance(settings, token) {
+    return await callAPI('saveTableAppearance', { settings, token });
 }
 
 async function apiGetKPIData() {
@@ -234,34 +234,34 @@ window.google.script = window.google.script || {};
                                 params = { credentials: args[0] };
                                 break;
                             case 'saveUser':
-                                params = { userData: args[0], callerId: args[1] };
+                                params = { userData: args[0], token: args[1] };
                                 break;
                             case 'saveGroup':
-                                params = { groupData: args[0], callerId: args[1] };
+                                params = { groupData: args[0], token: args[1] };
                                 break;
                             case 'deleteUser':
-                                params = { UserId: args[0], callerId: args[1] };
+                                params = { UserId: args[0], token: args[1] };
                                 break;
                             case 'deleteGroup':
-                                params = { GroupId: args[0], callerId: args[1] };
+                                params = { GroupId: args[0], token: args[1] };
                                 break;
                             case 'deleteFile':
-                                params = { fileId: args[0], deletedBy: args[1], callerId: args[2] };
+                                params = { fileId: args[0], deletedBy: args[1], token: args[2] };
                                 break;
                             case 'deleteMultipleFiles':
-                                params = { fileIds: args[0], deletedBy: args[1], callerId: args[2] };
+                                params = { fileIds: args[0], deletedBy: args[1], token: args[2] };
                                 break;
                             case 'permanentDeleteFile':
-                                params = { recycleId: args[0], callerId: args[1] };
+                                params = { recycleId: args[0], token: args[1] };
                                 break;
                             case 'permanentDeleteMultipleFiles':
-                                params = { recycleIds: args[0], callerId: args[1] };
+                                params = { recycleIds: args[0], token: args[1] };
                                 break;
                             case 'emptyRecycleBin':
-                                params = { callerId: args[0] };
+                                params = { token: args[0] };
                                 break;
                             case 'restoreFile':
-                                params = { recycleId: args[0], callerId: args[1] };
+                                params = { recycleId: args[0], token: args[1] };
                                 break;
                             case 'requestDeleteFile':
                                 params = { fileId: args[0], requestedBy: args[1], reason: args[2] };
@@ -276,13 +276,13 @@ window.google.script = window.google.script || {};
                                 params = { userId: args[0] };
                                 break;
                             case 'saveThemeSetting':
-                                params = { theme: args[0], callerId: args[1] };
+                                params = { theme: args[0], token: args[1] };
                                 break;
                             case 'saveTableMode':
-                                params = { mode: args[0], callerId: args[1] };
+                                params = { mode: args[0], token: args[1] };
                                 break;
                             case 'saveTableAppearance':
-                                params = { settings: args[0], callerId: args[1] };
+                                params = { settings: args[0], token: args[1] };
                                 break;
                             case 'recordDownloadAndGetFileUrl':
                                 params = { fileId: args[0], driveFileId: args[1], score: args[2] };
