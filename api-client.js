@@ -305,7 +305,7 @@ window.google.script = window.google.script || {};
                                 }
                         }
 
-                        console.log(`[API SHIM] Calling: ${funcName}`, params);
+                        // Security: Removed console.log to prevent exposing sensitive data
                         const result = await callAPI(funcName, params);
 
                         if (successHandler) {
@@ -324,5 +324,5 @@ window.google.script = window.google.script || {};
 
     window.google.script.run = createRunnerResult();
 
-    console.log('[API Client] google.script.run shim loaded for GitHub Pages compatibility');
+    // API Client shim loaded
 })();
