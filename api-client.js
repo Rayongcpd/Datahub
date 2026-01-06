@@ -4,7 +4,7 @@
  */
 
 // 🔧 แก้ไข URL นี้เป็น URL ของ Web App ที่ deploy แล้ว
-const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbzoa7QtCmmjt4Rw64q6-lwGJz2XjGFGP-waLNrF59mhLdMILei7CX5iJ7II3HiXUw7G5w/exec';
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwzR7m5mBxeM8CYnYUFUEHtlOUw3WGyHcfS8ZAMEcX1lMoXWK9bXsu1FuuXWx6d_Tzz0A/exec';
 
 /**
  * Send API request to Google Apps Script
