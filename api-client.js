@@ -296,8 +296,18 @@ window.google.script = window.google.script || {};
                             case 'processImportFolder':
                                 params = { importData: args[0] };
                                 break;
+                            case 'importFromDriveBatch':
+                                params = {
+                                    groupId: args[0],
+                                    mainFolderId: args[1],
+                                    userId: args[2],
+                                    coopId: args[3],
+                                    importSessionId: args[4],
+                                    startIndex: args[5]
+                                };
+                                break;
                             case 'getImportProgress':
-                                params = {};
+                                params = { importSessionId: args[0] };
                                 break;
                             case 'cancelImport':
                                 params = {};
