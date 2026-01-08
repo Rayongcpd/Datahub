@@ -2652,8 +2652,8 @@
           <span class="card-number-badge">ลำดับ ${start + index + 1}</span>
           <div class="file-title">${file.Title} ${pendingBadge}</div>
           ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
-          ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
+          ${file.HoldDate
+                        ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
           ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''} 
         </td>
@@ -2725,8 +2725,8 @@
                   <span class="card-number-badge">ลำดับ ${start + index + 1}</span>
                   <div class="file-title">${file.Title} ${pendingBadge}</div>
                   ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
-                  ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
+                  ${file.HoldDate
+                        ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
                   ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
                 </td>
@@ -3299,8 +3299,8 @@
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
           <div class="file-title">${file.Title} ${pendingBadge}</div>
           ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
-          ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
+          ${file.HoldDate
+                        ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
           ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
         </td>
@@ -3434,8 +3434,8 @@
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
           <div class="file-title">${file.Title} ${pendingBadge}</div>
           ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
-          ${file.HoldType && file.HoldDate
-                        ? `<div class="file-hold">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>`
+          ${file.HoldDate
+                        ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
                         : ''}
           ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
           
@@ -3606,7 +3606,7 @@
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight">
                 <div class="file-title">${file.Title} ${pendingBadge}</div>
                 ${file.SubTitle ? `<div class="file-subtitle text-gray-500">${file.SubTitle}</div>` : ''}
-                ${file.HoldType && file.HoldDate ? `<div class="file-hold text-gray-500 text-xs">(${file.HoldType} ${formatDateThaiJS(file.HoldDate)})</div>` : ''}
+                ${file.HoldDate ? `<div class="file-hold text-gray-500 text-xs">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>` : ''}
                 ${file.TypeName ? `<div class="file-type text-purple-600 text-xs">${file.TypeName}</div>` : ''}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">${groupBadge}</td>
