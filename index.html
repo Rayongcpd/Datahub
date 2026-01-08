@@ -2379,10 +2379,32 @@
                 menuHtml += `<a href="#" data-page="home" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>`;
                 mobileMenuHtml += `<a href="#" data-page="home" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>`;
 
+                // --- Desktop Dropdown ---
+                menuHtml += `
+                <div class="relative group z-50">
+                    <button class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center">
+                        <span>กลุ่มงาน</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <!-- Dropdown Panel -->
+                    <div class="absolute left-0 mt-0 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block transition-all duration-200 z-50">
+                        <div class="py-2 max-h-[80vh] overflow-y-auto" role="menu">`;
+
+                // Add separator for mobile
+                mobileMenuHtml += `<div class="px-3 py-2 text-green-200/50 text-xs font-semibold uppercase tracking-wider mt-2">กลุ่มงาน</div>`;
+
                 appState.allGroups.forEach(group => {
-                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">${group.GroupName}</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">${group.GroupName}</a>`;
+                    // Desktop Item
+                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700" role="menuitem">${group.GroupName}</a>`;
+
+                    // Mobile Item
+                    mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
                 });
+
+                menuHtml += `
+                        </div>
+                    </div>
+                </div>`;
 
                 menuHtml += `<a href="#" data-page="stats" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>`;
                 mobileMenuHtml += `<a href="#" data-page="stats" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">สถิติ</a>`;
