@@ -2395,7 +2395,7 @@
 
                 appState.allGroups.forEach(group => {
                     // Desktop Item
-                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700" role="menuitem">${group.GroupName}</a>`;
+                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700" role="menuitem">${group.GroupName}</a>`;
 
                     // Mobile Item
                     mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
