@@ -2059,6 +2059,17 @@
                                 <span class="ml-2 text-gray-700">ส่งข้อความ LINE แจ้งเตือนเมื่ออัปโหลดไฟล์นี้</span>
                             </label>
                         </div>
+                        <!-- ✅ Broadcast Upload Checkbox -->
+                        <div class="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="file-broadcast"
+                                    class="form-checkbox h-5 w-5 text-purple-600">
+                                <span class="ml-2 text-gray-700 font-medium">📢 อัพโหลดไปทุกสหกรณ์
+                                    (ยกเว้นกลุ่มเกษตรกร)</span>
+                            </label>
+                            <p class="text-xs text-purple-600 mt-1 ml-7">สำหรับเอกสารกลาง เช่น
+                                ระเบียบ/คำสั่งที่ทุกสหกรณ์ต้องถือใช้</p>
+                        </div>
                         <div class="flex items-center gap-4">
                             <button type="submit"
                                 class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">บันทึกข้อมูล</button>
@@ -2658,9 +2669,14 @@
 
 
                 // Find the group index to assign the correct color
-                const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                let groupBadge;
+                if (file.IsBroadcast === 'TRUE' || file.IsBroadcast === true) {
+                    groupBadge = `<span class="bg-purple-100 text-purple-700 inline-block px-2 py-1 rounded text-sm">ทุกกลุ่มงาน</span>`;
+                } else {
+                    const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
+                    const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-100', text: 'text-gray-600' };
+                    groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || '-'}</span>`;
+                }
 
                 // Check pending status (though usually home shows all; ensure logic handles it if home displays pending)
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -2672,7 +2688,7 @@
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="#">${start + index + 1}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
           <span class="card-number-badge">ลำดับ ${start + index + 1}</span>
-          <div class="file-title">${file.Title} ${pendingBadge}</div>
+          <div class="file-title">${file.Title} ${pendingBadge}${file.IsBroadcast === 'TRUE' || file.IsBroadcast === true ? '<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs ml-1">📢 ทุกสหกรณ์</span>' : ''}</div>
           ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
           ${file.HoldDate
                         ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
@@ -2705,7 +2721,10 @@
                 const subtitle = (file.SubTitle || '').toLowerCase();
                 const titleMatch = title.includes(searchText) || subtitle.includes(searchText);
                 const typeMatch = type === 'all' || file.TypeID == type;
-                return file.GroupID === groupId && titleMatch && typeMatch;
+                // ✅ แสดงไฟล์ที่ match GroupID หรือ เป็น Broadcast (IsBroadcast = TRUE)
+                const isBroadcast = file.IsBroadcast === 'TRUE' || file.IsBroadcast === true;
+                const groupMatch = file.GroupID === groupId || isBroadcast;
+                return groupMatch && titleMatch && typeMatch;
             });
 
             const { currentPage, rowsPerPage } = appState.tablePagination.group;
@@ -2745,7 +2764,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="#">${start + index + 1}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
                   <span class="card-number-badge">ลำดับ ${start + index + 1}</span>
-                  <div class="file-title">${file.Title} ${pendingBadge}</div>
+                  <div class="file-title">${file.Title} ${pendingBadge}${file.IsBroadcast === 'TRUE' || file.IsBroadcast === true ? '<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs ml-1">📢 ทุกสหกรณ์</span>' : ''}</div>
                   ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
                   ${file.HoldDate
                         ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
@@ -3304,9 +3323,14 @@
                 ).join('');
 
                 // Find the group index to assign the correct color
-                const groupIndex = appState.allGroups.findIndex(g => g.GroupName === file.GroupName);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                let groupBadge;
+                if (file.IsBroadcast === 'TRUE' || file.IsBroadcast === true) {
+                    groupBadge = `<span class="bg-purple-100 text-purple-700 inline-block px-2 py-1 rounded text-sm">ทุกกลุ่มงาน</span>`;
+                } else {
+                    const groupIndex = appState.allGroups.findIndex(g => g.GroupName === file.GroupName);
+                    const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-100', text: 'text-gray-600' };
+                    groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || '-'}</span>`;
+                }
 
                 // ✅ ตรวจสอบสถานะ pending
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -3433,9 +3457,14 @@
       </button>`
                 ).join('');
 
-                const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                let groupBadge;
+                if (file.IsBroadcast === 'TRUE' || file.IsBroadcast === true) {
+                    groupBadge = `<span class="bg-purple-100 text-purple-700 inline-block px-2 py-1 rounded text-sm">ทุกกลุ่มงาน</span>`;
+                } else {
+                    const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
+                    const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-100', text: 'text-gray-600' };
+                    groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || '-'}</span>`;
+                }
 
                 const deleteButton = `
     <button data-fileid="${file.FileID}" class="request-delete-btn text-red-600 hover:text-red-900">
@@ -3598,9 +3627,14 @@
             ];
 
             paginatedFiles.forEach((file, index) => {
-                const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                let groupBadge;
+                if (file.IsBroadcast === 'TRUE' || file.IsBroadcast === true) {
+                    groupBadge = `<span class="bg-purple-100 text-purple-700 inline-block px-2 py-1 rounded text-sm">ทุกกลุ่มงาน</span>`;
+                } else {
+                    const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
+                    const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-100', text: 'text-gray-600' };
+                    groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || '-'}</span>`;
+                }
 
                 // Find uploader name
                 const uploader = appState.allUsers.find(u => u.UserID === file.UserID);
@@ -3819,7 +3853,7 @@
             // Map colors to groups based on their index in appState.allGroups
             const backgroundColors = data.map(d => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-                return colors[groupIndex % colors.length].bg;
+                return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#e9d5ff';
             });
             const borderColors = backgroundColors; // Use same colors for borders
 
@@ -4240,7 +4274,7 @@
             // Map colors to groups based on their index in appState.allGroups
             const backgroundColors = data.map(d => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-                return colors[groupIndex % colors.length].bg;
+                return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#e9d5ff';
             });
 
             appState.charts.adminFiles = new Chart(ctx, {
@@ -4276,7 +4310,7 @@
             // Map colors to groups based on their index in appState.allGroups
             const backgroundColors = data.map(d => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-                return colors[groupIndex % colors.length].bg;
+                return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#e9d5ff';
             });
             const borderColors = backgroundColors; // Use same colors for borders
 
@@ -4609,6 +4643,42 @@
             // officer: File Management
             document.getElementById('file-form').addEventListener('submit', handleSaveFile);
             document.getElementById('cancel-edit-file-btn').addEventListener('click', resetFileForm);
+
+            // ✅ Broadcast Checkbox: Toggle coop AND group inputs when broadcast is selected
+            document.getElementById('file-broadcast')?.addEventListener('change', function () {
+                const coopInput = document.getElementById('file-coop');
+                const groupSelect = document.getElementById('file-group');
+                if (this.checked) {
+                    // Disable coop input
+                    coopInput.disabled = true;
+                    coopInput.value = '📢 ทุกสหกรณ์ (ยกเว้นกลุ่มเกษตรกร)';
+                    coopInput.classList.add('bg-purple-100', 'text-purple-600');
+                    // Disable group select
+                    groupSelect.disabled = true;
+                    groupSelect.value = '';
+                    groupSelect.classList.add('bg-purple-100', 'text-purple-600');
+                    // Add a placeholder option for broadcast
+                    if (!groupSelect.querySelector('option[value="broadcast"]')) {
+                        const opt = document.createElement('option');
+                        opt.value = '';
+                        opt.textContent = '📢 ทุกกลุ่มงาน';
+                        opt.dataset.broadcast = 'true';
+                        groupSelect.insertBefore(opt, groupSelect.firstChild);
+                    }
+                    groupSelect.value = '';
+                } else {
+                    // Enable coop input
+                    coopInput.disabled = false;
+                    coopInput.value = '';
+                    coopInput.classList.remove('bg-purple-100', 'text-purple-600');
+                    // Enable group select
+                    groupSelect.disabled = false;
+                    groupSelect.classList.remove('bg-purple-100', 'text-purple-600');
+                    // Remove broadcast option
+                    const broadcastOpt = groupSelect.querySelector('option[data-broadcast="true"]');
+                    if (broadcastOpt) broadcastOpt.remove();
+                }
+            });
             document.getElementById('officer-files-table-body').addEventListener('click', e => {
                 const editBtn = e.target.closest('.edit-file-btn');
                 if (editBtn) {
@@ -5093,7 +5163,10 @@
 
             Promise.all(filePromises)
                 .then(fileData => {
-                    // หา coopId จากชื่อที่ user พิมพ์/เลือก
+                    // ✅ Check if Broadcast Upload is selected
+                    const isBroadcast = document.getElementById('file-broadcast')?.checked || false;
+
+                    // หา coopId จากชื่อที่ user พิมพ์/เลือก (ข้ามถ้าเป็น Broadcast)
                     const selectedCoopName = document.getElementById('file-coop').value.trim();
                     const selectedCoop = appState.allCoops.find(c => c.CoopName === selectedCoopName);
                     const coopId = selectedCoop ? selectedCoop.CoopID : '';
@@ -5114,17 +5187,20 @@
                         FileID: document.getElementById('file-id').value,
                         Title: document.getElementById('file-title').value,
                         SubTitle: document.getElementById('file-subtitle').value,
-                        GroupID: document.getElementById('file-group').value,
+                        GroupID: isBroadcast ? '' : document.getElementById('file-group').value,  // ถ้า Broadcast ไม่ต้องระบุ GroupID
                         TypeID: document.getElementById('file-type').value,
-                        CoopID: coopId,
-                        CoopName: selectedCoopName,
+                        CoopID: isBroadcast ? '' : coopId,  // ถ้า Broadcast ไม่ต้องระบุ CoopID
+                        CoopName: isBroadcast ? '' : selectedCoopName,
                         UserID: appState.currentUser.UserID,
                         SendLine: document.getElementById('file-send-line').checked,
                         files: fileData,
                         HoldType: holdType || '',
-                        HoldDate: document.getElementById('file-holddate').value || ''
+                        HoldDate: document.getElementById('file-holddate').value || '',
+                        IsBroadcast: isBroadcast  // ✅ ส่ง IsBroadcast ไปยัง backend
                     };
-                    if (!coopId) {
+
+                    // ✅ ถ้าไม่ใช่ Broadcast ต้องเลือกสหกรณ์
+                    if (!isBroadcast && !coopId) {
                         hideLoading();
                         showToast('ไม่พบสหกรณ์ที่เลือก กรุณาเลือกชื่อจากรายการ', 'warning');
                         return;
@@ -5251,6 +5327,24 @@
             // Reset Custom Input
             document.getElementById('file-holdtype-custom').classList.add('hidden');
             document.getElementById('file-holdtype-custom').value = '';
+
+            // ✅ Reset Broadcast checkbox, coop input, and group select
+            const broadcastCheckbox = document.getElementById('file-broadcast');
+            const coopInput = document.getElementById('file-coop');
+            const groupSelect = document.getElementById('file-group');
+            if (broadcastCheckbox) broadcastCheckbox.checked = false;
+            if (coopInput) {
+                coopInput.disabled = false;
+                coopInput.value = '';
+                coopInput.classList.remove('bg-purple-100', 'text-purple-600');
+            }
+            if (groupSelect) {
+                groupSelect.disabled = false;
+                groupSelect.classList.remove('bg-purple-100', 'text-purple-600');
+                // Remove broadcast placeholder option
+                const broadcastOpt = groupSelect.querySelector('option[data-broadcast="true"]');
+                if (broadcastOpt) broadcastOpt.remove();
+            }
         }
 
         function handleDeleteFile(fileId) {
