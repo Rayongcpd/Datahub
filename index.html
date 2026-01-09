@@ -1124,9 +1124,7 @@
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         กลุ่มงาน</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        ดาวน์โหลด</th>
+
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ไฟล์แนบ</th>
@@ -1166,9 +1164,7 @@
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ชื่อเรื่อง</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        ดาวน์โหลด</th>
+
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         ไฟล์แนบ</th>
@@ -1539,8 +1535,7 @@
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ผู้สร้าง
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ดาวน์โหลด
-                                </th>
+
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ไฟล์แนบ</th>
                                 <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions
                                 </th>
@@ -1908,9 +1903,7 @@
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">
                                     ผู้อัปโหลด</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-purple-600 uppercase tracking-wider">
-                                    ดาวน์โหลด</th>
+
                                 <th
                                     class="px-6 py-3 text-center text-xs font-medium text-purple-600 uppercase tracking-wider">
                                     Actions</th>
@@ -2092,9 +2085,7 @@
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     กลุ่มงาน</th>
-                                <th
-                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    ดาวน์โหลด</th>
+
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     ไฟล์แนบ</th>
@@ -2680,7 +2671,7 @@
           ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''} 
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
+
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
     </tr>
 `;
@@ -2752,7 +2743,7 @@
                         : ''}
                   ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
+
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
             </tr>
         `;
@@ -3328,7 +3319,7 @@
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ผู้บันทึก">${file.UploaderName}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
+
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium" data-label="จัดการ">
             <button data-fileid="${file.FileID}" class="delete-file-btn text-red-600 hover:text-red-900">
@@ -3463,7 +3454,7 @@
           
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500" data-label="ดาวน์โหลด">${file.DownloadCount}</td>
+
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium" data-label="จัดการ">
           <button data-fileid="${file.FileID}" class="edit-file-btn text-indigo-600 hover:text-indigo-900 mr-4">
@@ -3633,7 +3624,7 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm">${groupBadge}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${uploaderName}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${file.DownloadCount}</td>
+
             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                 ${editButton}
                 ${deleteButton}
