@@ -2602,12 +2602,27 @@
             const group = document.getElementById('home-group-filter')?.value || 'all';
             const type = document.getElementById('home-type-filter')?.value || 'all';
 
+            const isCoopSearch = searchText.length > 2 && appState.allCoops.some(c => (c.CoopName || '').toLowerCase().includes(searchText));
+
             let filteredFiles = appState.allFiles.filter(file => {
                 const title = (file.Title || '').toLowerCase();
                 const subtitle = (file.SubTitle || '').toLowerCase();
                 const titleMatch = title.includes(searchText) || subtitle.includes(searchText);
+
+                // --- Shared File Logic ---
+                const isSharedFile = file.CoopID === 'SHARED_CENTER';
+                const typeName = file.TypeName || "";
+                const targetSharedType = "5.ประกาศ-ระเบียบ-คำสั่งของนายทะเบียน";
+
                 const groupMatch = group === 'all' || file.GroupID === group;
                 const typeMatch = type === 'all' || file.TypeID == type;
+
+                if (isSharedFile) {
+                    if (typeName.startsWith(targetSharedType)) {
+                        return (titleMatch || isCoopSearch) && typeMatch;
+                    }
+                }
+
                 return titleMatch && groupMatch && typeMatch;
             });
 
@@ -2650,8 +2665,8 @@
 
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // Check pending status (though usually home shows all; ensure logic handles it if home displays pending)
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -3296,8 +3311,8 @@
 
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === file.GroupName);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // ✅ ตรวจสอบสถานะ pending
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -3425,8 +3440,8 @@
                 ).join('');
 
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 const deleteButton = `
     <button data-fileid="${file.FileID}" class="request-delete-btn text-red-600 hover:text-red-900">
@@ -3590,8 +3605,8 @@
 
             paginatedFiles.forEach((file, index) => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = colors[groupIndex % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName}</span>`;
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // Find uploader name
                 const uploader = appState.allUsers.find(u => u.UserID === file.UserID);
@@ -3810,7 +3825,7 @@
             // Map colors to groups based on their index in appState.allGroups
             const backgroundColors = data.map(d => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-                return colors[groupIndex % colors.length].bg;
+                return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#6b7280';
             });
             const borderColors = backgroundColors; // Use same colors for borders
 
@@ -4231,7 +4246,7 @@
             // Map colors to groups based on their index in appState.allGroups
             const backgroundColors = data.map(d => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-                return colors[groupIndex % colors.length].bg;
+                return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#6b7280';
             });
 
             appState.charts.adminFiles = new Chart(ctx, {
@@ -4267,7 +4282,7 @@
             // Map colors to groups based on their index in appState.allGroups
             const backgroundColors = data.map(d => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-                return colors[groupIndex % colors.length].bg;
+                return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#6b7280';
             });
             const borderColors = backgroundColors; // Use same colors for borders
 
