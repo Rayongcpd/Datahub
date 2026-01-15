@@ -1792,6 +1792,85 @@
                         <span>เปิดฟอร์มแก้ไขไฟล์</span>
                     </button>
                 </h1>
+
+                <!-- Toggle Button for Upload Form -->
+                <button id="toggle-subadmin-upload-form-btn"
+                    class="bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-emerald-700 flex items-center gap-1.5 shadow-sm mb-4">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>เปิดฟอร์มเพิ่มไฟล์</span>
+                </button>
+
+                <!-- ✅ Subadmin Upload Form -->
+                <div id="subadmin-upload-form-container" class="bg-white p-6 rounded-lg shadow-lg mb-8 hidden">
+                    <h2 class="text-xl font-semibold mb-4 text-emerald-700">เพิ่มไฟล์ใหม่ (Subadmin)</h2>
+                    <form id="subadmin-upload-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="subadmin-upload-title"
+                                    class="block text-sm font-medium text-gray-700">ชื่อเรื่อง</label>
+                                <input type="text" id="subadmin-upload-title"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    required>
+                            </div>
+                            <div>
+                                <label for="subadmin-upload-subtitle"
+                                    class="block text-sm font-medium text-gray-700">ชื่อเพิ่มเติม</label>
+                                <input type="text" id="subadmin-upload-subtitle"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label for="subadmin-upload-type"
+                                    class="block text-sm font-medium text-gray-700">ประเภทเอกสาร</label>
+                                <select id="subadmin-upload-type"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    required>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="subadmin-upload-holdtype"
+                                    class="block text-sm font-medium text-gray-700">สถานะเอกสาร</label>
+                                <select id="subadmin-upload-holdtype"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    <option value="">-- เลือกสถานะเอกสาร --</option>
+                                    <option value="รับจดทะเบียน">รับจดทะเบียน</option>
+                                    <option value="ถือใช้">ถือใช้</option>
+                                    <option value="ลงวันที่">ลงวันที่</option>
+                                    <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
+                                    <option value="อื่นๆ">อื่นๆ</option>
+                                </select>
+                                <input type="text" id="subadmin-upload-holdtype-custom" placeholder="ระบุสถานะอื่น ๆ"
+                                    class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md hidden">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="subadmin-upload-holddate"
+                                class="block text-sm font-medium text-gray-700">วันที่</label>
+                            <input type="date" id="subadmin-upload-holddate"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700">อัปโหลดไฟล์ (ลากและวาง หรือ
+                                คลิกเพื่อเลือก)</label>
+                            <div class="mt-1 drop-zone" id="subadmin-drop-zone">
+                                <span class="drop-zone__prompt">ลากไฟล์มาที่นี่ หรือ คลิกเพื่อเลือกไฟล์</span>
+                                <input type="file" id="subadmin-upload-file" name="myFile" class="drop-zone__input"
+                                    multiple>
+                            </div>
+                            <div id="subadmin-upload-file-list" class="mt-2 text-sm text-gray-600"></div>
+                        </div>
+
+                        <div class="flex items-center gap-4">
+                            <button type="submit"
+                                class="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">บันทึกข้อมูล</button>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- Subadmin Edit File Form -->
                 <div id="subadmin-file-form-container" class="bg-white p-6 rounded-lg shadow-lg mb-8 hidden">
                     <h2 id="subadmin-file-form-title" class="text-xl font-semibold mb-4 text-purple-700">แก้ไขข้อมูลไฟล์
@@ -3743,6 +3822,107 @@
             }
         }
 
+        // ✅ Subadmin Upload Logic
+        let filesToUploadSubadmin = [];
+
+        function handleSubadminUpload(e) {
+            e.preventDefault();
+            if (filesToUploadSubadmin.length === 0) {
+                Swal.fire('แจ้งเตือน', 'กรุณาเลือกไฟล์อย่างน้อย 1 ไฟล์', 'warning');
+                return;
+            }
+
+            // Defaults for Subadmin Upload
+            const coopName = 'ส่วนกลาง';
+            const coopId = 'SHARED_CENTER';
+            const groupId = 'general'; // Default group
+
+            // Handle custom hold type
+            let holdType = document.getElementById('subadmin-upload-holdtype').value;
+            if (holdType === 'อื่นๆ') {
+                holdType = document.getElementById('subadmin-upload-holdtype-custom').value || 'อื่นๆ';
+            }
+
+            // Read files
+            const filePromises = filesToUploadSubadmin.map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const data = e.target.result.split(',');
+                        resolve({
+                            name: file.name,
+                            mimeType: file.type,
+                            data: data[1]
+                        });
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            Swal.fire({
+                title: 'กำลังอัปโหลด...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            Promise.all(filePromises).then(fileData => {
+                const formData = {
+                    FileID: '', // New file
+                    UserID: appState.currentUser?.UserID || '',
+                    Title: document.getElementById('subadmin-upload-title').value,
+                    SubTitle: document.getElementById('subadmin-upload-subtitle').value,
+                    GroupID: groupId,
+                    TypeID: document.getElementById('subadmin-upload-type').value,
+                    CoopID: coopId,
+                    CoopName: coopName,
+                    HoldType: holdType,
+                    HoldDate: document.getElementById('subadmin-upload-holddate').value,
+                    files: fileData
+                };
+
+                google.script.run
+                    .withSuccessHandler(response => {
+                        Swal.close();
+                        if (response.success) {
+                            Swal.fire('สำเร็จ', 'อัปโหลดไฟล์เรียบร้อย', 'success');
+                            resetSubadminUploadForm();
+                            google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
+                        } else {
+                            Swal.fire('ผิดพลาด', response.message || 'เกิดข้อผิดพลาด', 'error');
+                        }
+                    })
+                    .withFailureHandler(err => {
+                        Swal.close();
+                        Swal.fire('ผิดพลาด', err.message, 'error');
+                    })
+                    .uploadFiles(formData);
+            });
+        }
+
+        function resetSubadminUploadForm() {
+            document.getElementById('subadmin-upload-form').reset();
+            filesToUploadSubadmin = [];
+            updateSubadminFileList();
+            document.getElementById('subadmin-upload-form-container').classList.add('hidden');
+        }
+
+        function updateSubadminFileList() {
+            const listContainer = document.getElementById('subadmin-upload-file-list');
+            if (!listContainer) return;
+            listContainer.innerHTML = filesToUploadSubadmin.map((f, i) =>
+                `<div class="flex items-center justify-between bg-gray-50 p-2 rounded mb-1">
+                    <span class="text-sm truncate">${f.name}</span>
+                    <button type="button" class="text-red-500 hover:text-red-700 font-bold" onclick="removeSubadminFile(${i})">x</button>
+                </div>`
+            ).join('');
+        }
+
+        window.removeSubadminFile = function (index) {
+            filesToUploadSubadmin.splice(index, 1);
+            updateSubadminFileList();
+        };
+
         // Handle subadmin file form submit
         function handleSubadminSaveFile(e) {
             e.preventDefault();
@@ -4708,6 +4888,57 @@
                     lucide.createIcons();
                 }
             });
+
+            // ✅ Subadmin Upload Form event listeners
+            document.getElementById('toggle-subadmin-upload-form-btn')?.addEventListener('click', () => {
+                const formContainer = document.getElementById('subadmin-upload-form-container');
+                const toggleBtn = document.getElementById('toggle-subadmin-upload-form-btn');
+                if (formContainer && toggleBtn) {
+                    const isHidden = formContainer.classList.contains('hidden');
+                    formContainer.classList.toggle('hidden');
+                    const label = toggleBtn.querySelector('span');
+                    const icon = toggleBtn.querySelector('i');
+                    if (isHidden) {
+                        if (label) label.textContent = 'ซ่อนฟอร์มเพิ่มไฟล์';
+                        if (icon) icon.setAttribute('data-lucide', 'chevron-up');
+                        // Populate type dropdown
+                        populateTypeDropdown(document.getElementById('subadmin-upload-type'));
+                    } else {
+                        if (label) label.textContent = 'เปิดฟอร์มเพิ่มไฟล์';
+                        if (icon) icon.setAttribute('data-lucide', 'plus');
+                    }
+                    lucide.createIcons();
+                }
+            });
+            document.getElementById('subadmin-upload-form')?.addEventListener('submit', handleSubadminUpload);
+            document.getElementById('subadmin-upload-file')?.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                filesToUploadSubadmin = filesToUploadSubadmin.concat(files);
+                updateSubadminFileList();
+            });
+            const subadminDropZone = document.getElementById('subadmin-drop-zone');
+            if (subadminDropZone) {
+                subadminDropZone.addEventListener('click', () => document.getElementById('subadmin-upload-file').click());
+                subadminDropZone.addEventListener('dragover', (e) => { e.preventDefault(); subadminDropZone.classList.add('drop-zone--over'); });
+                subadminDropZone.addEventListener('dragleave', () => subadminDropZone.classList.remove('drop-zone--over'));
+                subadminDropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    subadminDropZone.classList.remove('drop-zone--over');
+                    const files = Array.from(e.dataTransfer.files);
+                    filesToUploadSubadmin = filesToUploadSubadmin.concat(files);
+                    updateSubadminFileList();
+                });
+            }
+            // HoldType custom for upload
+            document.getElementById('subadmin-upload-holdtype')?.addEventListener('change', (e) => {
+                const customInput = document.getElementById('subadmin-upload-holdtype-custom');
+                if (e.target.value === 'อื่นๆ') {
+                    customInput.classList.remove('hidden');
+                } else {
+                    customInput.classList.add('hidden');
+                }
+            });
+
             setupDragAndDrop();
 
             // ✅ Handle Custom Hold Type Visibility
