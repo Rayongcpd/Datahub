@@ -2114,7 +2114,7 @@
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700">อัปโหลดไฟล์ (ลากและวาง หรือ
                                 คลิกเพื่อเลือก)</label>
-                            <div class="mt-1 drop-zone">
+                            <div class="mt-1 drop-zone" id="officer-drop-zone">
                                 <span class="drop-zone__prompt">ลากไฟล์มาที่นี่ หรือ คลิกเพื่อเลือกไฟล์</span>
                                 <input type="file" id="file-upload" name="myFile" class="drop-zone__input" multiple>
                             </div>
@@ -5253,10 +5253,20 @@
         let filesToUpload = [];
 
         function setupDragAndDrop() {
-            const dropZoneElement = document.querySelector(".drop-zone");
+            const dropZoneElement = document.getElementById("officer-drop-zone");
             const inputElement = document.getElementById("file-upload");
 
-            dropZoneElement.addEventListener("click", () => inputElement.click());
+            // ตรวจสอบว่า elements มีอยู่จริง
+            if (!dropZoneElement || !inputElement) {
+                console.log("Officer drop-zone or file-upload input not found");
+                return;
+            }
+
+            dropZoneElement.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                inputElement.click();
+            });
             inputElement.addEventListener("change", () => {
                 if (inputElement.files.length) {
                     updateThumbnail(Array.from(inputElement.files));
@@ -5265,7 +5275,13 @@
 
             dropZoneElement.addEventListener("dragover", e => {
                 e.preventDefault();
+                e.stopPropagation();
                 dropZoneElement.classList.add("drop-zone--over");
+            });
+
+            dropZoneElement.addEventListener("dragenter", e => {
+                e.preventDefault();
+                e.stopPropagation();
             });
 
             ["dragleave", "dragend"].forEach(type => {
@@ -5276,6 +5292,7 @@
 
             dropZoneElement.addEventListener("drop", e => {
                 e.preventDefault();
+                e.stopPropagation();
                 if (e.dataTransfer.files.length) {
                     inputElement.files = e.dataTransfer.files;
                     updateThumbnail(Array.from(inputElement.files));
