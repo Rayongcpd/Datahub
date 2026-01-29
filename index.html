@@ -2174,6 +2174,47 @@
                     <!-- ✅ เพิ่ม -->
                 </div>
             </div>
+
+            <!-- ✅ Page: Document Requests (กระดานขอเอกสาร) -->
+            <div id="page-document-requests" class="page">
+                <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
+                    <span
+                        class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg">📋</span>
+                    กระดานขอเอกสาร
+                </h1>
+
+                <!-- Create New Request Button -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex gap-2">
+                        <button onclick="showRequestTab('all')" id="req-tab-all"
+                            class="req-tab-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-600 text-white">
+                            ทั้งหมด
+                        </button>
+                        <button onclick="showRequestTab('mine')" id="req-tab-mine"
+                            class="req-tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                            ของฉัน
+                        </button>
+                        <button onclick="showRequestTab('assigned')" id="req-tab-assigned"
+                            class="req-tab-btn px-4 py-2 rounded-full text-sm font-medium bg-gray-200 text-gray-700">
+                            ได้รับมอบหมาย
+                        </button>
+                    </div>
+                    <button onclick="showCreateRequestModal()"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2 shadow-md">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                        สร้างคำขอใหม่
+                    </button>
+                </div>
+
+                <!-- Requests List -->
+                <div id="requests-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Request cards will be injected here -->
+                    <div class="col-span-full text-center py-12 text-gray-500">
+                        <i data-lucide="inbox" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
+                        <p>กำลังโหลด...</p>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!-- Footer -->
@@ -2319,6 +2360,116 @@
                     class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
                     ปิด
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Create Document Request Modal -->
+    <div id="create-request-modal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 rounded-t-xl">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i data-lucide="file-plus" class="w-6 h-6"></i>
+                    สร้างคำขอเอกสารใหม่
+                </h2>
+            </div>
+            <form id="create-request-form" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">หัวข้อคำขอ *</label>
+                    <input type="text" id="req-title" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="เช่น ขอเอกสารข้อบังคับ สหกรณ์ ABC">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รายละเอียด</label>
+                    <textarea id="req-description" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="อธิบายเพิ่มเติมเกี่ยวกับเอกสารที่ต้องการ..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">มอบหมายให้</label>
+                    <select id="req-assigned-to"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">-- เลือกผู้รับผิดชอบ --</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">กลุ่มงาน</label>
+                        <select id="req-group"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">-- เลือกกลุ่มงาน --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อสหกรณ์</label>
+                        <input type="text" id="req-coop-name"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="ชื่อสหกรณ์ที่เกี่ยวข้อง">
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeCreateRequestModal()"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        ยกเลิก
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        สร้างคำขอ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ✅ Request Detail Modal (with Chat) -->
+    <div id="request-detail-modal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div id="req-detail-header"
+                class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 rounded-t-xl flex justify-between items-start">
+                <div>
+                    <h2 id="req-detail-title" class="text-xl font-bold text-white">หัวข้อคำขอ</h2>
+                    <p id="req-detail-meta" class="text-indigo-200 text-sm mt-1"></p>
+                </div>
+                <button onclick="closeRequestDetailModal()" class="text-white/80 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Status & Info -->
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <span id="req-detail-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
+                        <span id="req-detail-group" class="text-sm text-gray-600"></span>
+                    </div>
+                    <div id="req-detail-actions" class="flex gap-2">
+                        <!-- Action buttons injected here -->
+                    </div>
+                </div>
+                <p id="req-detail-description" class="text-gray-700 mt-3 text-sm"></p>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="req-detail-chat" class="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50"
+                style="max-height: 350px;">
+                <!-- Chat messages will be injected here -->
+            </div>
+
+            <!-- Reply Box -->
+            <div class="px-6 py-4 border-t border-gray-200 bg-white rounded-b-xl">
+                <div class="flex gap-2">
+                    <input type="text" id="req-reply-message" placeholder="พิมพ์ข้อความ..."
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select id="req-reply-file" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="">📎 อ้างอิงไฟล์</option>
+                    </select>
+                    <button onclick="sendRequestReply()"
+                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -2485,6 +2636,7 @@
                     menuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
                     menuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
                     menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
@@ -2492,21 +2644,26 @@
                     mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
                 } else if (appState.currentUser.Role === 'subadmin') {
                     // Subadmin: Dashboard, ไฟล์ทั้งหมด, Activity Log (ไม่มีสิทธิ์เข้าหน้าคำขอลบ, ถังขยะ, จัดการผู้ใช้/กลุ่ม)
                     menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
                     menuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
                     menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
                     mobileMenuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
                 } else if (appState.currentUser.Role === 'officer') {
                     menuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>`;
                     menuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
                     menuHtml += `<a href="#" data-page="officer-files" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการไฟล์</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
                     mobileMenuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (officer)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
                     mobileMenuHtml += `<a href="#" data-page="officer-files" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
                 }
             }
 
@@ -2608,6 +2765,9 @@
                     // Populate form dropdowns
                     populateGroupDropdown(document.getElementById('subadmin-file-group'));
                     populateTypeDropdown(document.getElementById('subadmin-file-type'));
+                    break;
+                case 'document-requests':
+                    renderDocumentRequests();
                     break;
             }
             lucide.createIcons();
@@ -6137,8 +6297,342 @@
 
 
         // =================================================================
-        // ✅ Event Listener สำหรับปุ่มอนุมัติ / ปฏิเสธคำขอลบ
+        // ✅ DOCUMENT REQUESTS FUNCTIONS (กระดานขอเอกสาร)
         // =================================================================
+        let currentRequestTab = 'all';
+        let currentRequestId = null;
+        let allDocumentRequests = [];
+
+        function renderDocumentRequests() {
+            if (!appState.currentUser || !appState.currentUser.UserID) {
+                document.getElementById('requests-list').innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-500">
+                        <i data-lucide="lock" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
+                        <p>กรุณาเข้าสู่ระบบเพื่อดูกระดานขอเอกสาร</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            showLoading();
+            google.script.run
+                .withSuccessHandler(res => {
+                    hideLoading();
+                    if (res.success) {
+                        allDocumentRequests = res.data;
+                        filterAndRenderRequests();
+                    } else {
+                        showToast(res.message, 'error');
+                    }
+                })
+                .withFailureHandler(onFailure)
+                .getDocumentRequests(appState.currentUser.UserID);
+        }
+
+        function showRequestTab(tab) {
+            currentRequestTab = tab;
+            document.querySelectorAll('.req-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            document.getElementById(`req-tab-${tab}`).classList.remove('bg-gray-200', 'text-gray-700');
+            document.getElementById(`req-tab-${tab}`).classList.add('bg-indigo-600', 'text-white');
+            filterAndRenderRequests();
+        }
+
+        function filterAndRenderRequests() {
+            let filtered = allDocumentRequests;
+
+            if (currentRequestTab === 'mine') {
+                filtered = allDocumentRequests.filter(r => r.RequestedBy === appState.currentUser.UserID);
+            } else if (currentRequestTab === 'assigned') {
+                filtered = allDocumentRequests.filter(r => r.AssignedTo === appState.currentUser.UserID);
+            }
+
+            const container = document.getElementById('requests-list');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-500">
+                        <i data-lucide="inbox" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
+                        <p>ยังไม่มีคำขอเอกสาร</p>
+                    </div>`;
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = filtered.map(req => {
+                const statusConfig = {
+                    'pending': { icon: '🟡', text: 'รอดำเนินการ', bg: 'bg-yellow-100', color: 'text-yellow-800' },
+                    'in_progress': { icon: '🔵', text: 'กำลังดำเนินการ', bg: 'bg-blue-100', color: 'text-blue-800' },
+                    'completed': { icon: '🟢', text: 'เสร็จสิ้น', bg: 'bg-green-100', color: 'text-green-800' }
+                };
+                const status = statusConfig[req.Status] || statusConfig.pending;
+
+                return `
+                    <div onclick="showRequestDetail('${req.RequestID}')" 
+                        class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-100 overflow-hidden">
+                        <div class="p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <h3 class="font-semibold text-gray-800 text-sm line-clamp-2">${req.Title}</h3>
+                                <span class="${status.bg} ${status.color} px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ml-2">
+                                    ${status.icon} ${status.text}
+                                </span>
+                            </div>
+                            <p class="text-gray-500 text-xs mb-3 line-clamp-2">${req.Description || 'ไม่มีรายละเอียด'}</p>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <span>จาก:</span>
+                                    <span class="font-medium text-gray-700">${req.RequesterName || 'ไม่ระบุ'}</span>
+                                </div>
+                                <span>📅 ${req.CreatedAt || ''}</span>
+                            </div>
+                            ${req.AssigneeName && req.AssigneeName !== 'ไม่ระบุ' ? `
+                                <div class="text-xs text-gray-500 mt-1">
+                                    → ถึง: <span class="font-medium text-indigo-600">${req.AssigneeName}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>`;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function showCreateRequestModal() {
+            if (!appState.currentUser || !appState.currentUser.UserID) {
+                showToast('กรุณาเข้าสู่ระบบก่อน', 'warning');
+                return;
+            }
+
+            // Populate dropdowns
+            const assignedSelect = document.getElementById('req-assigned-to');
+            assignedSelect.innerHTML = '<option value="">-- เลือกผู้รับผิดชอบ --</option>';
+            appState.allUsers.forEach(u => {
+                assignedSelect.innerHTML += `<option value="${u.UserID}">${u.FullName}</option>`;
+            });
+
+            const groupSelect = document.getElementById('req-group');
+            groupSelect.innerHTML = '<option value="">-- เลือกกลุ่มงาน --</option>';
+            appState.allGroups.forEach(g => {
+                groupSelect.innerHTML += `<option value="${g.GroupID}">${g.GroupName}</option>`;
+            });
+
+            // Reset form
+            document.getElementById('create-request-form').reset();
+            document.getElementById('create-request-modal').classList.add('active');
+            lucide.createIcons();
+        }
+
+        function closeCreateRequestModal() {
+            document.getElementById('create-request-modal').classList.remove('active');
+        }
+
+        // Form submit handler
+        document.addEventListener('DOMContentLoaded', () => {
+            const createRequestForm = document.getElementById('create-request-form');
+            if (createRequestForm) {
+                createRequestForm.addEventListener('submit', e => {
+                    e.preventDefault();
+
+                    const requestData = {
+                        Title: document.getElementById('req-title').value,
+                        Description: document.getElementById('req-description').value,
+                        AssignedTo: document.getElementById('req-assigned-to').value,
+                        GroupID: document.getElementById('req-group').value,
+                        CoopName: document.getElementById('req-coop-name').value
+                    };
+
+                    showLoading();
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            hideLoading();
+                            if (res.success) {
+                                showToast('สร้างคำขอเอกสารสำเร็จ', 'success');
+                                closeCreateRequestModal();
+                                renderDocumentRequests();
+                            } else {
+                                showToast(res.message, 'error');
+                            }
+                        })
+                        .withFailureHandler(onFailure)
+                        .createDocumentRequest(requestData, appState.currentUser.UserID);
+                });
+            }
+        });
+
+        function showRequestDetail(requestId) {
+            currentRequestId = requestId;
+            showLoading();
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    hideLoading();
+                    if (!res.success) {
+                        showToast(res.message, 'error');
+                        return;
+                    }
+
+                    const { request, replies } = res.data;
+
+                    // Header
+                    document.getElementById('req-detail-title').textContent = request.Title;
+                    document.getElementById('req-detail-meta').textContent =
+                        `จาก: ${request.RequesterName} → ถึง: ${request.AssigneeName || 'ไม่ระบุ'}`;
+
+                    // Status
+                    const statusEl = document.getElementById('req-detail-status');
+                    const statusConfig = {
+                        'pending': { text: '🟡 รอดำเนินการ', bg: 'bg-yellow-100', color: 'text-yellow-800' },
+                        'in_progress': { text: '🔵 กำลังดำเนินการ', bg: 'bg-blue-100', color: 'text-blue-800' },
+                        'completed': { text: '🟢 เสร็จสิ้น', bg: 'bg-green-100', color: 'text-green-800' }
+                    };
+                    const status = statusConfig[request.Status] || statusConfig.pending;
+                    statusEl.textContent = status.text;
+                    statusEl.className = `px-3 py-1 rounded-full text-sm font-medium ${status.bg} ${status.color}`;
+
+                    document.getElementById('req-detail-group').textContent =
+                        request.GroupName !== 'ไม่ระบุ' ? `📁 ${request.GroupName}` : '';
+                    document.getElementById('req-detail-description').textContent =
+                        request.Description || 'ไม่มีรายละเอียดเพิ่มเติม';
+
+                    // Action buttons
+                    const actionsEl = document.getElementById('req-detail-actions');
+                    actionsEl.innerHTML = '';
+
+                    // ผู้รับมอบหมายสามารถเปลี่ยนสถานะได้
+                    if (appState.currentUser.UserID === request.AssignedTo ||
+                        appState.currentUser.Role === 'admin' ||
+                        appState.currentUser.Role === 'subadmin') {
+                        if (request.Status === 'pending') {
+                            actionsEl.innerHTML += `
+                                <button onclick="updateRequestStatus('in_progress')" 
+                                    class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+                                    รับเรื่อง
+                                </button>`;
+                        }
+                        if (request.Status !== 'completed') {
+                            actionsEl.innerHTML += `
+                                <button onclick="markRequestCompleted()" 
+                                    class="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">
+                                    ✓ เสร็จสิ้น
+                                </button>`;
+                        }
+                    }
+
+                    // Chat messages
+                    const chatEl = document.getElementById('req-detail-chat');
+                    if (replies.length === 0) {
+                        chatEl.innerHTML = `
+                            <div class="text-center py-8 text-gray-400">
+                                <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-2"></i>
+                                <p>ยังไม่มีข้อความสนทนา</p>
+                            </div>`;
+                    } else {
+                        chatEl.innerHTML = replies.map(reply => {
+                            const isMe = reply.SenderID === appState.currentUser.UserID;
+                            return `
+                                <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                                    <div class="max-w-xs ${isMe ? 'bg-indigo-500 text-white' : 'bg-white'} rounded-lg px-4 py-2 shadow">
+                                        <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-500'} mb-1">${reply.SenderName}</p>
+                                        <p class="text-sm">${reply.Message}</p>
+                                        ${reply.LinkedFileName ? `
+                                            <p class="text-xs mt-1 ${isMe ? 'text-indigo-200' : 'text-indigo-600'}">
+                                                📎 ${reply.LinkedFileName}
+                                            </p>
+                                        ` : ''}
+                                        <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-400'} mt-1">${reply.CreatedAt}</p>
+                                    </div>
+                                </div>`;
+                        }).join('');
+                    }
+
+                    // Load files for reference dropdown
+                    loadFilesForReference();
+
+                    document.getElementById('request-detail-modal').classList.add('active');
+                    lucide.createIcons();
+
+                    // Scroll to bottom of chat
+                    chatEl.scrollTop = chatEl.scrollHeight;
+                })
+                .withFailureHandler(onFailure)
+                .getRequestDetail(requestId, appState.currentUser.UserID);
+        }
+
+        function closeRequestDetailModal() {
+            document.getElementById('request-detail-modal').classList.remove('active');
+            currentRequestId = null;
+        }
+
+        function loadFilesForReference() {
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (res.success) {
+                        const select = document.getElementById('req-reply-file');
+                        select.innerHTML = '<option value="">📎 อ้างอิงไฟล์</option>';
+                        res.data.slice(0, 50).forEach(f => {
+                            select.innerHTML += `<option value="${f.FileID}">${f.Title}</option>`;
+                        });
+                    }
+                })
+                .getFilesForReference(appState.currentUser.UserID);
+        }
+
+        function sendRequestReply() {
+            const message = document.getElementById('req-reply-message').value.trim();
+            const linkedFileId = document.getElementById('req-reply-file').value;
+
+            if (!message && !linkedFileId) {
+                showToast('กรุณาพิมพ์ข้อความหรือเลือกไฟล์อ้างอิง', 'warning');
+                return;
+            }
+
+            showLoading();
+            google.script.run
+                .withSuccessHandler(res => {
+                    hideLoading();
+                    if (res.success) {
+                        document.getElementById('req-reply-message').value = '';
+                        document.getElementById('req-reply-file').value = '';
+                        showRequestDetail(currentRequestId); // Refresh
+                    } else {
+                        showToast(res.message, 'error');
+                    }
+                })
+                .withFailureHandler(onFailure)
+                .replyToRequest(currentRequestId, message, linkedFileId, appState.currentUser.UserID);
+        }
+
+        function updateRequestStatus(status) {
+            showLoading();
+            google.script.run
+                .withSuccessHandler(res => {
+                    hideLoading();
+                    showToast(res.message, res.success ? 'success' : 'error');
+                    if (res.success) {
+                        showRequestDetail(currentRequestId);
+                        renderDocumentRequests();
+                    }
+                })
+                .withFailureHandler(onFailure)
+                .updateRequestStatus(currentRequestId, status, '', appState.currentUser.UserID);
+        }
+
+        function markRequestCompleted() {
+            Swal.fire({
+                title: 'ปิดคำขอเอกสาร?',
+                text: 'ยืนยันว่าคำขอนี้ดำเนินการเสร็จสิ้นแล้ว',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'ยืนยัน เสร็จสิ้น',
+                cancelButtonText: 'ยกเลิก'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    updateRequestStatus('completed');
+                }
+            });
+        }
         document.body.addEventListener('click', e => {
             const approveBtn = e.target.closest('.approve-btn');
             const rejectBtn = e.target.closest('.reject-btn');
