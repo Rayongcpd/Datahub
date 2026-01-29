@@ -315,6 +315,25 @@ window.google.script = window.google.script || {};
                             case 'getFileTypesByCooperative':
                                 params = { coopId: args[0] };
                                 break;
+                            // ✅ Document Requests (กระดานขอเอกสาร)
+                            case 'getDocumentRequests':
+                                params = { userId: args[0] };
+                                break;
+                            case 'createDocumentRequest':
+                                params = { requestData: args[0], userId: args[1] };
+                                break;
+                            case 'getRequestDetail':
+                                params = { requestId: args[0], userId: args[1] };
+                                break;
+                            case 'replyToRequest':
+                                params = { requestId: args[0], message: args[1], linkedFileId: args[2], userId: args[3] };
+                                break;
+                            case 'updateRequestStatus':
+                                params = { requestId: args[0], status: args[1], linkedFileId: args[2], userId: args[3] };
+                                break;
+                            case 'getFilesForReference':
+                                params = { userId: args[0] };
+                                break;
                             default:
                                 if (args.length > 0) {
                                     params = { args };
