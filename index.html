@@ -6481,24 +6481,24 @@
                     const actionsEl = document.getElementById('req-detail-actions');
                     actionsEl.innerHTML = '';
 
-                    // ผู้รับมอบหมายสามารถเปลี่ยนสถานะได้
-                    if (appState.currentUser.UserID === request.AssignedTo ||
+                    // ผู้รับมอบหมาย หรือ admin/subadmin สามารถกด "รับเรื่อง" ได้
+                    if ((appState.currentUser.UserID === request.AssignedTo ||
                         appState.currentUser.Role === 'admin' ||
-                        appState.currentUser.Role === 'subadmin') {
-                        if (request.Status === 'pending') {
-                            actionsEl.innerHTML += `
-                                <button onclick="updateRequestStatus('in_progress')" 
-                                    class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
-                                    รับเรื่อง
-                                </button>`;
-                        }
-                        if (request.Status !== 'completed') {
-                            actionsEl.innerHTML += `
-                                <button onclick="markRequestCompleted()" 
-                                    class="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">
-                                    ✓ เสร็จสิ้น
-                                </button>`;
-                        }
+                        appState.currentUser.Role === 'subadmin') && request.Status === 'pending') {
+                        actionsEl.innerHTML += `
+                            <button onclick="updateRequestStatus('in_progress')" 
+                                class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+                                รับเรื่อง
+                            </button>`;
+                    }
+
+                    // ✅ เฉพาะผู้ขอ (requester) เท่านั้นที่กดเสร็จสิ้นได้
+                    if (appState.currentUser.UserID === request.RequestedBy && request.Status !== 'completed') {
+                        actionsEl.innerHTML += `
+                            <button onclick="markRequestCompleted()" 
+                                class="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">
+                                ✓ เสร็จสิ้น
+                            </button>`;
                     }
 
                     // Chat messages
@@ -6530,6 +6530,10 @@
 
                     // Load files for reference dropdown
                     loadFilesForReference();
+
+                    // ✅ Clear input fields เพื่อป้องกันข้อความค้างจาก session อื่น
+                    document.getElementById('req-reply-message').value = '';
+                    document.getElementById('req-reply-file').value = '';
 
                     document.getElementById('request-detail-modal').classList.add('active');
                     lucide.createIcons();
