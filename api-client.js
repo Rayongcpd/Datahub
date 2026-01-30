@@ -331,6 +331,9 @@ window.google.script = window.google.script || {};
                             case 'updateRequestStatus':
                                 params = { requestId: args[0], status: args[1], linkedFileId: args[2], userId: args[3] };
                                 break;
+                            case 'deleteDocumentRequest':
+                                params = { requestId: args[0], userId: args[1] };
+                                break;
                             case 'getFilesForReference':
                                 params = { userId: args[0] };
                                 break;
