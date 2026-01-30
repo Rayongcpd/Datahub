@@ -6646,6 +6646,45 @@
                 }
             });
         }
+
+        // Make deleteRequest global accessible if needed, or just define it here like others
+        function deleteRequest(requestId) {
+            Swal.fire({
+                title: 'ยืนยันการลบคำขอ?',
+                text: "การลบนี้จะลบแค่ 'คำขอ' และ 'ข้อความสนทนา' เท่านั้น ไม่ได้ลบไฟล์ที่อัพโหลด ไฟล์ยังคงค้นหาได้ในหน้าแรก",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ลบคำขอ',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showLoading();
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            hideLoading();
+                            if (res.success) {
+                                showToast('ลบคำขอเรียบร้อยแล้ว', 'success');
+                                closeRequestDetailModal();
+                                // Refresh list
+                                const activeTab = document.querySelector('.tab-btn.active');
+                                if (activeTab && activeTab.id === 'tab-req-mine') {
+                                    filterRequests('mine');
+                                } else if (activeTab && activeTab.id === 'tab-req-assigned') {
+                                    filterRequests('assigned');
+                                } else {
+                                    loadDocumentRequests();
+                                }
+                            } else {
+                                showToast(res.message, 'error');
+                            }
+                        })
+                        .withFailureHandler(onFailure)
+                        .deleteDocumentRequest(requestId, appState.currentUser.UserID);
+                }
+            });
+        }
         document.body.addEventListener('click', e => {
             const approveBtn = e.target.closest('.approve-btn');
             const rejectBtn = e.target.closest('.reject-btn');
