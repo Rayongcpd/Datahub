@@ -6375,7 +6375,7 @@
                                     <span>จาก:</span>
                                     <span class="font-medium text-gray-700">${req.RequesterName || 'ไม่ระบุ'}</span>
                                 </div>
-                                <span>📅 ${req.CreatedAt || ''}</span>
+                                <span>📅 ${formatDateTimeThaiJS(req.CreatedAt)}</span>
                             </div>
                             ${req.AssigneeName && req.AssigneeName !== 'ไม่ระบุ' ? `
                                 <div class="text-xs text-gray-500 mt-1">
@@ -6553,7 +6553,7 @@
                                                 ` : ''}
                                             </div>
                                         ` : ''}
-                                        <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-400'} mt-1">${reply.CreatedAt}</p>
+                                        <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-400'} mt-1">${formatDateTimeThaiJS(reply.CreatedAt)}</p>
                                     </div>
                                 </div>`;
                         }).join('');
@@ -6878,6 +6878,31 @@
             let year = d.getFullYear() + 543;
 
             return `${day} ${month} ${year}`;
+        }
+
+        function formatDateTimeThaiJS(dateString) {
+            if (!dateString) return '';
+
+            // Standard Javascript Date can parse ISO string and handle timezone automatically
+            let d = new Date(dateString);
+
+            // If invalid date, try parsing manually (fallback for old data if any)
+            if (isNaN(d.getTime())) {
+                return dateString;
+            }
+
+            const months = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+                "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+
+            let day = d.getDate();
+            let month = months[d.getMonth()];
+            let year = d.getFullYear() + 543;
+            let hours = d.getHours().toString().padStart(2, '0');
+            let minutes = d.getMinutes().toString().padStart(2, '0');
+
+            return `${day} ${month} ${year} เวลา ${hours}:${minutes} น.`;
         }
 
         // =================================================================
