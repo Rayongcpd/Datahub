@@ -315,7 +315,7 @@ window.google.script = window.google.script || {};
                             case 'getFileTypesByCooperative':
                                 params = { coopId: args[0] };
                                 break;
-                            // ✅ Document Requests (กระดานขอเอกสาร)
+                            // ✅ Document Requests (ขอรับบริการข้อมูล)
                             case 'getDocumentRequests':
                                 params = { userId: args[0] };
                                 break;

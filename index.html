@@ -2179,12 +2179,12 @@
                 </div>
             </div>
 
-            <!-- ✅ Page: Document Requests (กระดานขอเอกสาร) -->
+            <!-- ✅ Page: Document Requests (ขอรับบริการข้อมูล) -->
             <div id="page-document-requests" class="page">
                 <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
                     <span
                         class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg">📋</span>
-                    กระดานขอเอกสาร
+                    ขอรับบริการข้อมูล
                 </h1>
 
                 <!-- Create New Request Button -->
@@ -2627,7 +2627,7 @@
                     menuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
                     menuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
                     menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
@@ -2635,26 +2635,26 @@
                     mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                 } else if (appState.currentUser.Role === 'subadmin') {
                     // Subadmin: Dashboard, ไฟล์ทั้งหมด, Activity Log (ไม่มีสิทธิ์เข้าหน้าคำขอลบ, ถังขยะ, จัดการผู้ใช้/กลุ่ม)
                     menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
                     menuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
                     menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                     mobileMenuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
                     mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                 } else if (appState.currentUser.Role === 'officer') {
                     menuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>`;
                     menuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
                     menuHtml += `<a href="#" data-page="officer-files" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการไฟล์</a>`;
-                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                     mobileMenuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (officer)</a>`;
                     mobileMenuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
                     mobileMenuHtml += `<a href="#" data-page="officer-files" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 กระดานขอเอกสาร</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                 }
             }
 
@@ -6288,7 +6288,7 @@
 
 
         // =================================================================
-        // ✅ DOCUMENT REQUESTS FUNCTIONS (กระดานขอเอกสาร)
+        // ✅ DOCUMENT REQUESTS FUNCTIONS (ขอรับบริการข้อมูล)
         // =================================================================
         let currentRequestTab = 'all';
         let currentRequestId = null;
@@ -6299,7 +6299,7 @@
                 document.getElementById('requests-list').innerHTML = `
                     <div class="col-span-full text-center py-12 text-gray-500">
                         <i data-lucide="lock" class="w-16 h-16 mx-auto mb-4 text-gray-300"></i>
-                        <p>กรุณาเข้าสู่ระบบเพื่อดูกระดานขอเอกสาร</p>
+                        <p>กรุณาเข้าสู่ระบบเพื่อใช้งานระบบขอรับบริการข้อมูล</p>
                     </div>`;
                 lucide.createIcons();
                 return;
