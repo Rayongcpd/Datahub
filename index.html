@@ -6498,7 +6498,7 @@
                     const isCompleted = request.Status === 'completed';
 
                     // 1. ปุ่ม "เสร็จสิ้น" ผู้ขอ หรือ ผู้รับผิดชอบ กดได้ (ถ้ายังไม่เสร็จ)
-                    if ((isRequester || currentUser.UserID === request.AssignedTo) && !isCompleted) {
+                    if (isRequester && !isCompleted) {
                         actionsEl.innerHTML += `
                             <button onclick="markRequestCompleted()" 
                                 class="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">
