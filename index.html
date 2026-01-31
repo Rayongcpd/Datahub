@@ -6704,19 +6704,44 @@
                 return;
             }
 
-            showLoading();
+            // ✅ ไม่ใช้ showLoading() เพื่อไม่ให้บังหน้าจอ - ใช้ disable button แทน
+            const sendBtn = document.querySelector('#request-detail-modal button[onclick="sendRequestReply()"]');
+            const msgInput = document.getElementById('req-reply-message');
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>ส่ง...</span>';
+            }
+            if (msgInput) msgInput.disabled = true;
+
             google.script.run
                 .withSuccessHandler(res => {
-                    hideLoading();
+                    // ✅ คืนสถานะปุ่ม
+                    if (sendBtn) {
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i><span>ส่ง</span>';
+                    }
+                    if (msgInput) msgInput.disabled = false;
+                    lucide.createIcons();
+
                     if (res.success) {
                         document.getElementById('req-reply-message').value = '';
                         document.getElementById('req-reply-file').value = '';
-                        showRequestDetail(currentRequestId); // Refresh
+                        // ✅ Refresh chat แบบ silent แทนการโหลดใหม่ทั้งหมด
+                        refreshChatMessages();
                     } else {
                         showToast(res.message, 'error');
                     }
                 })
-                .withFailureHandler(onFailure)
+                .withFailureHandler(err => {
+                    // ✅ คืนสถานะปุ่มเมื่อเกิด error
+                    if (sendBtn) {
+                        sendBtn.disabled = false;
+                        sendBtn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i><span>ส่ง</span>';
+                    }
+                    if (msgInput) msgInput.disabled = false;
+                    lucide.createIcons();
+                    showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+                })
                 .replyToRequest(currentRequestId, message, linkedFileId, appState.currentUser.UserID);
         }
 
