@@ -6610,7 +6610,8 @@
         }
 
         // ✅ Refresh Chat Messages แบบ Silent (ไม่โชว์ loading)
-        function refreshChatMessages() {
+        // force = true จะ update เสมอ ไม่เช็คจำนวน
+        function refreshChatMessages(force = false) {
             if (!currentRequestId || !appState.currentUser) return;
 
             google.script.run
@@ -6619,8 +6620,8 @@
 
                     const { replies } = res.data;
 
-                    // ✅ เช็คว่ามีข้อความใหม่หรือไม่
-                    if (replies.length !== lastMessageCount) {
+                    // ✅ ถ้า force หรือมีข้อความใหม่ ให้ update
+                    if (force || replies.length !== lastMessageCount) {
                         lastMessageCount = replies.length;
 
                         // ✅ อัปเดตเฉพาะส่วน chat messages
@@ -6672,13 +6673,18 @@
                         // ✅ Scroll to bottom เมื่อมีข้อความใหม่
                         chatEl.scrollTop = chatEl.scrollHeight;
 
-                        console.log('💬 New messages detected, chat updated');
+                        console.log('💬 Chat updated, messages:', replies.length);
                     }
                 })
                 .withFailureHandler(err => {
                     console.error('Chat polling error:', err);
                 })
                 .getRequestDetail(currentRequestId, appState.currentUser.UserID);
+        }
+
+        // ✅ Force Refresh Chat - ใช้หลังส่งข้อความสำเร็จ
+        function forceRefreshChat() {
+            refreshChatMessages(true);
         }
 
         function loadFilesForReference() {
@@ -6742,11 +6748,10 @@
                     if (sendBtn) sendBtn.disabled = false;
 
                     if (res.success) {
-                        // ✅ ลบข้อความชั่วคราว แล้ว refresh เพื่อดึงข้อความจริงจาก server
+                        // ✅ ลบข้อความชั่วคราว แล้ว force refresh เพื่อดึงข้อความจริงจาก server
                         const tempEl = document.getElementById(tempId);
                         if (tempEl) tempEl.remove();
-                        lastMessageCount++; // เพิ่มนับเพื่อให้ refresh จับได้
-                        refreshChatMessages();
+                        forceRefreshChat(); // ✅ ใช้ force refresh
                     } else {
                         // ✅ ถ้า error ลบข้อความชั่วคราวออก และแจ้งเตือน
                         const tempEl = document.getElementById(tempId);
