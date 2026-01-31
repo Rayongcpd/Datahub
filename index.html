@@ -6294,6 +6294,8 @@
         let currentRequestTab = 'all';
         let currentRequestId = null;
         let allDocumentRequests = [];
+        let chatPollingInterval = null; // ✅ Real-time chat polling
+        let lastMessageCount = 0; // ✅ เก็บจำนวนข้อความล่าสุดเพื่อเปรียบเทียบ
 
         function renderDocumentRequests() {
             if (!appState.currentUser || !appState.currentUser.UserID) {
@@ -6572,6 +6574,10 @@
 
                     // Scroll to bottom of chat
                     chatEl.scrollTop = chatEl.scrollHeight;
+
+                    // ✅ เริ่ม Real-time Chat Polling
+                    lastMessageCount = replies.length;
+                    startChatPolling();
                 })
                 .withFailureHandler(onFailure)
                 .getRequestDetail(requestId, appState.currentUser.UserID);
@@ -6580,6 +6586,99 @@
         function closeRequestDetailModal() {
             document.getElementById('request-detail-modal').classList.remove('active');
             currentRequestId = null;
+            stopChatPolling(); // ✅ หยุด polling เมื่อปิด modal
+        }
+
+        // ✅ เริ่ม Real-time Chat Polling
+        function startChatPolling() {
+            stopChatPolling(); // หยุดอันเก่าก่อน (ถ้ามี)
+            chatPollingInterval = setInterval(() => {
+                if (currentRequestId) {
+                    refreshChatMessages();
+                }
+            }, 5000); // Poll ทุก 5 วินาที
+            console.log('🟢 Real-time chat polling started');
+        }
+
+        // ✅ หยุด Chat Polling
+        function stopChatPolling() {
+            if (chatPollingInterval) {
+                clearInterval(chatPollingInterval);
+                chatPollingInterval = null;
+                console.log('🔴 Real-time chat polling stopped');
+            }
+        }
+
+        // ✅ Refresh Chat Messages แบบ Silent (ไม่โชว์ loading)
+        function refreshChatMessages() {
+            if (!currentRequestId || !appState.currentUser) return;
+
+            google.script.run
+                .withSuccessHandler(res => {
+                    if (!res.success) return;
+
+                    const { replies } = res.data;
+
+                    // ✅ เช็คว่ามีข้อความใหม่หรือไม่
+                    if (replies.length !== lastMessageCount) {
+                        lastMessageCount = replies.length;
+
+                        // ✅ อัปเดตเฉพาะส่วน chat messages
+                        const chatEl = document.getElementById('req-detail-chat');
+                        if (replies.length === 0) {
+                            chatEl.innerHTML = `
+                                <div class="text-center py-8 text-gray-400">
+                                    <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-2"></i>
+                                    <p>ยังไม่มีข้อความสนทนา</p>
+                                </div>`;
+                        } else {
+                            chatEl.innerHTML = replies.map(reply => {
+                                const isMe = reply.SenderID === appState.currentUser.UserID;
+                                return `
+                                    <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                                        <div class="max-w-xs ${isMe ? 'bg-indigo-500 text-white' : 'bg-white'} rounded-lg px-4 py-2 shadow">
+                                            <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-500'} mb-1">${reply.SenderName}</p>
+                                            <p class="text-sm">${reply.Message}</p>
+                                            ${reply.LinkedFileName ? `
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-indigo-600'} flex items-center gap-1">
+                                                        <span>📎</span>
+                                                        ${reply.LinkedFileDriveID ? `
+                                                            <a href="javascript:void(0)" 
+                                                               onclick="appState.fileToDownload = { fileId: '${reply.LinkedFileID}', driveFileId: '${reply.LinkedFileDriveID}' }; document.getElementById('satisfaction-modal').classList.add('flex');"
+                                                               class="hover:underline">
+                                                                ${reply.LinkedFileName}
+                                                            </a>
+                                                        ` : `<span>${reply.LinkedFileName}</span>`}
+                                                    </p>
+                                                    ${reply.LinkedFileDriveID ? `
+                                                        <button class="download-btn flex items-center gap-1 px-2 py-0.5 bg-green-500 text-white text-xs rounded hover:bg-green-600 ml-2"
+                                                            data-fileid="${reply.LinkedFileID}" 
+                                                            data-drivefileid="${reply.LinkedFileDriveID}">
+                                                            <i data-lucide="download" class="w-3 h-3"></i>
+                                                            โหลด
+                                                        </button>
+                                                    ` : ''}
+                                                </div>
+                                            ` : ''}
+                                            <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-400'} mt-1">${formatDateTimeThaiJS(reply.CreatedAt)}</p>
+                                        </div>
+                                    </div>`;
+                            }).join('');
+                        }
+
+                        lucide.createIcons();
+
+                        // ✅ Scroll to bottom เมื่อมีข้อความใหม่
+                        chatEl.scrollTop = chatEl.scrollHeight;
+
+                        console.log('💬 New messages detected, chat updated');
+                    }
+                })
+                .withFailureHandler(err => {
+                    console.error('Chat polling error:', err);
+                })
+                .getRequestDetail(currentRequestId, appState.currentUser.UserID);
         }
 
         function loadFilesForReference() {
