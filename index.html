@@ -6472,7 +6472,13 @@
                         'completed': { text: '🟢 เสร็จสิ้น', bg: 'bg-green-100', color: 'text-green-800' }
                     };
                     const status = statusConfig[request.Status] || statusConfig.pending;
-                    statusEl.textContent = status.text;
+
+                    // ✅ แสดงเวลาที่ใช้ดำเนินการ (ถ้า completed)
+                    if (request.Status === 'completed' && request.ProcessingTime) {
+                        statusEl.innerHTML = `${status.text} <span class="ml-2 text-xs text-gray-600">⏱️ ${request.ProcessingTime.text}</span>`;
+                    } else {
+                        statusEl.textContent = status.text;
+                    }
                     statusEl.className = `px-3 py-1 rounded-full text-sm font-medium ${status.bg} ${status.color}`;
 
                     document.getElementById('req-detail-group').textContent =
@@ -6774,10 +6780,33 @@
             google.script.run
                 .withSuccessHandler(res => {
                     hideLoading();
-                    showToast(res.message, res.success ? 'success' : 'error');
+
                     if (res.success) {
+                        // ✅ ถ้าเสร็จสิ้น แสดง popup พร้อมเวลาที่ใช้ดำเนินการ
+                        if (status === 'completed' && res.processingTime) {
+                            Swal.fire({
+                                title: '✅ ดำเนินการเสร็จสิ้น!',
+                                html: `
+                                    <div class="text-center">
+                                        <p class="text-gray-600 mb-3">คำขอนี้ได้รับการดำเนินการเรียบร้อยแล้ว</p>
+                                        <div class="bg-indigo-50 rounded-lg p-4 inline-block">
+                                            <p class="text-sm text-indigo-600 mb-1">⏱️ ระยะเวลาดำเนินการ</p>
+                                            <p class="text-2xl font-bold text-indigo-700">${res.processingTime.text}</p>
+                                        </div>
+                                    </div>
+                                `,
+                                icon: 'success',
+                                confirmButtonColor: '#16a34a',
+                                confirmButtonText: 'ตกลง'
+                            });
+                        } else {
+                            showToast(res.message, 'success');
+                        }
+
                         showRequestDetail(currentRequestId);
                         renderDocumentRequests();
+                    } else {
+                        showToast(res.message, 'error');
                     }
                 })
                 .withFailureHandler(onFailure)
