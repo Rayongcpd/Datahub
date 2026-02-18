@@ -5326,59 +5326,75 @@
         // FILE PREVIEW FUNCTIONS
         // =================================================================
         function openPreviewModal(driveFileId, fileName, fileId) {
-            // แสดง loading
-            showLoading();
+            const modal = document.getElementById('file-preview-modal');
+            const iframe = document.getElementById('preview-iframe');
+            const fileNameEl = document.getElementById('preview-file-name');
+            const downloadBtn = document.getElementById('preview-download-btn');
 
-            // เรียก API เพื่อ set sharing permission และรับ preview URL
+            // แสดงชื่อไฟล์
+            fileNameEl.textContent = fileName || 'ดูตัวอย่างไฟล์';
+
+            // ล้าง iframe ก่อน
+            iframe.src = '';
+
+            // เปิด modal
+            modal.classList.add('flex');
+            lucide.createIcons();
+
+            // แสดง loading state
+            iframe.style.opacity = '0.3';
+
+            // เรียก API เพื่อ set sharing permission และรับ preview URL (gview)
             google.script.run
                 .withSuccessHandler(function (result) {
-                    hideLoading();
                     if (result.success) {
-                        // เปิด preview ใน popup window (หน้าต่างลอย)
-                        const w = 900, h = 700;
-                        const left = (screen.width - w) / 2;
-                        const top = (screen.height - h) / 2;
-                        window.open(result.previewUrl, 'filePreview', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
-
-                        // ถามว่าต้องการ download ด้วยหรือไม่
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'เปิดตัวอย่างไฟล์แล้ว',
-                            html: `<p class="text-gray-600">ไฟล์ <strong>${result.fileName || fileName}</strong> ถูกเปิดในแท็บใหม่</p>`,
-                            showCancelButton: true,
-                            confirmButtonText: '⬇️ ดาวน์โหลดไฟล์นี้',
-                            cancelButtonText: 'ปิด',
-                            confirmButtonColor: '#22c55e',
-                            cancelButtonColor: '#6b7280'
-                        }).then((swalResult) => {
-                            if (swalResult.isConfirmed) {
-                                // เข้าสู่ flow download เดิม (satisfaction modal)
-                                appState.fileToDownload = {
-                                    fileId: fileId,
-                                    driveFileId: driveFileId
-                                };
-                                document.getElementById('satisfaction-modal').classList.add('flex');
-                            }
-                        });
+                        iframe.src = result.previewUrl;
+                        iframe.onload = function () {
+                            iframe.style.opacity = '1';
+                        };
+                        // อัปเดตชื่อไฟล์จาก backend (ถ้ามี)
+                        if (result.fileName) {
+                            fileNameEl.textContent = result.fileName;
+                        }
                     } else {
+                        iframe.style.opacity = '1';
                         Swal.fire({
                             icon: 'error',
                             title: 'ไม่สามารถดูตัวอย่างได้',
                             text: result.message || 'เกิดข้อผิดพลาด',
                             confirmButtonColor: '#3b82f6'
                         });
+                        closePreviewModal();
                     }
                 })
                 .withFailureHandler(function (error) {
-                    hideLoading();
+                    iframe.style.opacity = '1';
                     Swal.fire({
                         icon: 'error',
                         title: 'เกิดข้อผิดพลาด',
                         text: error.message || 'ไม่สามารถเชื่อมต่อได้',
                         confirmButtonColor: '#3b82f6'
                     });
+                    closePreviewModal();
                 })
                 .previewFile(driveFileId);
+
+            // ตั้งค่าปุ่ม Download ใน preview popup → เปิด satisfaction modal
+            downloadBtn.onclick = function () {
+                closePreviewModal();
+                appState.fileToDownload = {
+                    fileId: fileId,
+                    driveFileId: driveFileId
+                };
+                document.getElementById('satisfaction-modal').classList.add('flex');
+            };
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('file-preview-modal');
+            const iframe = document.getElementById('preview-iframe');
+            modal.classList.remove('flex');
+            iframe.src = ''; // ล้าง iframe เพื่อหยุด loading
         }
 
         function handleSatisfaction(score) {
