@@ -5334,8 +5334,11 @@
                 .withSuccessHandler(function (result) {
                     hideLoading();
                     if (result.success) {
-                        // เปิด preview ใน tab ใหม่ (หลีกเลี่ยง CSP frame-ancestors block)
-                        window.open(result.previewUrl, '_blank');
+                        // เปิด preview ใน popup window (หน้าต่างลอย)
+                        const w = 900, h = 700;
+                        const left = (screen.width - w) / 2;
+                        const top = (screen.height - h) / 2;
+                        window.open(result.previewUrl, 'filePreview', `width=${w},height=${h},left=${left},top=${top},resizable=yes,scrollbars=yes`);
 
                         // ถามว่าต้องการ download ด้วยหรือไม่
                         Swal.fire({
