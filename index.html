@@ -2380,7 +2380,7 @@
             <div
                 class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="file-search" class="w-5 h-5"></i>
+                    <i data-lucide="scan-eye" class="w-5 h-5"></i>
                     <span id="preview-file-name">ดูตัวอย่างไฟล์</span>
                 </h2>
                 <button onclick="closePreviewModal()" class="text-white/80 hover:text-white transition-colors">
@@ -2954,7 +2954,7 @@
                     `<div class="flex items-center gap-1 mb-1">
         <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
             class="preview-btn" title="ดูตัวอย่าง">
-            <i data-lucide="file-search" class="w-5 h-5"></i>
+            <i data-lucide="scan-eye" class="w-5 h-5"></i>
         </button>
         <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
             class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600">
@@ -3037,7 +3037,7 @@
                     `<div class="flex items-center gap-1 mb-1">
         <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
             class="preview-btn" title="ดูตัวอย่าง">
-            <i data-lucide="file-search" class="w-5 h-5"></i>
+            <i data-lucide="scan-eye" class="w-5 h-5"></i>
         </button>
         <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
             class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600">
@@ -3613,7 +3613,7 @@
                     `<div class="flex items-center gap-1 mb-1">
                 <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
                     class="preview-btn" title="ดูตัวอย่าง" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                    <i data-lucide="file-search" class="w-4 h-4"></i>
+                    <i data-lucide="scan-eye" class="w-4 h-4"></i>
                 </button>
                 <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 flex items-center space-x-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3749,7 +3749,7 @@
                     `<div class="flex items-center gap-1 mb-1">
           <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
               class="preview-btn" title="ดูตัวอย่าง" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-              <i data-lucide="file-search" class="w-4 h-4"></i>
+              <i data-lucide="scan-eye" class="w-4 h-4"></i>
           </button>
           <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 flex items-center space-x-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -5326,75 +5326,56 @@
         // FILE PREVIEW FUNCTIONS
         // =================================================================
         function openPreviewModal(driveFileId, fileName, fileId) {
-            const modal = document.getElementById('file-preview-modal');
-            const iframe = document.getElementById('preview-iframe');
-            const fileNameEl = document.getElementById('preview-file-name');
-            const downloadBtn = document.getElementById('preview-download-btn');
-
-            // แสดงชื่อไฟล์
-            fileNameEl.textContent = fileName || 'ดูตัวอย่างไฟล์';
-
-            // ล้าง iframe ก่อน
-            iframe.src = '';
-
-            // เปิด modal
-            modal.classList.add('flex');
-            lucide.createIcons();
-
             // แสดง loading
-            iframe.style.opacity = '0.3';
+            showLoading();
 
             // เรียก API เพื่อ set sharing permission และรับ preview URL
             google.script.run
                 .withSuccessHandler(function (result) {
+                    hideLoading();
                     if (result.success) {
-                        iframe.src = result.previewUrl;
-                        iframe.onload = function () {
-                            iframe.style.opacity = '1';
-                        };
-                        // อัปเดตชื่อไฟล์จาก backend (ถ้ามี)
-                        if (result.fileName) {
-                            fileNameEl.textContent = result.fileName;
-                        }
+                        // เปิด preview ใน tab ใหม่ (หลีกเลี่ยง CSP frame-ancestors block)
+                        window.open(result.previewUrl, '_blank');
+
+                        // ถามว่าต้องการ download ด้วยหรือไม่
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'เปิดตัวอย่างไฟล์แล้ว',
+                            html: `<p class="text-gray-600">ไฟล์ <strong>${result.fileName || fileName}</strong> ถูกเปิดในแท็บใหม่</p>`,
+                            showCancelButton: true,
+                            confirmButtonText: '⬇️ ดาวน์โหลดไฟล์นี้',
+                            cancelButtonText: 'ปิด',
+                            confirmButtonColor: '#22c55e',
+                            cancelButtonColor: '#6b7280'
+                        }).then((swalResult) => {
+                            if (swalResult.isConfirmed) {
+                                // เข้าสู่ flow download เดิม (satisfaction modal)
+                                appState.fileToDownload = {
+                                    fileId: fileId,
+                                    driveFileId: driveFileId
+                                };
+                                document.getElementById('satisfaction-modal').classList.add('flex');
+                            }
+                        });
                     } else {
-                        iframe.style.opacity = '1';
                         Swal.fire({
                             icon: 'error',
                             title: 'ไม่สามารถดูตัวอย่างได้',
                             text: result.message || 'เกิดข้อผิดพลาด',
                             confirmButtonColor: '#3b82f6'
                         });
-                        closePreviewModal();
                     }
                 })
                 .withFailureHandler(function (error) {
-                    iframe.style.opacity = '1';
+                    hideLoading();
                     Swal.fire({
                         icon: 'error',
                         title: 'เกิดข้อผิดพลาด',
                         text: error.message || 'ไม่สามารถเชื่อมต่อได้',
                         confirmButtonColor: '#3b82f6'
                     });
-                    closePreviewModal();
                 })
                 .previewFile(driveFileId);
-
-            // ตั้งค่าปุ่ม Download ใน preview popup → เปิด satisfaction modal
-            downloadBtn.onclick = function () {
-                closePreviewModal();
-                appState.fileToDownload = {
-                    fileId: fileId,
-                    driveFileId: driveFileId
-                };
-                document.getElementById('satisfaction-modal').classList.add('flex');
-            };
-        }
-
-        function closePreviewModal() {
-            const modal = document.getElementById('file-preview-modal');
-            const iframe = document.getElementById('preview-iframe');
-            modal.classList.remove('flex');
-            iframe.src = ''; // ล้าง iframe เพื่อหยุด loading
         }
 
         function handleSatisfaction(score) {
