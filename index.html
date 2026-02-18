@@ -5363,15 +5363,23 @@
                         }
 
                         // แสดงตามประเภทไฟล์
-                        const isImage = result.mimeType && result.mimeType.startsWith('image/');
-                        if (isImage) {
-                            // ภาพ: ใช้ <img>
+                        if (result.previewType === 'image') {
+                            // ภาพ: ใช้ <img> + base64 data URI
                             img.style.display = 'block';
-                            img.src = result.previewUrl;
-                        } else {
-                            // เอกสาร: ใช้ <iframe> + gview
+                            img.src = result.previewData;
+                        } else if (result.previewType === 'pdf') {
+                            // PDF/เอกสาร: ใช้ <iframe> + base64 data URI
                             iframe.style.display = 'block';
-                            iframe.src = result.previewUrl;
+                            iframe.src = result.previewData;
+                        } else {
+                            // ไม่รองรับ preview
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'ไม่รองรับการดูตัวอย่าง',
+                                text: result.message || 'ไฟล์ประเภทนี้ไม่รองรับการดูตัวอย่าง',
+                                confirmButtonColor: '#3b82f6'
+                            });
+                            closePreviewModal();
                         }
                     } else {
                         Swal.fire({
