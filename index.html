@@ -2397,10 +2397,12 @@
                     </svg>
                 </button>
             </div>
-            <!-- iframe Preview Area -->
-            <div class="flex-1 p-2 bg-gray-100 overflow-hidden">
+            <!-- Preview Area -->
+            <div class="flex-1 p-2 bg-gray-100 overflow-hidden flex items-center justify-center">
                 <iframe id="preview-iframe" class="w-full h-full rounded-lg border border-gray-300 bg-white"
-                    frameborder="0" allowfullscreen></iframe>
+                    style="display:none;" frameborder="0" allowfullscreen></iframe>
+                <img id="preview-image" class="max-w-full max-h-full rounded-lg object-contain" style="display:none;"
+                    alt="Preview" />
             </div>
             <!-- Footer -->
             <div class="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white">
@@ -5335,36 +5337,43 @@
         function openPreviewModal(driveFileId, fileName, fileId) {
             const modal = document.getElementById('file-preview-modal');
             const iframe = document.getElementById('preview-iframe');
+            const img = document.getElementById('preview-image');
             const fileNameEl = document.getElementById('preview-file-name');
             const downloadBtn = document.getElementById('preview-download-btn');
 
             // แสดงชื่อไฟล์
             fileNameEl.textContent = fileName || 'ดูตัวอย่างไฟล์';
 
-            // ล้าง iframe ก่อน
+            // ล้างและซ่อนทั้งสองก่อน
             iframe.src = '';
+            iframe.style.display = 'none';
+            img.src = '';
+            img.style.display = 'none';
 
             // เปิด modal
             modal.classList.add('flex');
-            lucide.createIcons();
 
-            // แสดง loading state
-            iframe.style.opacity = '0.3';
-
-            // เรียก API เพื่อ set sharing permission และรับ preview URL (gview)
+            // เรียก API เพื่อ set sharing permission และรับ preview URL
             google.script.run
                 .withSuccessHandler(function (result) {
                     if (result.success) {
-                        iframe.src = result.previewUrl;
-                        iframe.onload = function () {
-                            iframe.style.opacity = '1';
-                        };
-                        // อัปเดตชื่อไฟล์จาก backend (ถ้ามี)
+                        // อัปเดตชื่อไฟล์
                         if (result.fileName) {
                             fileNameEl.textContent = result.fileName;
                         }
+
+                        // แสดงตามประเภทไฟล์
+                        const isImage = result.mimeType && result.mimeType.startsWith('image/');
+                        if (isImage) {
+                            // ภาพ: ใช้ <img>
+                            img.style.display = 'block';
+                            img.src = result.previewUrl;
+                        } else {
+                            // เอกสาร: ใช้ <iframe> + gview
+                            iframe.style.display = 'block';
+                            iframe.src = result.previewUrl;
+                        }
                     } else {
-                        iframe.style.opacity = '1';
                         Swal.fire({
                             icon: 'error',
                             title: 'ไม่สามารถดูตัวอย่างได้',
@@ -5375,7 +5384,6 @@
                     }
                 })
                 .withFailureHandler(function (error) {
-                    iframe.style.opacity = '1';
                     Swal.fire({
                         icon: 'error',
                         title: 'เกิดข้อผิดพลาด',
@@ -5400,8 +5408,12 @@
         function closePreviewModal() {
             const modal = document.getElementById('file-preview-modal');
             const iframe = document.getElementById('preview-iframe');
+            const img = document.getElementById('preview-image');
             modal.classList.remove('flex');
-            iframe.src = ''; // ล้าง iframe เพื่อหยุด loading
+            iframe.src = '';
+            iframe.style.display = 'none';
+            img.src = '';
+            img.style.display = 'none';
         }
 
         function handleSatisfaction(score) {
