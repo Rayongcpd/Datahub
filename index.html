@@ -2380,7 +2380,15 @@
             <div
                 class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="scan-eye" class="w-5 h-5"></i>
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+                        <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+                        <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+                        <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M5 12s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5" />
+                    </svg>
                     <span id="preview-file-name">ดูตัวอย่างไฟล์</span>
                 </h2>
                 <button onclick="closePreviewModal()" class="text-white/80 hover:text-white transition-colors">
@@ -2954,7 +2962,7 @@
                     `<div class="flex items-center gap-1 mb-1">
         <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
             class="preview-btn" title="ดูตัวอย่าง">
-            <i data-lucide="scan-eye" class="w-5 h-5"></i>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="M5 12s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5"/></svg>
         </button>
         <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
             class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600">
@@ -3037,7 +3045,7 @@
                     `<div class="flex items-center gap-1 mb-1">
         <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
             class="preview-btn" title="ดูตัวอย่าง">
-            <i data-lucide="scan-eye" class="w-5 h-5"></i>
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="M5 12s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5"/></svg>
         </button>
         <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
             class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600">
@@ -3613,7 +3621,7 @@
                     `<div class="flex items-center gap-1 mb-1">
                 <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
                     class="preview-btn" title="ดูตัวอย่าง" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                    <i data-lucide="scan-eye" class="w-4 h-4"></i>
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="M5 12s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5"/></svg>
                 </button>
                 <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 flex items-center space-x-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3749,7 +3757,7 @@
                     `<div class="flex items-center gap-1 mb-1">
           <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
               class="preview-btn" title="ดูตัวอย่าง" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-              <i data-lucide="scan-eye" class="w-4 h-4"></i>
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="M5 12s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5"/></svg>
           </button>
           <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 flex items-center space-x-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
