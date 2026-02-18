@@ -5368,9 +5368,19 @@
                             img.style.display = 'block';
                             img.src = result.previewData;
                         } else if (result.previewType === 'pdf') {
-                            // PDF/เอกสาร: ใช้ <iframe> + base64 data URI
+                            // PDF/เอกสาร: แปลง base64 → Blob URL → <iframe>
                             iframe.style.display = 'block';
-                            iframe.src = result.previewData;
+                            // แยก base64 จาก data URI
+                            const base64Str = result.previewData.split(',')[1];
+                            const byteChars = atob(base64Str);
+                            const byteNumbers = new Array(byteChars.length);
+                            for (let i = 0; i < byteChars.length; i++) {
+                                byteNumbers[i] = byteChars.charCodeAt(i);
+                            }
+                            const byteArray = new Uint8Array(byteNumbers);
+                            const blob = new Blob([byteArray], { type: 'application/pdf' });
+                            const blobUrl = URL.createObjectURL(blob);
+                            iframe.src = blobUrl;
                         } else {
                             // ไม่รองรับ preview
                             Swal.fire({
@@ -5417,6 +5427,10 @@
             const modal = document.getElementById('file-preview-modal');
             const iframe = document.getElementById('preview-iframe');
             const img = document.getElementById('preview-image');
+            // Revoke blob URL เพื่อป้องกัน memory leak
+            if (iframe.src && iframe.src.startsWith('blob:')) {
+                URL.revokeObjectURL(iframe.src);
+            }
             modal.classList.remove('flex');
             iframe.src = '';
             iframe.style.display = 'none';
