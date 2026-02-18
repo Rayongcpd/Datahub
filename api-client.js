@@ -287,6 +287,9 @@ window.google.script = window.google.script || {};
                             case 'recordDownloadAndGetFileUrl':
                                 params = { fileId: args[0], driveFileId: args[1], score: args[2] };
                                 break;
+                            case 'previewFile':
+                                params = { driveFileId: args[0] };
+                                break;
                             case 'incrementDownload':
                                 params = { fileId: args[0] };
                                 break;

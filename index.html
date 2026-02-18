@@ -488,6 +488,42 @@
             display: none;
         }
 
+        /* =========================================
+           File Preview Modal
+           ========================================= */
+        .preview-modal-content {
+            width: 90vw;
+            height: 85vh;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .preview-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            background-color: #3b82f6;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border: none;
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-btn:hover {
+            background-color: #2563eb;
+        }
+
+        @media (max-width: 640px) {
+            .preview-modal-content {
+                width: 95vw;
+                height: 90vh;
+            }
+        }
+
         .modal {
             display: none;
             /* Hidden by default */
@@ -2337,6 +2373,44 @@
         </div>
     </div>
 
+    <!-- ✅ File Preview Modal -->
+    <div id="file-preview-modal" class="modal" style="z-index: 9998;">
+        <div class="bg-white rounded-xl shadow-2xl preview-modal-content overflow-hidden">
+            <!-- Header -->
+            <div
+                class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
+                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i data-lucide="file-search" class="w-5 h-5"></i>
+                    <span id="preview-file-name">ดูตัวอย่างไฟล์</span>
+                </h2>
+                <button onclick="closePreviewModal()" class="text-white/80 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <!-- iframe Preview Area -->
+            <div class="flex-1 p-2 bg-gray-100 overflow-hidden">
+                <iframe id="preview-iframe" class="w-full h-full rounded-lg border border-gray-300 bg-white"
+                    frameborder="0" allowfullscreen></iframe>
+            </div>
+            <!-- Footer -->
+            <div class="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white">
+                <button id="preview-download-btn"
+                    class="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors font-medium">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    ดาวน์โหลด
+                </button>
+                <button onclick="closePreviewModal()"
+                    class="flex items-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                    ปิด
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- File Type Breakdown Modal -->
     <div id="file-type-modal" class="modal">
         <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col">
@@ -2877,14 +2951,19 @@
             paginatedFiles.forEach((file, index) => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-        class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600 mb-1 block">
-        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4">
-            </path>
-        </svg>
-    </button>`
+                    `<div class="flex items-center gap-1 mb-1">
+        <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+            class="preview-btn" title="ดูตัวอย่าง">
+            <i data-lucide="file-search" class="w-5 h-5"></i>
+        </button>
+        <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+            class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600">
+            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+        </button>
+    </div>`
                 ).join('');
 
 
@@ -2955,14 +3034,19 @@
             paginatedFiles.forEach((file, index) => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-        class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600 mb-1 block">
-        <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4">
-            </path>
-        </svg>
-    </button>`
+                    `<div class="flex items-center gap-1 mb-1">
+        <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+            class="preview-btn" title="ดูตัวอย่าง">
+            <i data-lucide="file-search" class="w-5 h-5"></i>
+        </button>
+        <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+            class="download-btn bg-green-500 text-white p-2 rounded hover:bg-green-600">
+            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+        </button>
+    </div>`
                 ).join('');
 
 
@@ -3526,12 +3610,18 @@
             paginatedFiles.forEach(file => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 mb-1 block flex items-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                </svg>
-                <span>${f.fileName}</span>
-            </button>`
+                    `<div class="flex items-center gap-1 mb-1">
+                <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+                    class="preview-btn" title="ดูตัวอย่าง" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                    <i data-lucide="file-search" class="w-4 h-4"></i>
+                </button>
+                <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span>${f.fileName}</span>
+                </button>
+            </div>`
                 ).join('');
 
                 // Find the group index to assign the correct color
@@ -3656,12 +3746,18 @@
             paginatedFiles.forEach(file => {
                 const fileDetails = JSON.parse(file.FileDetails || '[]');
                 let downloadButtons = fileDetails.map(f =>
-                    `<button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 mb-1 block flex items-center space-x-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-          </svg>
-          <span>${f.fileName}</span>
-      </button>`
+                    `<div class="flex items-center gap-1 mb-1">
+          <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+              class="preview-btn" title="ดูตัวอย่าง" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+              <i data-lucide="file-search" class="w-4 h-4"></i>
+          </button>
+          <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}" class="download-btn bg-green-500 text-white px-3 py-1 text-xs rounded hover:bg-green-600 flex items-center space-x-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 16v2a2 2 0 002 2h14a2 2 0 002-2v-2m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              <span>${f.fileName}</span>
+          </button>
+      </div>`
                 ).join('');
 
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
@@ -4848,6 +4944,19 @@
                 renderSubadminFilesTable();
             });
 
+            // ✅ File Preview
+            document.body.addEventListener('click', (e) => {
+                const previewBtn = e.target.closest('.preview-btn');
+                if (previewBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const driveFileId = previewBtn.dataset.drivefileid;
+                    const fileName = previewBtn.dataset.filename || 'ไฟล์';
+                    const fileId = previewBtn.dataset.fileid;
+                    openPreviewModal(driveFileId, fileName, fileId);
+                }
+            });
+
             // Download & Satisfaction
             document.body.addEventListener('click', (e) => {
                 const downloadBtn = e.target.closest('.download-btn');
@@ -5211,6 +5320,81 @@
                     renderAll();
                 }
             });
+        }
+
+        // =================================================================
+        // FILE PREVIEW FUNCTIONS
+        // =================================================================
+        function openPreviewModal(driveFileId, fileName, fileId) {
+            const modal = document.getElementById('file-preview-modal');
+            const iframe = document.getElementById('preview-iframe');
+            const fileNameEl = document.getElementById('preview-file-name');
+            const downloadBtn = document.getElementById('preview-download-btn');
+
+            // แสดงชื่อไฟล์
+            fileNameEl.textContent = fileName || 'ดูตัวอย่างไฟล์';
+
+            // ล้าง iframe ก่อน
+            iframe.src = '';
+
+            // เปิด modal
+            modal.classList.add('flex');
+            lucide.createIcons();
+
+            // แสดง loading
+            iframe.style.opacity = '0.3';
+
+            // เรียก API เพื่อ set sharing permission และรับ preview URL
+            google.script.run
+                .withSuccessHandler(function (result) {
+                    if (result.success) {
+                        iframe.src = result.previewUrl;
+                        iframe.onload = function () {
+                            iframe.style.opacity = '1';
+                        };
+                        // อัปเดตชื่อไฟล์จาก backend (ถ้ามี)
+                        if (result.fileName) {
+                            fileNameEl.textContent = result.fileName;
+                        }
+                    } else {
+                        iframe.style.opacity = '1';
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ไม่สามารถดูตัวอย่างได้',
+                            text: result.message || 'เกิดข้อผิดพลาด',
+                            confirmButtonColor: '#3b82f6'
+                        });
+                        closePreviewModal();
+                    }
+                })
+                .withFailureHandler(function (error) {
+                    iframe.style.opacity = '1';
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: error.message || 'ไม่สามารถเชื่อมต่อได้',
+                        confirmButtonColor: '#3b82f6'
+                    });
+                    closePreviewModal();
+                })
+                .previewFile(driveFileId);
+
+            // ตั้งค่าปุ่ม Download ใน preview popup → เปิด satisfaction modal
+            downloadBtn.onclick = function () {
+                closePreviewModal();
+                appState.fileToDownload = {
+                    fileId: fileId,
+                    driveFileId: driveFileId
+                };
+                document.getElementById('satisfaction-modal').classList.add('flex');
+            };
+        }
+
+        function closePreviewModal() {
+            const modal = document.getElementById('file-preview-modal');
+            const iframe = document.getElementById('preview-iframe');
+            modal.classList.remove('flex');
+            iframe.src = ''; // ล้าง iframe เพื่อหยุด loading
         }
 
         function handleSatisfaction(score) {
