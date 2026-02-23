@@ -2411,6 +2411,11 @@
                     <i data-lucide="download" class="w-4 h-4"></i>
                     ดาวน์โหลด
                 </button>
+                <button id="preview-print-btn" onclick="printPreview()"
+                    class="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    พิมพ์
+                </button>
                 <button onclick="closePreviewModal()"
                     class="flex items-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors font-medium">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -5422,6 +5427,57 @@
             iframe.style.display = 'none';
             img.src = '';
             img.style.display = 'none';
+        }
+
+        function printPreview() {
+            const iframe = document.getElementById('preview-iframe');
+            const img = document.getElementById('preview-image');
+            const fileName = document.getElementById('preview-file-name').textContent || 'ไฟล์';
+
+            if (iframe.style.display !== 'none' && iframe.src) {
+                // สำหรับเอกสาร (PDF ผ่าน Google Docs Viewer)
+                // เปิด Google Drive direct view ใน tab ใหม่เพื่อให้ user สั่ง print จากหน้านั้น
+                const iframeSrc = iframe.src;
+                const printWindow = window.open(iframeSrc, '_blank');
+                if (printWindow) {
+                    // พยายาม auto-print หลัง load
+                    printWindow.addEventListener('load', () => {
+                        try { printWindow.print(); } catch (e) { /* cross-origin — user prints manually */ }
+                    });
+                    showToast('เปิดหน้าต่างเพื่อสั่งพิมพ์แล้ว กรุณากด Ctrl+P หรือ Cmd+P ในหน้าต่างที่เปิดขึ้น', 'info');
+                }
+            } else if (img.style.display !== 'none' && img.src) {
+                // สำหรับรูปภาพ — สร้างหน้าต่างใหม่แล้วสั่ง print
+                const printWindow = window.open('', '_blank');
+                if (printWindow) {
+                    printWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>พิมพ์ - ${fileName}</title>
+                            <style>
+                                @page { margin: 1cm; }
+                                body {
+                                    margin: 0; padding: 0;
+                                    display: flex; justify-content: center; align-items: center;
+                                    min-height: 100vh;
+                                }
+                                img {
+                                    max-width: 100%; max-height: 100vh;
+                                    object-fit: contain;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <img src="${img.src}" onload="window.print(); window.close();" />
+                        </body>
+                        </html>
+                    `);
+                    printWindow.document.close();
+                }
+            } else {
+                showToast('ไม่มีเนื้อหาในการพิมพ์', 'warning');
+            }
         }
 
         function handleSatisfaction(score) {
