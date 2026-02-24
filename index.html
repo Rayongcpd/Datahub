@@ -2426,10 +2426,6 @@
                 </div>
                 <iframe id="preview-iframe" class="w-full h-full rounded-lg border border-gray-300 bg-white"
                     style="display:none;" frameborder="0" allowfullscreen></iframe>
-                <!-- ซ่อนปุ่ม Pop-out ของ Google Drive embed -->
-                <div id="preview-popout-cover"
-                    style="display:none; position:absolute; top:8px; right:8px; width:50px; height:50px; background:white; z-index:10; border-radius:8px;">
-                </div>
                 <img id="preview-image" class="max-w-full max-h-full rounded-lg object-contain" style="display:none;"
                     alt="Preview" />
             </div>
@@ -5455,7 +5451,6 @@
                                 if (previewTimeoutId) clearTimeout(previewTimeoutId);
                             };
                             iframe.style.display = 'block';
-                            document.getElementById('preview-popout-cover').style.display = 'block';
                             iframe.src = result.previewData;
                         } else {
                             if (previewTimeoutId) clearTimeout(previewTimeoutId);
@@ -5513,7 +5508,6 @@
             img.style.display = 'none';
             currentPreviewDownloadUrl = null;
             currentPreviewDriveFileId = null;
-            document.getElementById('preview-popout-cover').style.display = 'none';
             hidePreviewLoading();
             // Reset progress bar color
             const pb = document.getElementById('preview-progress-bar');
