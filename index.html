@@ -5366,6 +5366,8 @@
         // =================================================================
         // Preview timeout tracker
         let previewTimeoutId = null;
+        let currentPreviewDownloadUrl = null;
+        let currentPreviewDriveFileId = null;
 
         function setPreviewLoading(text, percent) {
             const loadingEl = document.getElementById('preview-loading');
@@ -5396,6 +5398,8 @@
             iframe.style.display = 'none';
             img.src = '';
             img.style.display = 'none';
+            currentPreviewDownloadUrl = null;
+            currentPreviewDriveFileId = driveFileId;
 
             // แสดง loading
             setPreviewLoading('กำลังเชื่อมต่อ...', 10);
@@ -5419,6 +5423,11 @@
             google.script.run
                 .withSuccessHandler(function (result) {
                     if (result.success) {
+                        // เก็บ downloadUrl สำหรับใช้พิมพ์
+                        if (result.downloadUrl) {
+                            currentPreviewDownloadUrl = result.downloadUrl;
+                        }
+
                         // อัปเดตชื่อไฟล์
                         if (result.fileName) {
                             fileNameEl.textContent = result.fileName;
@@ -5502,6 +5511,8 @@
             iframe.style.display = 'none';
             img.src = '';
             img.style.display = 'none';
+            currentPreviewDownloadUrl = null;
+            currentPreviewDriveFileId = null;
             hidePreviewLoading();
             // Reset progress bar color
             const pb = document.getElementById('preview-progress-bar');
@@ -5514,16 +5525,23 @@
             const fileName = document.getElementById('preview-file-name').textContent || 'ไฟล์';
 
             if (iframe.style.display !== 'none' && iframe.src) {
-                // สำหรับเอกสาร (PDF ผ่าน Google Docs Viewer)
-                // เปิด Google Drive direct view ใน tab ใหม่เพื่อให้ user สั่ง print จากหน้านั้น
-                const iframeSrc = iframe.src;
-                const printWindow = window.open(iframeSrc, '_blank');
+                // สำหรับเอกสาร — ใช้ Google Drive export PDF แล้วเปิดใน window ใหม่เพื่อ print
+                showToast('กำลังเตรียมเอกสารสำหรับพิมพ์...', 'info');
+
+                // ใช้ Drive file ID สร้าง direct PDF URL
+                const driveId = currentPreviewDriveFileId;
+                if (!driveId) {
+                    showToast('ไม่พบข้อมูลไฟล์สำหรับพิมพ์', 'warning');
+                    return;
+                }
+
+                // เปิด Google Drive viewer ใน tab ใหม่ (มีปุ่ม print ในตัว)
+                const viewUrl = `https://drive.google.com/file/d/${driveId}/view`;
+                const printWindow = window.open(viewUrl, '_blank');
                 if (printWindow) {
-                    // พยายาม auto-print หลัง load
-                    printWindow.addEventListener('load', () => {
-                        try { printWindow.print(); } catch (e) { /* cross-origin — user prints manually */ }
-                    });
-                    showToast('เปิดหน้าต่างเพื่อสั่งพิมพ์แล้ว กรุณากด Ctrl+P หรือ Cmd+P ในหน้าต่างที่เปิดขึ้น', 'info');
+                    showToast('เปิดหน้าต่างเอกสารแล้ว — กรุณากดปุ่มพิมพ์ 🖨️ ที่มุมบนขวาของหน้าต่างนั้น หรือกด Ctrl+P / Cmd+P', 'info');
+                } else {
+                    showToast('ไม่สามารถเปิดหน้าต่างใหม่ได้ กรุณาอนุญาต popup', 'warning');
                 }
             } else if (img.style.display !== 'none' && img.src) {
                 // สำหรับรูปภาพ — สร้างหน้าต่างใหม่แล้วสั่ง print
