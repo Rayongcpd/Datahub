@@ -5455,6 +5455,7 @@
                                 if (previewTimeoutId) clearTimeout(previewTimeoutId);
                             };
                             iframe.style.display = 'block';
+                            document.getElementById('preview-popout-cover').style.display = 'block';
                             iframe.src = result.previewData;
                         } else {
                             if (previewTimeoutId) clearTimeout(previewTimeoutId);
@@ -5512,6 +5513,7 @@
             img.style.display = 'none';
             currentPreviewDownloadUrl = null;
             currentPreviewDriveFileId = null;
+            document.getElementById('preview-popout-cover').style.display = 'none';
             hidePreviewLoading();
             // Reset progress bar color
             const pb = document.getElementById('preview-progress-bar');
