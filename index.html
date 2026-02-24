@@ -5525,24 +5525,63 @@
             const fileName = document.getElementById('preview-file-name').textContent || 'ไฟล์';
 
             if (iframe.style.display !== 'none' && iframe.src) {
-                // สำหรับเอกสาร — ใช้ Google Drive export PDF แล้วเปิดใน window ใหม่เพื่อ print
-                showToast('กำลังเตรียมเอกสารสำหรับพิมพ์...', 'info');
-
-                // ใช้ Drive file ID สร้าง direct PDF URL
+                // สำหรับเอกสาร — ดึงไฟล์จาก backend เป็น base64 แล้วพิมพ์จาก blob (ไม่เปิด Google Drive UI)
                 const driveId = currentPreviewDriveFileId;
                 if (!driveId) {
                     showToast('ไม่พบข้อมูลไฟล์สำหรับพิมพ์', 'warning');
                     return;
                 }
 
-                // เปิด Google Drive viewer ใน tab ใหม่ (มีปุ่ม print ในตัว)
-                const viewUrl = `https://drive.google.com/file/d/${driveId}/view`;
-                const printWindow = window.open(viewUrl, '_blank');
-                if (printWindow) {
-                    showToast('เปิดหน้าต่างเอกสารแล้ว — กรุณากดปุ่มพิมพ์ 🖨️ ที่มุมบนขวาของหน้าต่างนั้น หรือกด Ctrl+P / Cmd+P', 'info');
-                } else {
-                    showToast('ไม่สามารถเปิดหน้าต่างใหม่ได้ กรุณาอนุญาต popup', 'warning');
-                }
+                showToast('กำลังเตรียมเอกสารสำหรับพิมพ์...', 'info');
+
+                google.script.run
+                    .withSuccessHandler(function (result) {
+                        if (result.success) {
+                            try {
+                                // แปลง base64 เป็น Blob
+                                const byteCharacters = atob(result.data);
+                                const byteNumbers = new Array(byteCharacters.length);
+                                for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                }
+                                const byteArray = new Uint8Array(byteNumbers);
+                                const blob = new Blob([byteArray], { type: result.mimeType || 'application/pdf' });
+                                const blobUrl = URL.createObjectURL(blob);
+
+                                // เปิดหน้าต่างใหม่ที่มี iframe แสดง PDF แล้วสั่ง print
+                                const printWindow = window.open('', '_blank');
+                                if (printWindow) {
+                                    printWindow.document.write(`
+                                        <!DOCTYPE html>
+                                        <html>
+                                        <head>
+                                            <title>พิมพ์ - ${fileName}</title>
+                                            <style>
+                                                body { margin: 0; padding: 0; }
+                                                iframe { width: 100%; height: 100vh; border: none; }
+                                            </style>
+                                        </head>
+                                        <body>
+                                            <iframe src="${blobUrl}" onload="setTimeout(function(){ window.print(); }, 500);"></iframe>
+                                        </body>
+                                        </html>
+                                    `);
+                                    printWindow.document.close();
+                                } else {
+                                    showToast('ไม่สามารถเปิดหน้าต่างใหม่ได้ กรุณาอนุญาต popup', 'warning');
+                                    URL.revokeObjectURL(blobUrl);
+                                }
+                            } catch (e) {
+                                showToast('เกิดข้อผิดพลาดในการเตรียมเอกสาร: ' + e.message, 'error');
+                            }
+                        } else {
+                            showToast(result.message || 'ไม่สามารถเตรียมเอกสารสำหรับพิมพ์ได้', 'error');
+                        }
+                    })
+                    .withFailureHandler(function (error) {
+                        showToast('เกิดข้อผิดพลาด: ' + (error.message || 'ไม่สามารถเชื่อมต่อได้'), 'error');
+                    })
+                    .getFileForPrint(driveId);
             } else if (img.style.display !== 'none' && img.src) {
                 // สำหรับรูปภาพ — สร้างหน้าต่างใหม่แล้วสั่ง print
                 const printWindow = window.open('', '_blank');

@@ -290,6 +290,9 @@ window.google.script = window.google.script || {};
                             case 'previewFile':
                                 params = { driveFileId: args[0] };
                                 break;
+                            case 'getFileForPrint':
+                                params = { driveFileId: args[0] };
+                                break;
                             case 'incrementDownload':
                                 params = { fileId: args[0] };
                                 break;
