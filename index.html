@@ -5832,6 +5832,7 @@
             dropZoneElement.addEventListener("dragenter", e => {
                 e.preventDefault();
                 e.stopPropagation();
+                dropZoneElement.classList.add("drop-zone--over");
             });
 
             ["dragleave", "dragend"].forEach(type => {
@@ -5843,9 +5844,11 @@
             dropZoneElement.addEventListener("drop", e => {
                 e.preventDefault();
                 e.stopPropagation();
-                if (e.dataTransfer.files.length) {
-                    inputElement.files = e.dataTransfer.files;
-                    updateThumbnail(Array.from(inputElement.files));
+                const droppedFiles = e.dataTransfer.files;
+                if (droppedFiles && droppedFiles.length) {
+                    // ✅ เก็บใน filesToUpload โดยตรง (inputElement.files เป็น read-only)
+                    filesToUpload = Array.from(droppedFiles);
+                    updateThumbnail(filesToUpload);
                 }
                 dropZoneElement.classList.remove("drop-zone--over");
             });
