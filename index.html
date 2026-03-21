@@ -2559,10 +2559,21 @@
                 <div class="flex gap-2 items-center">
                     <input type="text" id="req-reply-message" placeholder="พิมพ์ข้อความ..."
                         class="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                    <select id="req-reply-file"
-                        class="w-32 flex-shrink-0 px-2 py-2 border border-gray-300 rounded-lg text-xs truncate">
-                        <option value="">📎 อ้างอิงไฟล์</option>
-                    </select>
+                    <div class="relative w-48 flex-shrink-0" id="req-reply-file-container">
+                        <div class="flex items-center justify-between w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer" onclick="toggleFileDropdown(event)">
+                            <span id="req-reply-file-text" class="truncate text-gray-400">📎 อ้างอิงไฟล์</span>
+                            <i data-lucide="chevron-up" class="w-4 h-4 ml-1 text-gray-400 rotate-180 transition-transform duration-200" id="req-reply-file-icon"></i>
+                        </div>
+                        <div id="req-reply-file-dropdown" class="absolute bottom-full left-0 w-64 mb-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden z-50 flex-col max-h-64">
+                            <div class="p-2 border-b border-gray-100 sticky top-0 bg-white rounded-t-lg">
+                                <input type="text" id="req-reply-file-search" placeholder="ค้นหาชื่อไฟล์..." class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" onkeyup="filterFileDropdown()">
+                            </div>
+                            <div id="req-reply-file-list" class="overflow-y-auto flex-1 p-1 space-y-1">
+                                <div class="text-sm text-gray-500 text-center py-2">กำลังโหลด...</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="req-reply-file" value="">
+                    </div>
                     <button onclick="sendRequestReply()"
                         class="flex-shrink-0 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-1">
                         <i data-lucide="send" class="w-4 h-4"></i>
@@ -7094,19 +7105,95 @@
             refreshChatMessages(true);
         }
 
+        let referenceFilesData = [];
+
         function loadFilesForReference() {
             google.script.run
                 .withSuccessHandler(res => {
                     if (res.success) {
-                        const select = document.getElementById('req-reply-file');
-                        select.innerHTML = '<option value="">📎 อ้างอิงไฟล์</option>';
-                        res.data.slice(0, 50).forEach(f => {
-                            select.innerHTML += `<option value="${f.FileID}">${f.Title}</option>`;
-                        });
+                        referenceFilesData = res.data;
+                        renderFileDropdown(referenceFilesData.slice(0, 50));
                     }
                 })
                 .getFilesForReference(appState.currentUser.UserID);
         }
+
+        function renderFileDropdown(filesToRender) {
+            const listContainer = document.getElementById('req-reply-file-list');
+            if (!listContainer) return;
+
+            let html = `
+                <div class="px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100 text-sm text-gray-700" onclick="selectFileReference('', '📎 อ้างอิงไฟล์')">
+                    <span class="text-gray-500">📎 ย้ายการเลิกอ้างอิงไฟล์ (ไม่ระบุ)</span>
+                </div>
+            `;
+            
+            if (!filesToRender || filesToRender.length === 0) {
+                html += `<div class="text-sm text-gray-500 text-center py-2">ไม่พบไฟล์</div>`;
+            } else {
+                filesToRender.forEach(f => {
+                    const safeTitle = f.Title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    html += `
+                        <div class="px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100 text-sm text-gray-700 truncate" 
+                             onclick="selectFileReference('${f.FileID}', '${safeTitle}')" title="${f.Title}">
+                            ${f.Title}
+                        </div>
+                    `;
+                });
+            }
+            listContainer.innerHTML = html;
+        }
+
+        function toggleFileDropdown(e) {
+            if(e) e.stopPropagation();
+            const dropdown = document.getElementById('req-reply-file-dropdown');
+            const icon = document.getElementById('req-reply-file-icon');
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                dropdown.classList.add('flex');
+                if (icon) icon.classList.remove('rotate-180');
+                renderFileDropdown(referenceFilesData.slice(0, 50));
+                document.getElementById('req-reply-file-search').value = '';
+                setTimeout(() => document.getElementById('req-reply-file-search').focus(), 50);
+            } else {
+                dropdown.classList.add('hidden');
+                dropdown.classList.remove('flex');
+                if (icon) icon.classList.add('rotate-180');
+            }
+        }
+
+        function filterFileDropdown() {
+            const searchTerm = document.getElementById('req-reply-file-search').value.toLowerCase();
+            const filtered = referenceFilesData.filter(f => f.Title.toLowerCase().includes(searchTerm)).slice(0, 50);
+            renderFileDropdown(filtered);
+        }
+
+        function selectFileReference(id, title) {
+            document.getElementById('req-reply-file').value = id;
+            document.getElementById('req-reply-file-text').textContent = id ? title : '📎 อ้างอิงไฟล์';
+            document.getElementById('req-reply-file-text').className = id ? 'truncate text-indigo-600 font-medium w-36 inline-block' : 'truncate text-gray-400 w-36 inline-block';
+            
+            const dropdown = document.getElementById('req-reply-file-dropdown');
+            const icon = document.getElementById('req-reply-file-icon');
+            if (dropdown && !dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+                dropdown.classList.remove('flex');
+                if (icon) icon.classList.add('rotate-180');
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('req-reply-file-container');
+            const dropdown = document.getElementById('req-reply-file-dropdown');
+            const icon = document.getElementById('req-reply-file-icon');
+            if (container && !container.contains(event.target)) {
+                if (dropdown && !dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                    dropdown.classList.remove('flex');
+                    if (icon) icon.classList.add('rotate-180');
+                }
+            }
+        });
 
         function sendRequestReply() {
             const message = document.getElementById('req-reply-message').value.trim();
@@ -7143,6 +7230,12 @@
             // ✅ เคลียร์ input ทันที
             document.getElementById('req-reply-message').value = '';
             document.getElementById('req-reply-file').value = '';
+            
+            const fileText = document.getElementById('req-reply-file-text');
+            if (fileText) {
+                fileText.textContent = '📎 อ้างอิงไฟล์';
+                fileText.className = 'truncate text-gray-400 w-36 inline-block';
+            }
 
             // ✅ Disable ปุ่มชั่วคราว
             const sendBtn = document.querySelector('#request-detail-modal button[onclick="sendRequestReply()"]');
