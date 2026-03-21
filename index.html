@@ -5813,9 +5813,10 @@
             }
 
             dropZoneElement.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                inputElement.click();
+                // เปลี่ยนจากการ block default/bubbling เป็นการเช็คว่าถ้ายังไม่ได้กดที่ตัว input ให้ไปกระตุ้น input
+                if (e.target !== inputElement) {
+                    inputElement.click();
+                }
             });
             inputElement.addEventListener("change", () => {
                 if (inputElement.files.length) {
@@ -5846,7 +5847,6 @@
                 e.stopPropagation();
                 const droppedFiles = e.dataTransfer.files;
                 if (droppedFiles && droppedFiles.length) {
-                    // ✅ เก็บใน filesToUpload โดยตรง (inputElement.files เป็น read-only)
                     filesToUpload = Array.from(droppedFiles);
                     updateThumbnail(filesToUpload);
                 }
