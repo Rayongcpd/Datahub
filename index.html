@@ -3156,6 +3156,52 @@
         }
 
 
+        function renderDashboardRequestCard(role, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const cardId = 'request-summary-card-' + role;
+            const placeholderHtml = `
+            <div id="${cardId}" class="bg-indigo-600 text-white p-6 rounded-lg shadow-md flex items-center justify-center space-x-4 cursor-pointer hover:bg-indigo-700 transition" onclick="navigate('document-requests')">
+                <div class="animate-pulse flex items-center gap-4">
+                    <div class="h-8 w-8 bg-indigo-500 rounded-full"></div>
+                    <div>
+                        <div class="h-4 w-24 bg-indigo-500 rounded mb-2"></div>
+                        <div class="h-6 w-16 bg-indigo-500 rounded"></div>
+                    </div>
+                </div>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', placeholderHtml);
+
+            google.script.run.withSuccessHandler(res => {
+                const card = document.getElementById(cardId);
+                if (!card) return;
+                
+                if (res.success) {
+                    const requests = res.data;
+                    const pendingCount = requests.filter(r => r.Status === 'pending').length;
+                    const inProgressCount = requests.filter(r => r.Status === 'in_progress').length;
+                    const completedCount = requests.filter(r => r.Status === 'completed').length;
+                    
+                    card.innerHTML = `
+            <svg class="w-8 h-8 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <div class="text-left flex-1 pl-2">
+                <h3 class="text-base sm:text-lg font-medium mb-2 border-b border-indigo-500 pb-1">คำขอรับบริการข้อมูล</h3>
+                <div class="flex flex-col gap-1 text-sm font-light">
+                    <div class="flex items-center justify-between"><span>🟡 รอดำเนินการ:</span> <strong class="text-base ml-2">${pendingCount}</strong></div>
+                    <div class="flex items-center justify-between"><span>🔵 กำลังดำเนินการ:</span> <strong class="text-base ml-2">${inProgressCount}</strong></div>
+                    <div class="flex items-center justify-between"><span>🟢 เสร็จสิ้น:</span> <strong class="text-base ml-2">${completedCount}</strong></div>
+                </div>
+            </div>
+                    `;
+                } else {
+                    card.innerHTML = '<p class="text-sm">ไม่สามารถโหลดข้อมูลคำขอได้</p>';
+                }
+            }).getDocumentRequests(appState.currentUser.UserID);
+        }
+
         function renderAdminDashboard() {
             const container = document.getElementById('admin-dashboard-cards');
             const totalFiles = appState.allFiles.length;
@@ -3312,6 +3358,7 @@
                 return { groupName: group.GroupName, count: count };
             });
             renderAdminFilesPerGroupChart(filesPerGroup);
+            renderDashboardRequestCard('admin', 'admin-dashboard-cards');
         }
 
         // Helper for Admin Dashboard Appearance Settings
@@ -3746,6 +3793,7 @@
                 return { groupName: group.GroupName, count: count };
             });
             renderofficerFilesPerGroupChart(filesPerGroup);
+            renderDashboardRequestCard('officer', 'officer-dashboard-cards');
         }
 
         function renderofficerFilesTable() {
@@ -3901,6 +3949,7 @@
                 return { groupName: group.GroupName, count: count };
             });
             renderSubadminFilesPerGroupChart(filesPerGroup);
+            renderDashboardRequestCard('subadmin', 'subadmin-dashboard-cards');
         }
 
         function renderSubadminFilesPerGroupChart(data) {
