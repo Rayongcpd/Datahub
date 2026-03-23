@@ -6967,8 +6967,9 @@
                     const isAdmin = currentUser.Role === 'admin' || currentUser.Role === 'subadmin';
                     const isCompleted = request.Status === 'completed';
 
-                    // 1. ปุ่ม "เสร็จสิ้น" ผู้ขอ หรือ ผู้รับผิดชอบ กดได้ (ถ้ายังไม่เสร็จ)
-                    if (isRequester && !isCompleted) {
+                    // 1. ปุ่ม "เสร็จสิ้น" ผู้ขอ, ผู้รับผิดชอบ หรือ Admin กดได้ (ถ้ายังไม่เสร็๋จ)
+                    const isAssignee = currentUser.UserID === request.AssignedTo;
+                    if ((isRequester || isAssignee || isAdmin) && !isCompleted) {
                         actionsEl.innerHTML += `
                             <button onclick="markRequestCompleted()" 
                                 class="px-3 py-1 bg-green-500 text-white rounded-lg text-sm hover:bg-green-600">
