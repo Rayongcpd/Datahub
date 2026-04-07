@@ -3054,7 +3054,8 @@
             let filteredFiles = appState.allFiles.filter(file => {
                 const title = (file.Title || '').toLowerCase();
                 const subtitle = (file.SubTitle || '').toLowerCase();
-                const titleMatch = title.includes(searchText) || subtitle.includes(searchText);
+                const coopName = (file.CoopName || '').toLowerCase();
+                const titleMatch = title.includes(searchText) || subtitle.includes(searchText) || coopName.includes(searchText);
 
                 // --- Shared File Logic ---
                 const isSharedFile = file.CoopID === 'SHARED_CENTER';
@@ -3161,7 +3162,8 @@
             let filteredFiles = appState.allFiles.filter(file => {
                 const title = (file.Title || '').toLowerCase();
                 const subtitle = (file.SubTitle || '').toLowerCase();
-                const titleMatch = title.includes(searchText) || subtitle.includes(searchText);
+                const coopName = (file.CoopName || '').toLowerCase();
+                const titleMatch = title.includes(searchText) || subtitle.includes(searchText) || coopName.includes(searchText);
                 const typeMatch = type === 'all' || file.TypeID == type;
                 return file.GroupID === groupId && titleMatch && typeMatch;
             });
@@ -3763,7 +3765,8 @@
             let filteredFiles = appState.allFiles.filter(file => {
                 const title = (file.Title || '').toLowerCase();
                 const subtitle = (file.SubTitle || '').toLowerCase();
-                const titleMatch = title.includes(search) || subtitle.includes(search);
+                const coopName = (file.CoopName || '').toLowerCase();
+                const titleMatch = title.includes(search) || subtitle.includes(search) || coopName.includes(search);
                 const groupMatch = groupFilter === 'all' || file.GroupID === groupFilter;
                 const typeMatch = typeFilter === 'all' || file.TypeID == typeFilter; // ✅
                 return titleMatch && groupMatch && typeMatch;
@@ -3909,7 +3912,8 @@
 
             myFiles = myFiles.filter(f => {
                 const titleMatch = (f.Title || '').toLowerCase().includes(searchText) ||
-                    (f.SubTitle || '').toLowerCase().includes(searchText);
+                    (f.SubTitle || '').toLowerCase().includes(searchText) ||
+                    (f.CoopName || '').toLowerCase().includes(searchText);
                 const groupMatch = groupFilter === 'all' || f.GroupID === groupFilter;
                 const typeMatch = typeFilter === 'all' || f.TypeID == typeFilter;
                 return titleMatch && groupMatch && typeMatch;
@@ -4091,7 +4095,8 @@
             // Subadmin sees ALL files
             let allFiles = appState.allFiles.filter(f => {
                 const titleMatch = (f.Title || '').toLowerCase().includes(searchText) ||
-                    (f.SubTitle || '').toLowerCase().includes(searchText);
+                    (f.SubTitle || '').toLowerCase().includes(searchText) ||
+                    (f.CoopName || '').toLowerCase().includes(searchText);
                 const groupMatch = groupFilter === 'all' || f.GroupID === groupFilter;
                 const typeMatch = typeFilter === 'all' || f.TypeID == typeFilter;
                 return titleMatch && groupMatch && typeMatch;
