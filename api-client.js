@@ -309,7 +309,10 @@ window.google.script = window.google.script || {};
                                     userId: args[2],
                                     coopId: args[3],
                                     importSessionId: args[4],
-                                    startIndex: args[5]
+                                    startIndex: args[5],
+                                    importMode: args[6],
+                                    skipFileNames: args[7],
+                                    replaceFiles: args[8]
                                 };
                                 break;
                             case 'getImportProgress':
@@ -317,6 +320,9 @@ window.google.script = window.google.script || {};
                                 break;
                             case 'cancelImport':
                                 params = {};
+                                break;
+                            case 'checkImportDuplicates':
+                                params = { mainFolderId: args[0], coopId: args[1] };
                                 break;
                             case 'getFileTypesByCooperative':
                                 params = { coopId: args[0] };

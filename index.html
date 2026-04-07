@@ -1542,11 +1542,114 @@
                                 placeholder="https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxx" required>
                         </div>
 
-                        <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end">
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end gap-3">
+                            <button type="button" id="check-duplicates-btn" onclick="handleCheckDuplicates()"
+                                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2">
+                                🔍 ตรวจสอบไฟล์
+                            </button>
                             <button type="submit"
                                 class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 flex items-center gap-2">
                                 🚀 นำเข้าไฟล์ทั้งหมด
                             </button>
+                        </div>
+
+                        <!-- ✅ ผลการตรวจสอบไฟล์ซ้ำ -->
+                        <div id="duplicate-check-result" class="col-span-1 md:col-span-2 lg:col-span-3 mt-4 hidden">
+                            <div class="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                                <!-- Header -->
+                                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4">
+                                    <h3 class="text-lg font-bold flex items-center gap-2">📊 ผลการตรวจสอบไฟล์</h3>
+                                    <div id="dup-check-summary" class="mt-2 flex flex-wrap gap-4 text-sm">
+                                        <!-- จะถูก inject โดย JS -->
+                                    </div>
+                                </div>
+                                
+                                <!-- Tabs -->
+                                <div class="border-b border-gray-200 px-4">
+                                    <nav class="flex gap-1 -mb-px">
+                                        <button onclick="switchDupTab('new')" id="dup-tab-new"
+                                            class="dup-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-green-500 text-green-600">
+                                            🟢 ไฟล์ใหม่ (<span id="dup-new-count">0</span>)
+                                        </button>
+                                        <button onclick="switchDupTab('updated')" id="dup-tab-updated"
+                                            class="dup-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-orange-600">
+                                            🔄 มี Version ใหม่ (<span id="dup-updated-count">0</span>)
+                                        </button>
+                                        <button onclick="switchDupTab('existing')" id="dup-tab-existing"
+                                            class="dup-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                            🟡 มีอยู่แล้ว (<span id="dup-existing-count">0</span>)
+                                        </button>
+                                    </nav>
+                                </div>
+
+                                <!-- Tab Content: ไฟล์ใหม่ -->
+                                <div id="dup-panel-new" class="dup-panel p-4 max-h-72 overflow-y-auto">
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-green-50">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ชื่อไฟล์</th>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ประเภท</th>
+                                                <th class="px-3 py-2 text-right font-medium text-gray-600">ขนาด</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dup-new-body"></tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Tab Content: Version ใหม่ -->
+                                <div id="dup-panel-updated" class="dup-panel p-4 max-h-72 overflow-y-auto hidden">
+                                    <div class="bg-orange-50 border border-orange-200 p-3 rounded-lg mb-3 text-sm text-orange-700">
+                                        ⚠️ ไฟล์เหล่านี้มีชื่อเดียวกับไฟล์ในระบบ แต่ขนาดไฟล์ต่างกัน (อาจเป็นเวอร์ชันใหม่) — การนำเข้าจะ<strong>แทนที่</strong>ไฟล์เดิม
+                                    </div>
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-orange-50">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ชื่อไฟล์</th>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ประเภท</th>
+                                                <th class="px-3 py-2 text-right font-medium text-gray-600">ขนาดใหม่</th>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ไฟล์เดิมในระบบ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dup-updated-body"></tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Tab Content: มีอยู่แล้ว -->
+                                <div id="dup-panel-existing" class="dup-panel p-4 max-h-72 overflow-y-auto hidden">
+                                    <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mb-3 text-sm text-gray-600">
+                                        ✅ ไฟล์เหล่านี้มีอยู่ในระบบแล้ว (ชื่อ + ขนาด + ประเภทเดียวกัน) — จะถูก<strong>ข้าม</strong>ไม่นำเข้าซ้ำ
+                                    </div>
+                                    <table class="min-w-full text-sm">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ชื่อไฟล์</th>
+                                                <th class="px-3 py-2 text-left font-medium text-gray-600">ประเภท</th>
+                                                <th class="px-3 py-2 text-right font-medium text-gray-600">ขนาด</th>
+                                                <th class="px-3 py-2 text-center font-medium text-gray-600">สถานะ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="dup-existing-body"></tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="bg-gray-50 px-6 py-4 flex flex-wrap justify-end gap-3 border-t">
+                                    <button type="button" onclick="handleImportNewOnly()"
+                                        id="btn-import-new-only"
+                                        class="bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2 shadow-sm transition-colors">
+                                        🚀 นำเข้าเฉพาะไฟล์ใหม่ (<span id="btn-new-count">0</span>)
+                                    </button>
+                                    <button type="button" onclick="handleImportNewAndReplace()"
+                                        id="btn-import-new-replace"
+                                        class="bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:bg-orange-600 font-medium flex items-center gap-2 shadow-sm transition-colors hidden">
+                                        🔄 นำเข้าไฟล์ใหม่ + แทนที่ (<span id="btn-replace-count">0</span>)
+                                    </button>
+                                    <button type="button" onclick="closeDupCheckResult()"
+                                        class="bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg hover:bg-gray-300 font-medium transition-colors">
+                                        ปิด
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Progress bar -->
@@ -7500,11 +7603,338 @@
         });
 
 
+        // ============================================================
+        // 🔍 Duplicate Check Functions (ตรวจสอบไฟล์ซ้ำก่อน Import)
+        // ============================================================
+        
+        // เก็บผลตรวจสอบล่าสุดเพื่อใช้ตอน import
+        let lastDupCheckResult = null;
+
+        /**
+         * Format ขนาดไฟล์เป็น human readable
+         */
+        function formatFileSize(bytes) {
+            if (!bytes || bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        /**
+         * ดึงค่า form import (ใช้ร่วมกัน)
+         */
+        function getImportFormValues() {
+            const selectedCoopName = document.getElementById('import-coop-name').value.trim();
+            const groupId = document.getElementById('import-group').value.trim();
+            const userId = document.getElementById('import-user').value.trim();
+            const folderUrl = document.getElementById('import-folder-url').value.trim();
+
+            if (!selectedCoopName || !groupId || !userId || !folderUrl) {
+                showToast('กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
+                return null;
+            }
+
+            const match = folderUrl.match(/[-\w]{25,}/);
+            if (!match) {
+                showToast('ลิงก์โฟลเดอร์ไม่ถูกต้อง', 'error');
+                return null;
+            }
+
+            const folderId = match[0];
+            const selectedCoop = appState.allCoops.find(c => c.CoopName === selectedCoopName);
+            const coopId = selectedCoop ? selectedCoop.CoopID : '';
+
+            if (!coopId) {
+                showToast('ไม่พบสหกรณ์ที่เลือก กรุณาเลือกชื่อจากรายการ', 'warning');
+                return null;
+            }
+
+            return { selectedCoopName, groupId, userId, folderUrl, folderId, coopId };
+        }
+
+        /**
+         * กดปุ่ม "ตรวจสอบไฟล์"
+         */
+        function handleCheckDuplicates() {
+            const formVals = getImportFormValues();
+            if (!formVals) return;
+
+            const btn = document.getElementById('check-duplicates-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin w-5 h-5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> กำลังตรวจสอบ...';
+
+            google.script.run
+                .withSuccessHandler(result => {
+                    btn.disabled = false;
+                    btn.innerHTML = '🔍 ตรวจสอบไฟล์';
+
+                    if (!result || !result.success) {
+                        showToast('ไม่สามารถตรวจสอบได้: ' + (result?.message || 'Unknown error'), 'error');
+                        return;
+                    }
+
+                    lastDupCheckResult = result;
+                    lastDupCheckResult._formVals = formVals;
+                    renderDupCheckResult(result);
+                })
+                .withFailureHandler(err => {
+                    btn.disabled = false;
+                    btn.innerHTML = '🔍 ตรวจสอบไฟล์';
+                    showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+                })
+                .checkImportDuplicates(formVals.folderId, formVals.coopId);
+        }
+
+        /**
+         * แสดงผลตรวจสอบไฟล์ซ้ำ
+         */
+        function renderDupCheckResult(result) {
+            const container = document.getElementById('duplicate-check-result');
+            container.classList.remove('hidden');
+
+            // Summary
+            const summary = document.getElementById('dup-check-summary');
+            summary.innerHTML = `
+                <span class="bg-white/20 px-3 py-1 rounded-full">📁 ทั้งหมด: ${result.totalInFolder} ไฟล์</span>
+                <span class="bg-green-400/30 px-3 py-1 rounded-full">🟢 ใหม่: ${result.totalNew}</span>
+                ${result.totalUpdated > 0 ? `<span class="bg-orange-400/30 px-3 py-1 rounded-full">🔄 Version ใหม่: ${result.totalUpdated}</span>` : ''}
+                <span class="bg-yellow-400/30 px-3 py-1 rounded-full">🟡 มีอยู่แล้ว: ${result.totalExisting}</span>
+            `;
+
+            // Counts
+            document.getElementById('dup-new-count').textContent = result.totalNew;
+            document.getElementById('dup-updated-count').textContent = result.totalUpdated;
+            document.getElementById('dup-existing-count').textContent = result.totalExisting;
+            document.getElementById('btn-new-count').textContent = result.totalNew;
+            document.getElementById('btn-replace-count').textContent = result.totalNew + result.totalUpdated;
+
+            // Show/hide replace button
+            const replaceBtn = document.getElementById('btn-import-new-replace');
+            if (result.totalUpdated > 0) {
+                replaceBtn.classList.remove('hidden');
+            } else {
+                replaceBtn.classList.add('hidden');
+            }
+
+            // Render new files table
+            const newBody = document.getElementById('dup-new-body');
+            if (result.newFiles.length === 0) {
+                newBody.innerHTML = '<tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">ไม่มีไฟล์ใหม่</td></tr>';
+            } else {
+                newBody.innerHTML = result.newFiles.map(f => `
+                    <tr class="border-b border-gray-100 hover:bg-green-50/50">
+                        <td class="px-3 py-2 font-medium text-gray-800">${f.fileName}</td>
+                        <td class="px-3 py-2 text-gray-500">${f.typeName || '-'}</td>
+                        <td class="px-3 py-2 text-right text-gray-500">${formatFileSize(f.fileSize)}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render updated files table
+            const updatedBody = document.getElementById('dup-updated-body');
+            if (result.updatedFiles.length === 0) {
+                updatedBody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-center text-gray-400">ไม่มีไฟล์ที่ต้องแทนที่</td></tr>';
+            } else {
+                updatedBody.innerHTML = result.updatedFiles.map(f => `
+                    <tr class="border-b border-gray-100 hover:bg-orange-50/50">
+                        <td class="px-3 py-2 font-medium text-gray-800">${f.fileName}</td>
+                        <td class="px-3 py-2 text-gray-500">${f.typeName || '-'}</td>
+                        <td class="px-3 py-2 text-right text-orange-600 font-medium">${formatFileSize(f.fileSize)}</td>
+                        <td class="px-3 py-2 text-gray-400 text-xs">${f.systemTitle || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render existing files table
+            const existingBody = document.getElementById('dup-existing-body');
+            if (result.existingFiles.length === 0) {
+                existingBody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-center text-gray-400">ไม่มีไฟล์ซ้ำ</td></tr>';
+            } else {
+                existingBody.innerHTML = result.existingFiles.map(f => `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                        <td class="px-3 py-2 text-gray-600">${f.fileName}</td>
+                        <td class="px-3 py-2 text-gray-400">${f.typeName || '-'}</td>
+                        <td class="px-3 py-2 text-right text-gray-400">${formatFileSize(f.fileSize)}</td>
+                        <td class="px-3 py-2 text-center"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium">✅ อัพแล้ว</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Switch to first tab
+            switchDupTab('new');
+
+            // Scroll to result
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        /**
+         * สลับ Tab ในผลตรวจสอบ
+         */
+        function switchDupTab(tab) {
+            // Hide all panels
+            document.querySelectorAll('.dup-panel').forEach(p => p.classList.add('hidden'));
+            // Reset all tab buttons
+            document.querySelectorAll('.dup-tab-btn').forEach(b => {
+                b.classList.remove('border-green-500', 'text-green-600', 'border-orange-500', 'text-orange-600', 'border-gray-500', 'text-gray-700');
+                b.classList.add('border-transparent', 'text-gray-500');
+            });
+
+            // Show selected panel and style tab
+            const panel = document.getElementById(`dup-panel-${tab}`);
+            const tabBtn = document.getElementById(`dup-tab-${tab}`);
+            if (panel) panel.classList.remove('hidden');
+            if (tabBtn) {
+                tabBtn.classList.remove('border-transparent', 'text-gray-500');
+                const colors = { new: ['border-green-500', 'text-green-600'], updated: ['border-orange-500', 'text-orange-600'], existing: ['border-gray-500', 'text-gray-700'] };
+                tabBtn.classList.add(...(colors[tab] || colors.new));
+            }
+        }
+
+        /**
+         * นำเข้าเฉพาะไฟล์ใหม่ (ข้ามไฟล์ซ้ำ + ไฟล์ที่ต้องแทนที่)
+         */
+        function handleImportNewOnly() {
+            if (!lastDupCheckResult || !lastDupCheckResult._formVals) {
+                showToast('กรุณาตรวจสอบไฟล์ก่อน', 'warning');
+                return;
+            }
+
+            if (lastDupCheckResult.totalNew === 0) {
+                showToast('ไม่มีไฟล์ใหม่ที่จะนำเข้า', 'info');
+                return;
+            }
+
+            const formVals = lastDupCheckResult._formVals;
+
+            // สร้าง skip list (ไฟล์ที่มีอยู่แล้ว + ไฟล์ที่ต้องแทนที่)
+            const skipList = [
+                ...lastDupCheckResult.existingFiles.map(f => `${f.fileName}_${f.typeId || ''}`.toLowerCase()),
+                ...lastDupCheckResult.updatedFiles.map(f => `${f.fileName}_${f.typeId || ''}`.toLowerCase())
+            ];
+
+            Swal.fire({
+                title: 'ยืนยันนำเข้าเฉพาะไฟล์ใหม่?',
+                html: `จะนำเข้า <strong>${lastDupCheckResult.totalNew}</strong> ไฟล์ใหม่<br>(ข้าม ${lastDupCheckResult.totalExisting + lastDupCheckResult.totalUpdated} ไฟล์ที่มีอยู่แล้ว)`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#16a34a',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'ยืนยัน',
+                cancelButtonText: 'ยกเลิก'
+            }).then(result => {
+                if (!result.isConfirmed) return;
+                closeDupCheckResult();
+                startImportWithMode(formVals, 'new_only', skipList, []);
+            });
+        }
+
+        /**
+         * นำเข้าไฟล์ใหม่ + แทนที่ไฟล์ที่มี version ใหม่
+         */
+        function handleImportNewAndReplace() {
+            if (!lastDupCheckResult || !lastDupCheckResult._formVals) {
+                showToast('กรุณาตรวจสอบไฟล์ก่อน', 'warning');
+                return;
+            }
+
+            const formVals = lastDupCheckResult._formVals;
+
+            // skip list = เฉพาะไฟล์ที่มีอยู่แล้ว (ซ้ำ 100%)
+            const skipList = lastDupCheckResult.existingFiles.map(f => `${f.fileName}_${f.typeId || ''}`.toLowerCase());
+
+            // replace list = ไฟล์ที่ต้องแทนที่
+            const replaceList = lastDupCheckResult.updatedFiles.map(f => ({
+                fileName: f.fileName,
+                typeId: f.typeId,
+                systemFileId: f.systemFileId,
+                systemDriveFileId: f.systemDriveFileId
+            }));
+
+            Swal.fire({
+                title: 'ยืนยันนำเข้า + แทนที่?',
+                html: `จะนำเข้า <strong>${lastDupCheckResult.totalNew}</strong> ไฟล์ใหม่<br>และแทนที่ <strong>${lastDupCheckResult.totalUpdated}</strong> ไฟล์ด้วยเวอร์ชันใหม่<br><small class="text-gray-500">(ข้าม ${lastDupCheckResult.totalExisting} ไฟล์ที่เหมือนกันทุกประการ)</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f97316',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'ยืนยันแทนที่',
+                cancelButtonText: 'ยกเลิก'
+            }).then(result => {
+                if (!result.isConfirmed) return;
+                closeDupCheckResult();
+                startImportWithMode(formVals, 'new_and_replace', skipList, replaceList);
+            });
+        }
+
+        /**
+         * เริ่ม Import ด้วย mode ที่กำหนด
+         */
+        function startImportWithMode(formVals, importMode, skipFileNames, replaceFiles) {
+            const importSessionId = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+
+            // UI: แสดง progress
+            const progressContainer = document.getElementById('import-progress-container');
+            const progressBar = document.getElementById('import-progress-bar');
+            const progressText = document.getElementById('import-progress-text');
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+
+            // Polling
+            let pollInterval = setInterval(() => {
+                google.script.run
+                    .withSuccessHandler(val => {
+                        if (!val) return;
+                        if (typeof val === 'string' && val.indexOf('ERROR:') === 0) {
+                            clearInterval(pollInterval);
+                            hideLoading();
+                            progressText.textContent = 'Error';
+                            showToast('เกิดข้อผิดพลาดในการนำเข้า: ' + val.replace('ERROR:', ''), 'error');
+                            return;
+                        }
+                        const percent = parseInt(val, 10);
+                        if (!isNaN(percent)) {
+                            progressBar.style.width = percent + '%';
+                            progressText.textContent = percent + '%';
+                        }
+                        if (percent >= 100) {
+                            clearInterval(pollInterval);
+                            hideLoading();
+                            progressBar.style.width = '100%';
+                            progressText.textContent = '100%';
+                            google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
+                            showToast('นำเข้าจบแล้ว', 'success');
+                            setTimeout(() => {
+                                progressContainer.classList.add('hidden');
+                            }, 1500);
+                        }
+                    })
+                    .withFailureHandler(err => {
+                        clearInterval(pollInterval);
+                        hideLoading();
+                        showToast('ไม่สามารถตรวจสอบสถานะได้', 'error');
+                    })
+                    .getImportProgress(importSessionId);
+            }, 2000);
+
+            startImportBatch(formVals.groupId, formVals.folderId, formVals.userId, formVals.coopId, importSessionId, 0, importMode, skipFileNames, replaceFiles);
+        }
+
+        /**
+         * ปิดผลตรวจสอบ
+         */
+        function closeDupCheckResult() {
+            document.getElementById('duplicate-check-result').classList.add('hidden');
+        }
+
 
         // ============================================================
         // 🧩 Batch Import Function (แทน importFromDriveStructure เดิม)
         // ============================================================
-        function startImportBatch(groupId, folderId, userId, coopId, importSessionId, startIndex = 0) {
+        function startImportBatch(groupId, folderId, userId, coopId, importSessionId, startIndex = 0, importMode = 'all', skipFileNames = [], replaceFiles = []) {
             google.script.run
                 .withSuccessHandler(res => {
                     if (!res) {
@@ -7526,11 +7956,14 @@
                         hideLoading();
                         document.getElementById('import-progress-container').classList.add('hidden');
                         google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
-                        showToast('นำเข้าจบแล้ว', 'success');
+                        const msg = res.replacedCount > 0 
+                            ? `นำเข้าจบแล้ว (แทนที่ ${res.replacedCount} ไฟล์)` 
+                            : 'นำเข้าจบแล้ว';
+                        showToast(msg, 'success');
                     } else {
                         // 🔁 ถ้ายังไม่จบ เรียก batch ถัดไป
                         setTimeout(() => {
-                            startImportBatch(groupId, folderId, userId, coopId, importSessionId, res.nextIndex);
+                            startImportBatch(groupId, folderId, userId, coopId, importSessionId, res.nextIndex, importMode, skipFileNames, replaceFiles);
                         }, 200);
                     }
                 })
@@ -7540,8 +7973,8 @@
                     showToast('เกิดข้อผิดพลาดในการนำเข้า: ' + (err.message || err), 'error');
                     console.error(err);
                 })
-                // 🔧 เรียก Apps Script Function ตัวใหม่
-                .importFromDriveBatch(groupId, folderId, userId, coopId, importSessionId, startIndex);
+                // 🔧 เรียก Apps Script Function พร้อม params ใหม่
+                .importFromDriveBatch(groupId, folderId, userId, coopId, importSessionId, startIndex, importMode, skipFileNames, replaceFiles);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
