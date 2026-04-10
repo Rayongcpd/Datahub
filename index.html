@@ -4194,6 +4194,7 @@
             // Set selected values after population
             setTimeout(() => {
                 document.getElementById('subadmin-file-group').value = file.GroupID || '';
+                document.getElementById('subadmin-file-group').required = (file.CoopName !== 'ส่วนกลาง');
                 document.getElementById('subadmin-file-type').value = file.TypeID || '';
             }, 50);
 
@@ -5031,6 +5032,23 @@
         // EVENT LISTENERS
         // =================================================================
         function setupEventListeners() {
+            // ✅ Dynamic validation for Central group
+            const subadminCoopInput = document.getElementById('subadmin-file-coop');
+            const subadminGroupSelect = document.getElementById('subadmin-file-group');
+            if (subadminCoopInput && subadminGroupSelect) {
+                subadminCoopInput.addEventListener('input', (e) => {
+                    subadminGroupSelect.required = (e.target.value !== 'ส่วนกลาง');
+                });
+            }
+            
+            const fileCoopInput = document.getElementById('file-coop');
+            const fileGroupSelect = document.getElementById('file-group');
+            if (fileCoopInput && fileGroupSelect) {
+                fileCoopInput.addEventListener('input', (e) => {
+                    fileGroupSelect.required = (e.target.value !== 'ส่วนกลาง');
+                });
+            }
+
             // Navigation
             document.body.addEventListener('click', (e) => {
                 // Main navigation
@@ -6175,6 +6193,8 @@
                 // ✅ ดึงชื่อสหกรณ์ขึ้นมาด้วย
                 const coopName = file.CoopName || '';
                 document.getElementById('file-coop').value = coopName;
+                document.getElementById('file-group').required = (coopName !== 'ส่วนกลาง');
+                
                 document.getElementById('cancel-edit-file-btn').classList.remove('hidden');
 
                 // ✅ เปิดฟอร์มอัตโนมัติถ้ายังซ่อนอยู่
