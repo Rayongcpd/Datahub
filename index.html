@@ -8695,7 +8695,16 @@
             let totalUpdated = 0;
             let totalExisting = 0;
             
-            showLoading('กำลังเตรียมการตรวจสอบ...');
+            // ใช้ Swal.fire เพื่อให้ Swal.update ทำงานได้
+            Swal.fire({
+                title: 'กำลังตรวจสอบข้อมูล...',
+                html: 'กำลังเตรียมการตรวจสอบ...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
             
             for (let i = 0; i < coopsWithLink.length; i++) {
                 const coop = coopsWithLink[i];
@@ -8739,7 +8748,6 @@
                 }
             }
             
-            hideLoading();
             btn.disabled = false;
             btn.innerHTML = originalHtml;
             lucide.createIcons();
@@ -8761,12 +8769,16 @@
                     cancelButtonText: 'ปิด'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        startBulkImportAllCoops();
+                        // ดีเลย์เล็กน้อยเพื่อให้ Popup เก่าปิดสนิทก่อนเปิด Popup ใหม่
+                        setTimeout(() => {
+                            startBulkImportAllCoops();
+                        }, 300);
                     } else {
                         document.getElementById('import-all-coops-btn').style.display = 'flex';
                     }
                 });
             } else {
+                Swal.close();
                 showToast('ตรวจสอบไม่สำเร็จ หรือไม่พบไฟล์ใหม่ในโฟลเดอร์ใดเลย', 'warning');
             }
         }
@@ -8805,7 +8817,6 @@
 
             let totalCoops = coopsToImport.length;
             let totalFilesToProcess = coopsToImport.reduce((sum, r) => sum + r.totalNew + r.totalUpdated, 0);
-            let processedFiles = 0;
 
             for (let i = 0; i < totalCoops; i++) {
                 const result = coopsToImport[i];
@@ -8815,8 +8826,16 @@
                 let startIndex = 0;
                 let isDone = false;
                 
-                const skipFileNames = result.existingFiles.map(f => f.fileName);
-                const replaceFiles = result.updatedFiles.map(f => f.fileName);
+                // สร้าง skip list ในรูปแบบ key = "fileName_typeId" (ตรงตามที่ Backend คาดหวัง)
+                const skipFileNames = result.existingFiles.map(f => `${f.fileName}_${f.typeId || ''}`.toLowerCase());
+                
+                // ส่ง replaceFiles เป็น object ที่มีข้อมูลครบ
+                const replaceFiles = result.updatedFiles.map(f => ({
+                    fileName: f.fileName,
+                    typeId: f.typeId,
+                    systemFileId: f.systemFileId,
+                    systemDriveFileId: f.systemDriveFileId
+                }));
 
                 document.getElementById('bulk-import-status').innerHTML = `
                     กำลังนำเข้าสหกรณ์ที่ ${i+1}/${totalCoops}:<br>
@@ -8836,7 +8855,7 @@
                                     coop.CoopID,
                                     sessionId,
                                     startIndex,
-                                    'all', 
+                                    'new_and_replace', 
                                     skipFileNames,
                                     replaceFiles
                                 );
@@ -8846,13 +8865,13 @@
                             startIndex = importRes.nextIndex;
                             isDone = importRes.done;
                             
-                            processedFiles += importRes.processedCount;
+                            let coopPct = importRes.percent || 0;
+                            if (isDone) coopPct = 100;
                             
-                            let pct = Math.min(100, Math.round((processedFiles / totalFilesToProcess) * 100));
-                            if (isNaN(pct)) pct = 100;
+                            let pct = Math.min(100, Math.round(((i * 100) + coopPct) / totalCoops));
                             
                             document.getElementById('bulk-import-progress-bar').style.width = `${pct}%`;
-                            document.getElementById('bulk-import-progress-text').textContent = `${pct}% (${processedFiles}/${totalFilesToProcess})`;
+                            document.getElementById('bulk-import-progress-text').textContent = `${pct}%`;
                         } else {
                             console.error('Import batch error', importRes);
                             isDone = true; 
@@ -8866,7 +8885,7 @@
 
             Swal.fire({
                 title: 'นำเข้าข้อมูลรวมสำเร็จ! 🎉',
-                text: `นำเข้าไฟล์ใหม่และอัปเดตไฟล์ ทั้งหมด ${processedFiles} ไฟล์ จาก ${totalCoops} สหกรณ์ เรียบร้อยแล้ว`,
+                text: `นำเข้าไฟล์ใหม่และอัปเดตไฟล์ ทั้งหมด ${totalFilesToProcess} ไฟล์ จาก ${totalCoops} สหกรณ์ เรียบร้อยแล้ว`,
                 icon: 'success'
             }).then(() => {
                 google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
