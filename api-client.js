@@ -330,6 +330,9 @@ window.google.script = window.google.script || {};
                             case 'saveCoopDriveLink':
                                 params = { coopName: args[0], folderUrl: args[1] };
                                 break;
+                            case 'cleanDuplicateFiles':
+                                params = {};
+                                break;
                             // ✅ Document Requests (ขอรับบริการข้อมูล)
                             case 'getDocumentRequests':
                                 params = { userId: args[0] };
