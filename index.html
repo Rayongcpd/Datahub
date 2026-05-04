@@ -1541,10 +1541,21 @@
                                 <input type="url" id="import-folder-url"
                                     class="border border-gray-300 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxx" required>
-                                <button type="button" onclick="saveDriveLink()"
+                                
+                                <button type="button" id="save-link-btn" onclick="saveDriveLink()"
                                     class="bg-gray-100 text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-200 flex-shrink-0 flex items-center gap-2 transition-colors">
                                     <i data-lucide="save" class="w-4 h-4"></i>
-                                    บันทึกลิงก์
+                                    <span>บันทึก</span>
+                                </button>
+                                
+                                <button type="button" id="edit-link-btn" onclick="editDriveLink()" style="display: none;"
+                                    class="bg-blue-100 text-blue-700 border border-blue-300 px-3 py-2 rounded-md hover:bg-blue-200 flex-shrink-0 flex items-center transition-colors" title="แก้ไขลิงก์">
+                                    <i data-lucide="edit-2" class="w-4 h-4"></i>
+                                </button>
+
+                                <button type="button" id="delete-link-btn" onclick="deleteDriveLink()" style="display: none;"
+                                    class="bg-red-100 text-red-700 border border-red-300 px-3 py-2 rounded-md hover:bg-red-200 flex-shrink-0 flex items-center transition-colors" title="ลบลิงก์">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
                         </div>
@@ -5483,6 +5494,27 @@
             }
         });
 
+        function updateLinkUI(hasLink) {
+            const input = document.getElementById('import-folder-url');
+            const saveBtn = document.getElementById('save-link-btn');
+            const editBtn = document.getElementById('edit-link-btn');
+            const deleteBtn = document.getElementById('delete-link-btn');
+            
+            if (hasLink) {
+                input.readOnly = true;
+                input.classList.add('bg-gray-100', 'text-gray-500');
+                saveBtn.style.display = 'none';
+                editBtn.style.display = 'flex';
+                deleteBtn.style.display = 'flex';
+            } else {
+                input.readOnly = false;
+                input.classList.remove('bg-gray-100', 'text-gray-500');
+                saveBtn.style.display = 'flex';
+                editBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+            }
+        }
+
         document.getElementById('import-coop-name')?.addEventListener('change', () => {
             const selectedCoopName = document.getElementById('import-coop-name').value.trim();
             const coop = appState.allCoops.find(c => c.CoopName === selectedCoopName);
@@ -5493,17 +5525,78 @@
             // โหลดลิงก์ที่เคยบันทึกไว้
             if (coop && coop.FolderURL) {
                 document.getElementById('import-folder-url').value = coop.FolderURL;
+                updateLinkUI(true);
             } else if (selectedCoopName) {
                 const savedLink = localStorage.getItem('drive_link_' + selectedCoopName);
                 if (savedLink) {
                     document.getElementById('import-folder-url').value = savedLink;
+                    updateLinkUI(true);
                 } else {
                     document.getElementById('import-folder-url').value = '';
+                    updateLinkUI(false);
                 }
             } else {
                 document.getElementById('import-folder-url').value = '';
+                updateLinkUI(false);
             }
         });
+
+        function editDriveLink() {
+            updateLinkUI(false);
+            document.getElementById('import-folder-url').focus();
+        }
+
+        function deleteDriveLink() {
+            const selectedCoopName = document.getElementById('import-coop-name').value.trim();
+            if (!selectedCoopName) return;
+
+            Swal.fire({
+                title: 'ยืนยันการลบลิงก์?',
+                text: `คุณต้องการลบลิงก์ของ "${selectedCoopName}" หรือไม่?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'ลบลิงก์',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const deleteBtn = document.getElementById('delete-link-btn');
+                    const originalHtml = deleteBtn.innerHTML;
+                    deleteBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>';
+                    deleteBtn.disabled = true;
+
+                    google.script.run
+                        .withSuccessHandler(response => {
+                            deleteBtn.innerHTML = originalHtml;
+                            deleteBtn.disabled = false;
+                            lucide.createIcons();
+
+                            if (response.success || response.message === 'ไม่พบข้อมูลสหกรณ์ในระบบ') {
+                                showToast('ลบลิงก์เรียบร้อยแล้ว', 'success');
+                                
+                                // อัปเดต state ทันที
+                                const coop = appState.allCoops.find(c => c.CoopName === selectedCoopName);
+                                if (coop) {
+                                    coop.FolderURL = '';
+                                }
+                                
+                                document.getElementById('import-folder-url').value = '';
+                                updateLinkUI(false);
+                            } else {
+                                showToast(response.message || 'ลบไม่สำเร็จ', 'error');
+                            }
+                        })
+                        .withFailureHandler(error => {
+                            deleteBtn.innerHTML = originalHtml;
+                            deleteBtn.disabled = false;
+                            lucide.createIcons();
+                            showToast('การเชื่อมต่อมีปัญหา', 'error');
+                        })
+                        .saveCoopDriveLink(selectedCoopName, "");
+                }
+            });
+        }
 
         // ฟังก์ชันบันทึกลิงก์ Google Drive ลง Google Sheets
         function saveDriveLink() {
@@ -5520,9 +5613,9 @@
                 return;
             }
             
-            const saveBtn = document.querySelector('button[onclick="saveDriveLink()"]');
+            const saveBtn = document.getElementById('save-link-btn');
             const originalHtml = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังบันทึก...';
+            saveBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>กำลังบันทึก...</span>';
             saveBtn.disabled = true;
 
             google.script.run
@@ -5541,6 +5634,7 @@
                         }
                         
                         localStorage.removeItem('drive_link_' + selectedCoopName);
+                        updateLinkUI(true);
                     } else {
                         showToast(response.message || 'บันทึกไม่สำเร็จ', 'error');
                     }
