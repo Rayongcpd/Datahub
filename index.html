@@ -1561,10 +1561,6 @@
                         </div>
 
                         <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end gap-3 flex-wrap mt-2">
-                            <button type="button" id="clean-duplicates-btn" onclick="handleCleanDuplicates()"
-                                class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 flex items-center gap-2">
-                                🧹 ลบข้อมูลซ้ำ
-                            </button>
                             <button type="button" id="check-all-coops-btn" onclick="handleCheckAllCoops()"
                                 class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 flex items-center gap-2">
                                 📊 ตรวจสอบข้อมูลรวม
@@ -8676,71 +8672,6 @@
             }
         }
 
-        // =================================================================
-        // CLEAN DUPLICATE FILES
-        // =================================================================
-        function handleCleanDuplicates() {
-            Swal.fire({
-                title: 'ลบข้อมูลซ้ำในระบบ?',
-                html: `
-                    <div class="text-left text-sm space-y-2">
-                        <p>ระบบจะตรวจสอบไฟล์ทั้งหมดและลบรายการที่ซ้ำกัน</p>
-                        <p class="text-gray-500">• เปรียบเทียบจาก <b>ชื่อไฟล์ + ประเภท + สหกรณ์</b></p>
-                        <p class="text-gray-500">• เก็บเฉพาะ <b>รายการล่าสุด</b> ลบรายการเก่าออก</p>
-                        <p class="text-gray-500">• ไฟล์ใน Drive จะถูกย้ายไปถังขยะ</p>
-                    </div>
-                `,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc2626',
-                cancelButtonColor: '#6b7280',
-                confirmButtonText: '🧹 เริ่มลบข้อมูลซ้ำ',
-                cancelButtonText: 'ยกเลิก'
-            }).then((result) => {
-                if (!result.isConfirmed) return;
-
-                Swal.fire({
-                    title: 'กำลังตรวจสอบและลบข้อมูลซ้ำ...',
-                    html: 'กรุณารอสักครู่ อาจใช้เวลาหลายนาที',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-
-                google.script.run
-                    .withSuccessHandler(response => {
-                        if (response.success) {
-                            Swal.fire({
-                                title: 'ลบข้อมูลซ้ำสำเร็จ! 🎉',
-                                html: `
-                                    <div class="text-left mt-2">
-                                        <p class="text-lg font-bold text-red-600 mb-2">ลบทั้งหมด ${response.deletedCount} รายการ</p>
-                                        ${response.deletedCount > 0 ? `
-                                            <div class="max-h-48 overflow-y-auto border rounded p-2 text-sm text-gray-600">
-                                                ${response.details.slice(0, 20).map(d => `<p class="truncate">• ${d.title || d.fileId}</p>`).join('')}
-                                                ${response.details.length > 20 ? `<p class="text-gray-400">... และอีก ${response.details.length - 20} รายการ</p>` : ''}
-                                            </div>
-                                        ` : '<p class="text-gray-500">ไม่พบไฟล์ซ้ำในระบบ</p>'}
-                                    </div>
-                                `,
-                                icon: 'success'
-                            }).then(() => {
-                                if (response.deletedCount > 0) {
-                                    google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
-                                }
-                            });
-                        } else {
-                            Swal.fire('เกิดข้อผิดพลาด', response.message, 'error');
-                        }
-                    })
-                    .withFailureHandler(error => {
-                        Swal.fire('เกิดข้อผิดพลาด', 'การเชื่อมต่อมีปัญหา: ' + error.message, 'error');
-                    })
-                    .cleanDuplicateFiles();
-            });
-        }
 
         // =================================================================
         // BULK IMPORT FOR ALL COOPERATIVES
