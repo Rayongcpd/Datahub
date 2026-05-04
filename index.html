@@ -8754,15 +8754,41 @@
             lucide.createIcons();
 
             if (allCoopsDupCheckResults.length > 0) {
+                // Generate file list HTML
+                let fileListHtml = '';
+                if (totalNew > 0 || totalUpdated > 0) {
+                    fileListHtml += `<div class="mt-4 max-h-64 overflow-y-auto border border-gray-200 rounded p-3 text-sm text-gray-700 bg-gray-50 space-y-3">`;
+                    allCoopsDupCheckResults.forEach(res => {
+                        if (res.totalNew > 0 || res.totalUpdated > 0) {
+                            fileListHtml += `<div>`;
+                            fileListHtml += `<p class="font-bold text-gray-900 border-b border-gray-200 mb-1 pb-1">${res.coop.CoopName}</p>`;
+                            if (res.totalNew > 0) {
+                                res.newFiles.forEach(f => {
+                                    fileListHtml += `<p class="text-green-600 truncate ml-2">🟢 [ใหม่] ${f.fileName}</p>`;
+                                });
+                            }
+                            if (res.totalUpdated > 0) {
+                                res.updatedFiles.forEach(f => {
+                                    fileListHtml += `<p class="text-orange-600 truncate ml-2">🔄 [อัปเดต] ${f.fileName}</p>`;
+                                });
+                            }
+                            fileListHtml += `</div>`;
+                        }
+                    });
+                    fileListHtml += `</div>`;
+                }
+
                 Swal.fire({
                     title: 'ผลการตรวจสอบทุกสหกรณ์',
+                    width: '600px',
                     html: `
-                        <div class="text-left space-y-2 mt-4">
+                        <div class="text-left space-y-2 mt-2">
                             <p>ตรวจสอบสำเร็จ: <b>${allCoopsDupCheckResults.length}</b> สหกรณ์</p>
                             <p class="text-green-600">🟢 ไฟล์ใหม่พร้อมนำเข้า: <b>${totalNew}</b> ไฟล์</p>
                             <p class="text-orange-600">🔄 ไฟล์ที่ต้องอัปเดต: <b>${totalUpdated}</b> ไฟล์</p>
                             <p class="text-gray-500">⚪ ไฟล์ที่มีอยู่แล้ว (ซ้ำ): <b>${totalExisting}</b> ไฟล์</p>
                         </div>
+                        ${fileListHtml}
                     `,
                     icon: 'info',
                     showCancelButton: true,
