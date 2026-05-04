@@ -327,6 +327,9 @@ window.google.script = window.google.script || {};
                             case 'getFileTypesByCooperative':
                                 params = { coopId: args[0] };
                                 break;
+                            case 'saveCoopDriveLink':
+                                params = { coopName: args[0], folderUrl: args[1] };
+                                break;
                             // ✅ Document Requests (ขอรับบริการข้อมูล)
                             case 'getDocumentRequests':
                                 params = { userId: args[0] };
