@@ -1560,7 +1560,15 @@
                             </div>
                         </div>
 
-                        <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end gap-3">
+                        <div class="col-span-1 md:col-span-2 lg:col-span-3 flex justify-end gap-3 flex-wrap mt-2">
+                            <button type="button" id="check-all-coops-btn" onclick="handleCheckAllCoops()"
+                                class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 flex items-center gap-2">
+                                📊 ตรวจสอบข้อมูลรวม
+                            </button>
+                            <button type="button" id="import-all-coops-btn" onclick="startBulkImportAllCoops()" style="display: none;"
+                                class="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 flex items-center gap-2">
+                                🌟 นำเข้าข้อมูลรวม
+                            </button>
                             <button type="button" id="check-duplicates-btn" onclick="handleCheckDuplicates()"
                                 class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2">
                                 🔍 ตรวจสอบไฟล์
@@ -8664,6 +8672,206 @@
             }
         }
 
+        // =================================================================
+        // BULK IMPORT FOR ALL COOPERATIVES
+        // =================================================================
+        let allCoopsDupCheckResults = [];
+
+        async function handleCheckAllCoops() {
+            const coopsWithLink = appState.allCoops.filter(c => c.FolderURL && c.FolderURL.trim() !== '');
+            if (coopsWithLink.length === 0) {
+                showToast('ไม่พบสหกรณ์ที่มีการบันทึกลิงก์ Google Drive', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('check-all-coops-btn');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังตรวจสอบ...';
+
+            allCoopsDupCheckResults = [];
+            
+            let totalNew = 0;
+            let totalUpdated = 0;
+            let totalExisting = 0;
+            
+            showLoading('กำลังเตรียมการตรวจสอบ...');
+            
+            for (let i = 0; i < coopsWithLink.length; i++) {
+                const coop = coopsWithLink[i];
+                
+                Swal.update({
+                    title: 'กำลังตรวจสอบข้อมูล...',
+                    html: `กำลังตรวจสอบสหกรณ์:<br><b>${coop.CoopName}</b><br>(${i + 1}/${coopsWithLink.length})`
+                });
+
+                let folderId = "";
+                try {
+                    const urlObj = new URL(coop.FolderURL);
+                    const pathParts = urlObj.pathname.split('/');
+                    folderId = pathParts[pathParts.length - 1];
+                    if (folderId.includes('?')) {
+                        folderId = folderId.split('?')[0];
+                    }
+                } catch(e) {
+                    console.warn('Invalid URL for coop', coop.CoopName);
+                    continue; 
+                }
+                
+                try {
+                    const result = await new Promise((resolve, reject) => {
+                        google.script.run
+                            .withSuccessHandler(resolve)
+                            .withFailureHandler(reject)
+                            .checkImportDuplicates(folderId, coop.CoopID);
+                    });
+                    
+                    if (result && result.success) {
+                        result.coop = coop; 
+                        result.folderId = folderId;
+                        allCoopsDupCheckResults.push(result);
+                        totalNew += result.totalNew;
+                        totalUpdated += result.totalUpdated;
+                        totalExisting += result.totalExisting;
+                    }
+                } catch (err) {
+                    console.error('Error checking coop', coop.CoopName, err);
+                }
+            }
+            
+            hideLoading();
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            lucide.createIcons();
+
+            if (allCoopsDupCheckResults.length > 0) {
+                Swal.fire({
+                    title: 'ผลการตรวจสอบทุกสหกรณ์',
+                    html: `
+                        <div class="text-left space-y-2 mt-4">
+                            <p>ตรวจสอบสำเร็จ: <b>${allCoopsDupCheckResults.length}</b> สหกรณ์</p>
+                            <p class="text-green-600">🟢 ไฟล์ใหม่พร้อมนำเข้า: <b>${totalNew}</b> ไฟล์</p>
+                            <p class="text-orange-600">🔄 ไฟล์ที่ต้องอัปเดต: <b>${totalUpdated}</b> ไฟล์</p>
+                            <p class="text-gray-500">⚪ ไฟล์ที่มีอยู่แล้ว (ซ้ำ): <b>${totalExisting}</b> ไฟล์</p>
+                        </div>
+                    `,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: '🚀 นำเข้าทั้งหมดเดี๋ยวนี้',
+                    cancelButtonText: 'ปิด'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        startBulkImportAllCoops();
+                    } else {
+                        document.getElementById('import-all-coops-btn').style.display = 'flex';
+                    }
+                });
+            } else {
+                showToast('ตรวจสอบไม่สำเร็จ หรือไม่พบไฟล์ใหม่ในโฟลเดอร์ใดเลย', 'warning');
+            }
+        }
+
+        async function startBulkImportAllCoops() {
+            if (!allCoopsDupCheckResults || allCoopsDupCheckResults.length === 0) return;
+            
+            const userId = document.getElementById('import-user').value || appState.currentUser.UserID;
+            if (!userId) {
+                showToast('กรุณาเลือกผู้บันทึกในฟอร์มก่อนดำเนินการ', 'error');
+                return;
+            }
+
+            document.getElementById('import-all-coops-btn').style.display = 'none';
+
+            const coopsToImport = allCoopsDupCheckResults.filter(r => r.totalNew > 0 || r.totalUpdated > 0);
+            
+            if (coopsToImport.length === 0) {
+                Swal.fire('เสร็จสิ้น', 'ไม่มีไฟล์ใหม่ให้ต้องนำเข้า', 'success');
+                return;
+            }
+
+            Swal.fire({
+                title: 'กำลังนำเข้าข้อมูลรวม...',
+                html: `
+                    <div id="bulk-import-status" class="text-left text-sm mb-4">เตรียมการ...</div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                        <div id="bulk-import-progress-bar" class="bg-purple-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div id="bulk-import-progress-text" class="text-sm text-gray-600 font-medium text-center">0%</div>
+                `,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false
+            });
+
+            let totalCoops = coopsToImport.length;
+            let totalFilesToProcess = coopsToImport.reduce((sum, r) => sum + r.totalNew + r.totalUpdated, 0);
+            let processedFiles = 0;
+
+            for (let i = 0; i < totalCoops; i++) {
+                const result = coopsToImport[i];
+                const coop = result.coop;
+                
+                const sessionId = 'bulk_' + new Date().getTime() + '_' + i;
+                let startIndex = 0;
+                let isDone = false;
+                
+                const skipFileNames = result.existingFiles.map(f => f.fileName);
+                const replaceFiles = result.updatedFiles.map(f => f.fileName);
+
+                document.getElementById('bulk-import-status').innerHTML = `
+                    กำลังนำเข้าสหกรณ์ที่ ${i+1}/${totalCoops}:<br>
+                    <b>${coop.CoopName}</b>
+                `;
+
+                while (!isDone) {
+                    try {
+                        const importRes = await new Promise((resolve, reject) => {
+                            google.script.run
+                                .withSuccessHandler(resolve)
+                                .withFailureHandler(reject)
+                                .importFromDriveBatch(
+                                    coop.GroupID,
+                                    result.folderId,
+                                    userId,
+                                    coop.CoopID,
+                                    sessionId,
+                                    startIndex,
+                                    'all', 
+                                    skipFileNames,
+                                    replaceFiles
+                                );
+                        });
+
+                        if (importRes && importRes.success) {
+                            startIndex = importRes.nextIndex;
+                            isDone = importRes.done;
+                            
+                            processedFiles += importRes.processedCount;
+                            
+                            let pct = Math.min(100, Math.round((processedFiles / totalFilesToProcess) * 100));
+                            if (isNaN(pct)) pct = 100;
+                            
+                            document.getElementById('bulk-import-progress-bar').style.width = `${pct}%`;
+                            document.getElementById('bulk-import-progress-text').textContent = `${pct}% (${processedFiles}/${totalFilesToProcess})`;
+                        } else {
+                            console.error('Import batch error', importRes);
+                            isDone = true; 
+                        }
+                    } catch (err) {
+                        console.error('Network error during bulk import', err);
+                        isDone = true;
+                    }
+                }
+            }
+
+            Swal.fire({
+                title: 'นำเข้าข้อมูลรวมสำเร็จ! 🎉',
+                text: `นำเข้าไฟล์ใหม่และอัปเดตไฟล์ ทั้งหมด ${processedFiles} ไฟล์ จาก ${totalCoops} สหกรณ์ เรียบร้อยแล้ว`,
+                icon: 'success'
+            }).then(() => {
+                google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
+            });
+        }
 
     </script>
 
