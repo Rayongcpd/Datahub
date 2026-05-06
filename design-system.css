@@ -1,0 +1,217 @@
+/**
+ * Claude-Style Design System v2.0
+ * ระบบคลังไฟล์เอกสารสหกรณ์
+ *
+ * Philosophy: Warmth over Coolness, Content First, Typography as UI,
+ * Generous Whitespace, Subtle Borders > Heavy Shadows
+ */
+
+:root {
+  /* Base Palette */
+  --bg-primary: #faf8f5;
+  --bg-elevated: #ffffff;
+  --bg-muted: #f5f0eb;
+  --border-subtle: #e7e2dc;
+  --border-focus: #d4cfc8;
+  --text-primary: #2d2a26;
+  --text-secondary: #6b6560;
+  --text-tertiary: #9c948c;
+
+  /* Accent (Terracotta / Amber Warm) */
+  --accent: #c27b53;
+  --accent-hover: #a96a46;
+  --accent-muted: #f5ebe4;
+
+  /* Semantic */
+  --success: #5a7c5a;
+  --warning: #c9a84c;
+  --danger: #b85c5c;
+
+  /* Typography */
+  --font-heading: 'Playfair Display', 'Noto Serif Thai', Georgia, serif;
+  --font-body: 'Inter', 'Sarabun', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+/* ===== Reset & Base ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Typography ===== */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* ===== Components ===== */
+
+/* Card */
+.card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--border-focus);
+}
+
+/* Button: Primary */
+.btn-primary {
+  background-color: var(--accent);
+  color: #ffffff;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Button: Secondary */
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--border-focus);
+  background: var(--bg-muted);
+}
+
+/* Button: Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+  color: var(--text-primary);
+  background: var(--bg-muted);
+}
+
+/* Input */
+.input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(194, 123, 83, 0.15);
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead th {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.table tbody td {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+
+.table tbody tr:hover td {
+  background: var(--bg-primary);
+}
+
+/* Modal */
+.modal-overlay {
+  background-color: rgba(45, 42, 38, 0.3);
+  backdrop-filter: blur(2px);
+}
+
+.modal-panel {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+}
+
+/* ===== Skeleton Loading ===== */
+.skeleton {
+  background: linear-gradient(90deg, #f5f0eb 25%, #e7e2dc 50%, #f5f0eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== Micro-interactions ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Utility ===== */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+.bg-primary { background-color: var(--bg-primary); }
+.bg-elevated { background-color: var(--bg-elevated); }
+.bg-muted { background-color: var(--bg-muted); }
+.border-subtle { border-color: var(--border-subtle); }
