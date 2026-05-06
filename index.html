@@ -235,12 +235,37 @@
 
       .responsive-table tbody tr {
         display: block;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
         border: 1px solid var(--border-subtle);
-        border-radius: 8px;
+        border-left: 4px solid var(--accent);
+        border-radius: 10px;
         background: var(--bg-elevated);
-        padding: 12px 16px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .responsive-table tbody tr:active {
+        transform: scale(0.995);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+
+      /* Sequence number: small, muted, top-right feel */
+      .responsive-table tbody td[data-label="ลำดับ"],
+      .responsive-table tbody td[data-label="#"] {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        text-align: right !important;
+        padding-top: 0;
+        padding-bottom: 6px;
+        border-bottom: none;
+      }
+
+      .responsive-table tbody td[data-label="ลำดับ"]::before,
+      .responsive-table tbody td[data-label="#"]::before {
+        display: inline;
+        margin-bottom: 0;
+        margin-right: 4px;
       }
 
       .responsive-table tbody td {
@@ -267,6 +292,29 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+      }
+
+      /* Title field: larger & bolder */
+      .responsive-table tbody td[data-label="ชื่อเรื่อง"] {
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+
+      /* Group / type field: much smaller than title */
+      .responsive-table tbody td[data-label="กลุ่มงาน"],
+      .responsive-table tbody td[data-label="ประเภทเอกสาร"],
+      .responsive-table tbody td[data-label="ประเภท"] {
+        font-size: 0.75rem;
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .responsive-table tbody td[data-label="กลุ่มงาน"] span,
+      .responsive-table tbody td[data-label="ประเภทเอกสาร"] span,
+      .responsive-table tbody td[data-label="ประเภท"] span {
+        font-size: 0.7rem !important;
+        padding: 2px 8px !important;
       }
     }
   </style>
