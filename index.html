@@ -8,12 +8,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warm: {
+                            50: '#faf8f5',
+                            100: '#f5f0eb',
+                            200: '#e7e2dc',
+                            300: '#d4cfc8',
+                            400: '#9c948c',
+                            500: '#6b6560',
+                            600: '#4a4540',
+                            700: '#2d2a26',
+                            800: '#1a1816',
+                            900: '#0f0e0d',
+                        },
+                        accent: {
+                            DEFAULT: '#c27b53',
+                            50: '#f5ebe4',
+                            100: '#ebd5c4',
+                            200: '#d4a98c',
+                            300: '#c27b53',
+                            400: '#a96a46',
+                            500: '#8a5639',
+                            600: '#6b432d',
+                        },
+                        sage: {
+                            DEFAULT: '#5a7c5a',
+                            50: '#eef3ee',
+                            100: '#d4e0d4',
+                            500: '#5a7c5a',
+                        },
+                        brick: {
+                            DEFAULT: '#b85c5c',
+                            50: '#f5e4e4',
+                            100: '#e8c4c4',
+                            500: '#b85c5c',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['"Playfair Display"', '"Noto Serif Thai"', 'Georgia', 'serif'],
+                        body: ['"Inter"', '"Sarabun"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <!-- Google Font: Prompt -->
+    <!-- Google Fonts: Inter + Playfair Display + Sarabun + Noto Serif Thai -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Chart.js -->
@@ -27,925 +74,120 @@
     <script src="api-client.js"></script>
 
     <style>
-        /* Seasonal Effects */
-        .effect-layer {
-            pointer-events: none;
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            overflow: hidden;
-        }
-
-        /* New Year (Spectacular Fireworks + Snow + Stars) */
-        .firework-particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: particle-explode 1.5s ease-out forwards;
-        }
-
-        @keyframes particle-explode {
-            0% {
-                transform: translate(0, 0) scale(1);
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        .firework-trail {
-            position: absolute;
-            width: 3px;
-            border-radius: 50%;
-            animation: trail-fade 0.8s ease-out forwards;
-        }
-
-        @keyframes trail-fade {
-            0% {
-                height: 0;
-                opacity: 1;
-            }
-
-            50% {
-                height: 30px;
-                opacity: 0.8;
-            }
-
-            100% {
-                height: 50px;
-                opacity: 0;
-            }
-        }
-
-        .star-burst {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #fef3c7 0%, #fbbf24 30%, transparent 70%);
-            border-radius: 50%;
-            animation: star-twinkle 1s ease-out forwards;
-            box-shadow: 0 0 20px #fbbf24, 0 0 40px #f59e0b;
-        }
-
-        @keyframes star-twinkle {
-            0% {
-                transform: scale(0) rotate(0deg);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.5) rotate(180deg);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(0) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .golden-confetti {
-            position: absolute;
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
-            animation: confetti-fall linear infinite;
-            box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(110vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
-        .snowflake {
-            position: absolute;
-            background: radial-gradient(circle, #ffffff 0%, rgba(255, 255, 255, 0.6) 100%);
-            border-radius: 50%;
-            opacity: 0.9;
-            animation: snow-fall linear infinite;
-            box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
-        }
-
-        @keyframes snow-fall {
-            0% {
-                transform: translateY(-10vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.9;
-            }
-
-            100% {
-                transform: translateY(110vh) translateX(40px) rotate(360deg);
-                opacity: 0.3;
-            }
-        }
-
-        .sparkle-star {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #fff, 0 0 20px #fbbf24;
-            animation: sparkle-blink 0.5s ease-in-out infinite;
-        }
-
-        @keyframes sparkle-blink {
-
-            0%,
-            100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* Valentine (Hearts) */
-        .heart {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            animation: heart-float linear infinite;
-            filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.6));
-        }
-
-        .heart::before,
-        .heart::after {
-            content: '';
-            position: absolute;
-            width: 25px;
-            height: 40px;
-            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #db2777 100%);
-            border-radius: 25px 25px 0 0;
-        }
-
-        .heart::before {
-            left: 25px;
-            transform: rotate(-45deg);
-            transform-origin: 0 100%;
-        }
-
-        .heart::after {
-            left: 0;
-            transform: rotate(45deg);
-            transform-origin: 100% 100%;
-        }
-
-        @keyframes heart-float {
-            0% {
-                transform: translateY(110vh) scale(0.5);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-10vh) scale(1);
-                opacity: 0;
-            }
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle, #fef3c7 0%, #fbbf24 50%, transparent 70%);
-            border-radius: 50%;
-            animation: sparkle-twinkle 1.5s ease-in-out infinite;
-        }
-
-        @keyframes sparkle-twinkle {
-
-            0%,
-            100% {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            50% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .love-petal {
-            position: absolute;
-            width: 12px;
-            height: 20px;
-            background: linear-gradient(180deg, rgba(251, 207, 232, 0.9) 0%, rgba(244, 114, 182, 0.7) 100%);
-            border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%;
-            animation: petal-fall linear infinite;
-            box-shadow: 0 0 8px rgba(244, 114, 182, 0.4);
-        }
-
-        @keyframes petal-fall {
-            0% {
-                transform: translateY(-10vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.9;
-            }
-
-            100% {
-                transform: translateY(110vh) translateX(50px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        /* Songkran (Liquid Splash) */
-        .liquid-blob {
-            position: absolute;
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.9) 0%, rgba(6, 182, 212, 0.8) 50%, rgba(14, 165, 233, 0.7) 100%);
-            border-radius: 50%;
-            filter: blur(0px);
-            animation: blob-morph 2s ease-in-out infinite, blob-move 3s ease-out forwards;
-            box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.3);
-        }
-
-        @keyframes blob-morph {
-
-            0%,
-            100% {
-                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-            }
-
-            25% {
-                border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
-            }
-
-            50% {
-                border-radius: 50% 60% 30% 60% / 30% 40% 70% 60%;
-            }
-
-            75% {
-                border-radius: 60% 30% 60% 40% / 70% 50% 40% 60%;
-            }
-        }
-
-        @keyframes blob-move {
-            0% {
-                transform: scale(0) translate(0, 0);
-                opacity: 0;
-            }
-
-            20% {
-                opacity: 1;
-                transform: scale(1) translate(0, 0);
-            }
-
-            100% {
-                transform: scale(1.5) translate(var(--tx), var(--ty));
-                opacity: 0;
-            }
-        }
-
-        .liquid-drop {
-            position: absolute;
-            background: radial-gradient(ellipse at 30% 30%, rgba(147, 197, 253, 0.95) 0%, rgba(59, 130, 246, 0.8) 70%);
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            box-shadow: inset -3px 3px 8px rgba(255, 255, 255, 0.5), 0 0 15px rgba(59, 130, 246, 0.4);
-            animation: drop-splash 1s ease-out forwards;
-        }
-
-        @keyframes drop-splash {
-            0% {
-                transform: scale(0) translateY(0);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.2) translateY(-20px);
-                opacity: 0.9;
-            }
-
-            100% {
-                transform: scale(0.8) translateY(50px);
-                opacity: 0;
-            }
-        }
-
-        .liquid-wave {
-            position: absolute;
-            width: 100vw;
-            height: 150px;
-            background: linear-gradient(0deg, rgba(56, 189, 248, 0.5) 0%, rgba(6, 182, 212, 0.3) 50%, transparent 100%);
-            border-radius: 100% 100% 0 0;
-            animation: wave-rise 2s ease-in-out infinite;
-            bottom: 0;
-            left: 0;
-        }
-
-        @keyframes wave-rise {
-
-            0%,
-            100% {
-                transform: translateY(50%) scaleY(1);
-            }
-
-            50% {
-                transform: translateY(30%) scaleY(1.3);
-            }
-        }
-
-        .splash-ring {
-            position: absolute;
-            border: 4px solid rgba(56, 189, 248, 0.8);
-            border-radius: 50%;
-            animation: ring-expand 1.5s ease-out forwards;
-        }
-
-        @keyframes ring-expand {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(3);
-                opacity: 0;
-            }
-        }
-
-        /* Loy Krathong (Lanterns) - Enhanced */
-        .lantern {
-            position: absolute;
-            background: radial-gradient(ellipse at center, #fef3c7 0%, #fcd34d 40%, #f59e0b 70%, #d97706 100%);
-            border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-            width: 24px;
-            height: 32px;
-            box-shadow: 0 0 20px 8px rgba(251, 191, 36, 0.5), 0 0 40px 16px rgba(245, 158, 11, 0.3);
-            animation: lantern-float ease-in-out infinite;
-            opacity: 0;
-        }
-
-        .lantern::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle, #fef3c7 0%, #fbbf24 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 8px 4px rgba(251, 191, 36, 0.8);
-        }
-
-        @keyframes lantern-float {
-            0% {
-                transform: translateY(110vh) translateX(0) scale(0.8);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.8;
-            }
-
-            100% {
-                transform: translateY(-20vh) translateX(20px) scale(1);
-                opacity: 0;
-            }
+        /* ===== Claude Design System Foundation ===== */
+        :root {
+            --bg-primary: #faf8f5;
+            --bg-elevated: #ffffff;
+            --bg-muted: #f5f0eb;
+            --border-subtle: #e7e2dc;
+            --border-focus: #d4cfc8;
+            --text-primary: #2d2a26;
+            --text-secondary: #6b6560;
+            --text-tertiary: #9c948c;
+            --accent: #c27b53;
+            --accent-hover: #a96a46;
+            --accent-muted: #f5ebe4;
+            --success: #5a7c5a;
+            --warning: #c9a84c;
+            --danger: #b85c5c;
+            --font-heading: 'Playfair Display', 'Noto Serif Thai', Georgia, serif;
+            --font-body: 'Inter', 'Sarabun', system-ui, sans-serif;
         }
 
         body {
-            font-family: 'Prompt', sans-serif;
-            background-color: #f0f2f5;
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
+        .font-heading { font-family: var(--font-heading); }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
-        .active-menu {
-            background-color: #274e13;
-            /* bg-blue-700 */
-            color: white;
-        }
-
+        /* Smooth Transitions */
         .page {
             display: none;
+            animation: fadeIn 0.4s ease-out;
         }
 
-        .page.active {
-            display: block;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* For drag and drop file upload */
-        .drop-zone {
-            border: 2px dashed #ccc;
-            border-radius: 0.5rem;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
+        /* Glassmorphism & Cards */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
         }
 
-        .drop-zone--over {
-            border-style: solid;
-            background-color: #e0e7ff;
+        .card-hover {
+            transition: all 0.2s ease;
         }
 
-        .drop-zone__input {
-            display: none;
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: var(--border-focus);
         }
 
-        /* =========================================
-           File Preview Modal
-           ========================================= */
-        .preview-modal-content {
-            width: 90vw;
-            height: 85vh;
-            max-width: 1200px;
-            display: flex;
-            flex-direction: column;
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f5f0eb 25%, #e7e2dc 50%, #f5f0eb 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
         }
 
-        .preview-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            background-color: #3b82f6;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border: none;
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .preview-btn:hover {
-            background-color: #2563eb;
-        }
-
-        .preview-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #e5e7eb;
-            border-top: 4px solid #3b82f6;
-            border-radius: 50%;
-            animation: preview-spin 0.8s linear infinite;
-        }
-
-        @keyframes preview-spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 640px) {
-            .preview-modal-content {
-                width: 95vw;
-                height: 90vh;
-            }
-        }
-
+        /* Modals */
         .modal {
             display: none;
-            /* Hidden by default */
-            position: fixed;
-            /* Stay in place */
-            z-index: 50;
-            /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%;
-            /* Full width */
-            height: 100%;
-            /* Full height */
-            overflow: auto;
-            /* Enable scroll if needed */
-            background-color: rgba(0, 0, 0, 0.5);
-            /* Black w/ opacity */
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.flex {
-            display: flex;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        /* =========================================
-           Table Appearance Variables (Granular)
-           ========================================= */
-        :root {
-            /* --- Normal Files --- */
-            --title-size: 1rem;
-            --title-color: #111827;
-            --title-weight: bold;
-            --subtitle-size: 0.875rem;
-            --subtitle-color: #111827;
-            --subtitle-weight: normal;
-            --hold-size: 0.75rem;
-            --hold-color: #111827;
-            --hold-weight: normal;
-            --type-size: 0.75rem;
-            --type-color: #6b7280;
-            --type-weight: normal;
-
-            /* --- Pending Deletion Files --- */
-            --p-title-size: 1rem;
-            --p-title-color: #ef4444;
-            --p-title-weight: bold;
-            --p-subtitle-size: 0.875rem;
-            --p-subtitle-color: #ef4444;
-            --p-subtitle-weight: normal;
-            --p-hold-size: 0.75rem;
-            --p-hold-color: #b91c1c;
-            --p-hold-weight: normal;
-            --p-type-size: 0.75rem;
-            --p-type-color: #b91c1c;
-            --p-type-weight: normal;
-
-            /* Fallbacks for overall table if needed */
-            --table-font-size: 0.875rem;
-            --table-text-color: #111827;
-        }
-
-        /* Granular Classes */
-        .file-title {
-            font-size: var(--title-size);
-            color: var(--title-color);
-            font-weight: var(--title-weight);
-        }
-
-        .file-title span {
-            font-size: 0.75rem;
-            font-weight: normal;
-        }
-
-        /* For the 'Waiting' badge */
-
-        .file-subtitle {
-            font-size: var(--subtitle-size);
-            color: var(--subtitle-color);
-            font-weight: var(--subtitle-weight);
-        }
-
-        .file-hold {
-            font-size: var(--hold-size);
-            color: var(--hold-color);
-            font-weight: var(--hold-weight);
-        }
-
-        .file-type {
-            font-size: var(--type-size);
-            color: var(--type-color);
-            font-weight: var(--type-weight);
-        }
-
-        /* Pending Overrides (using parent class .is-pending) */
-        .is-pending .file-title {
-            font-size: var(--p-title-size);
-            color: var(--p-title-color);
-            font-weight: var(--p-title-weight);
-        }
-
-        .is-pending .file-subtitle {
-            font-size: var(--p-subtitle-size);
-            color: var(--p-subtitle-color);
-            font-weight: var(--p-subtitle-weight);
-        }
-
-        .is-pending .file-hold {
-            font-size: var(--p-hold-size);
-            color: var(--p-hold-color);
-            font-weight: var(--p-hold-weight);
-        }
-
-        .is-pending .file-type {
-            font-size: var(--p-type-size);
-            color: var(--p-type-color);
-            font-weight: var(--p-type-weight);
-        }
-
-        /* Ensure badge remains distinct */
-        .badge-pending {
-            font-size: 0.75rem !important;
-            color: #dc2626 !important;
-            background-color: #fca5a5 !important;
-        }
-
-        /* General Table Defaults */
-        #home-table-body td,
-        #officer-files-table-body td,
-        #admin-files-table-body td,
-        #group-table-body td,
-        #users-table-body td {
-            /* Use basic defaults for non-specific columns */
-            font-size: var(--table-font-size);
-            color: var(--table-text-color);
-        }
-
-        /* 🌑 โหมดไว้ทุกข์ – ทำให้เว็บเป็นขาวดำ */
-        /* =========================================
-           Responsive Table Modes
-           ========================================= */
-
-        /* Mode 1: Scroll (Default behavior) - already works with overflow-x-auto */
-        body[data-table-mode="scroll"] .overflow-x-auto {
-            overflow-x: auto;
-        }
-
-        /* Mode 2: Card View (Mobile only) */
-        @media (max-width: 768px) {
-
-            body[data-table-mode="card"] table,
-            body[data-table-mode="card"] thead,
-            body[data-table-mode="card"] tbody,
-            body[data-table-mode="card"] th,
-            body[data-table-mode="card"] td,
-            body[data-table-mode="card"] tr {
-                display: block;
-            }
-
-            body[data-table-mode="card"] thead tr {
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
-            }
-
-            body[data-table-mode="card"] tr {
-                border: 2px solid #d1d5db;
-                margin-bottom: 1.25rem;
-                border-radius: 0.75rem;
-                background-color: white;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                overflow: hidden;
-            }
-
-            body[data-table-mode="card"] td {
-                /* Behave  like a "row" */
-                border: none;
-                border-bottom: 1px solid #f3f4f6;
-                position: relative;
-                padding-left: 40% !important;
-                padding-right: 1rem !important;
-                padding-top: 0.75rem !important;
-                padding-bottom: 0.75rem !important;
-                text-align: right !important;
-                white-space: normal !important;
-            }
-
-            body[data-table-mode="card"] td:last-child {
-                border-bottom: 0;
-            }
-
-            body[data-table-mode="card"] td:before {
-                /* Now like a table header */
-                position: absolute;
-                /* Top/left values mimic padding */
-                top: 0.75rem;
-                left: 1rem;
-                width: 35%;
-                padding-right: 10px;
-                white-space: nowrap;
-                text-align: left;
-
-                /* ✅ Linked to "Type" (General) settings */
-                font-size: var(--type-size);
-                color: var(--type-color);
-                font-weight: var(--type-weight);
-
-                content: attr(data-label);
-            }
-
-            /* ✅ ซ่อนคอลัมน์ลำดับ "#" ใน card mode */
-            body[data-table-mode="card"] td[data-label="#"] {
-                display: none !important;
-            }
-
-            /* Adjustments for specific content */
-            body[data-table-mode="card"] .download-btn {
-                display: inline-flex;
-                margin-left: auto;
-            }
-
-            /* ✅ Special styling for "Title" (Subject) to be the Card Header */
-            body[data-table-mode="card"] td[data-label="เรื่อง"] {
-                display: block;
-                width: 100%;
-                text-align: left !important;
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-                padding-top: 1rem !important;
-                padding-bottom: 0.75rem !important;
-                border-bottom: 2px solid #22c55e;
-                border-left: 4px solid #22c55e;
-            }
-
-            /* 5 โทนสีเขียวอ่อนสลับกัน */
-            body[data-table-mode="card"] tr:nth-child(5n+1) td[data-label="เรื่อง"] {
-                background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-                border-left-color: #22c55e;
-                border-bottom-color: #22c55e;
-            }
-
-            body[data-table-mode="card"] tr:nth-child(5n+2) td[data-label="เรื่อง"] {
-                background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-                border-left-color: #10b981;
-                border-bottom-color: #10b981;
-            }
-
-            body[data-table-mode="card"] tr:nth-child(5n+3) td[data-label="เรื่อง"] {
-                background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
-                border-left-color: #4ade80;
-                border-bottom-color: #4ade80;
-            }
-
-            body[data-table-mode="card"] tr:nth-child(5n+4) td[data-label="เรื่อง"] {
-                background: linear-gradient(135deg, #ecfccb 0%, #d9f99d 100%);
-                border-left-color: #84cc16;
-                border-bottom-color: #84cc16;
-            }
-
-            body[data-table-mode="card"] tr:nth-child(5n+5) td[data-label="เรื่อง"] {
-                background: linear-gradient(135deg, #f7fee7 0%, #d9f99d 100%);
-                border-left-color: #65a30d;
-                border-bottom-color: #65a30d;
-            }
-
-            body[data-table-mode="card"] td[data-label="เรื่อง"]::before {
-                display: none;
-                /* Hide the label "เรื่อง" */
-            }
-
-            body[data-table-mode="card"] td[data-label="เรื่อง"]>div:first-child {
-                /* font-size, font-weight removed to inherit from .file-title */
-                margin-bottom: 0.25rem;
-            }
-
-            /* ✅ Card number badge อยู่เหนือชื่อหัวเรื่อง */
-            body[data-table-mode="card"] td[data-label="เรื่อง"] .card-number-badge {
-                display: inline-block;
-                background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-                color: white;
-                font-size: 0.7rem;
-                font-weight: 600;
-                padding: 0.2rem 0.5rem;
-                border-radius: 9999px;
-                box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
-                margin-bottom: 0.5rem;
-            }
-        }
-
-        /* ซ่อน card-number-badge บน desktop (แสดงเฉพาะ mobile card mode) */
-        .card-number-badge {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            body[data-table-mode="card"] .card-number-badge {
-                display: inline-block;
-            }
-        }
-
-        /* Mode 3: Hide Columns (Mobile only) */
-        @media (max-width: 768px) {
-
-            /* Hide Group (col 2), Uploader (col 3), Downloads (col 4) - depending on table */
-            /* We need specific selectors or use nth-child. 
-               Let's assume standard 6 cols: Title, Group, Uploader, Downloads, Files, Actions
-               We keep: Title(1), Files(5), Actions(6). Hide: 2,3,4
-            */
-            body[data-table-mode="hide"] th:nth-child(2),
-            body[data-table-mode="hide"] td:nth-child(2),
-            body[data-table-mode="hide"] th:nth-child(3),
-            body[data-table-mode="hide"] td:nth-child(3),
-            body[data-table-mode="hide"] th:nth-child(4),
-            body[data-table-mode="hide"] td:nth-child(4) {
-                display: none;
-            }
-        }
-
-        body.mourning-mode {
-            filter: grayscale(0%) brightness(100%) contrast(100%);
-            transition: filter 0.4s ease;
-        }
-
-        /* Seasonal Effects */
-        .effect-layer {
-            pointer-events: none;
             position: fixed;
             inset: 0;
-            z-index: 50;
-            overflow: hidden;
+            background-color: rgba(45, 42, 38, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: modalFadeIn 0.3s ease-out;
         }
 
-        /* New Year (Confetti) */
-        .confetti-piece {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            opacity: 0.7;
-            animation: confetti-fall linear infinite;
+        .modal-content {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            position: relative;
         }
 
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(110vh) rotate(720deg);
-                opacity: 0;
-            }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* Songkran (Water) */
-        .water-drop {
-            position: absolute;
-            background: rgba(59, 130, 246, 0.6);
-            border-radius: 50%;
-            animation: water-fall linear infinite;
+        /* Loading Animation */
+        .wave-text span {
+            display: inline-block;
+            animation: wave 1.2s infinite ease-in-out;
+            color: var(--accent);
         }
 
-        @keyframes water-fall {
-            0% {
-                transform: translateY(-10vh) scale(0.5);
-                opacity: 0.8;
-            }
-
-            100% {
-                transform: translateY(110vh) scale(1);
-                opacity: 0;
-            }
-        }
-
-        /* Loy Krathong (Lanterns) */
-        .lantern {
-            position: absolute;
-            background: radial-gradient(circle, #fcd34d 0%, #d97706 100%);
-            border-radius: 50% 50% 10% 10%;
-            width: 30px;
-            height: 40px;
-            box-shadow: 0 0 10px #f59e0b;
-            animation: lantern-float linear infinite;
-            opacity: 0.8;
-        }
-
-        @keyframes lantern-float {
-            0% {
-                transform: translateY(110vh) translateX(0) scale(0.8);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.8;
-            }
-
-            100% {
-                transform: translateY(-20vh) translateX(20px) scale(1);
-                opacity: 0;
-            }
+        @keyframes wave {
+            0%, 40%, 100% { transform: translateY(0); }
+            20% { transform: translateY(-8px); }
         }
     </style>
-</head>
-
-<body class="antialiased text-slate-700">
+<body class="antialiased text-warm-700">
 
 
     <div id="loading-overlay"
@@ -955,7 +197,7 @@
         <img src="https://cpd.go.th/images/logo_cpd_big.png" alt="โลโก้สหกรณ์" class="w-24 h-24 mb-6 object-contain">
 
         <!-- ข้อความขยับแบบคลื่น -->
-        <div class="wave-text text-green-800 text-lg font-semibold">
+        <div class="wave-text text-warm-600 text-lg font-semibold">
             <span>ก</span><span>ำ</span><span>ลั</span><span>ง</span><span>โ</span><span>ห</span><span>ล</span><span>ด</span><span>ข</span><span>้</span><span>อ</span><span>ม</span><span>ู</span><span>ล</span><span>.</span><span>.</span><span>.</span>
         </div>
 
@@ -1062,22 +304,28 @@
     <!-- Main Container -->
     <div id="app" class="min-h-screen">
         <!-- Header -->
-        <header class="bg-gradient-to-r from-green-700 to-emerald-900 shadow-lg sticky top-0 z-40">
+        <header class="bg-white/90 backdrop-blur-md border-b border-warm-200 sticky top-0 z-40">
             <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
+                <div class="flex items-center justify-between h-18 py-2">
                     <div class="flex items-center">
-                        <img src="https://cpd.go.th/images/logo_cpd_big.png" style="width:55px;height:55px;"
-                            class="mr-3">
-                        <a id="brand-logo" class="flex-shrink-0 text-2xl font-bold text-white">
-                            คลังไฟล์เอกสาร
+                        <img src="https://cpd.go.th/images/logo_cpd_big.png" style="width:50px;height:50px;"
+                            class="mr-4 object-contain">
+                        <a id="brand-logo" class="flex-shrink-0 text-xl font-heading font-bold text-warm-700 tracking-tight">
+                            คลังไฟล์เอกสารสหกรณ์
                         </a>
                         <div class="hidden md:block">
-                            <div id="main-menu" class="ml-10 flex items-baseline space-x-4">
+                            <div id="main-menu" class="ml-10 flex items-center space-x-6">
                                 <!-- Menu items will be injected here -->
                                 <a href="#"
-                                    class="text-white hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>
+                                    class="text-warm-600 hover:text-accent px-1 py-2 text-sm font-medium transition-all duration-200 relative group">
+                                    หน้าแรก
+                                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-200 group-hover:w-full"></span>
+                                </a>
                                 <a href="#"
-                                    class="text-white hover:text-blue-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">กลุ่มงาน</a>
+                                    class="text-warm-600 hover:text-accent px-1 py-2 text-sm font-medium transition-all duration-200 relative group">
+                                    กลุ่มงาน
+                                    <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-200 group-hover:w-full"></span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -1085,13 +333,8 @@
                         <div id="auth-buttons" class="ml-4 flex items-center md:ml-6">
                             <!-- Login/Logout button here -->
                             <button
-                                class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-colors duration-200 flex items-center space-x-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
-                                    </path>
-                                </svg>
+                                class="bg-accent text-white px-5 py-2.5 rounded-full hover:bg-accent-hover focus:outline-none focus:ring-4 focus:ring-accent/20 transition-all duration-200 flex items-center space-x-2 shadow-sm font-medium">
+                                <i data-lucide="log-in" class="w-4 h-4"></i>
                                 <span>เข้าสู่ระบบ</span>
                             </button>
                         </div>
@@ -1099,7 +342,7 @@
                     <div class="-mr-2 flex md:hidden">
                         <!-- Mobile menu button -->
                         <button id="mobile-menu-button" type="button"
-                            class="bg-blue-900 inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-colors duration-200"
+                            class="bg-blue-900 inline-flex items-center justify-center p-2 rounded-md text-white hover:text-white hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-colors duration-200"
                             aria-controls="mobile-menu" aria-expanded="false">
                             <span class="sr-only">Open main menu</span>
                             <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -1128,7 +371,7 @@
                 <div id="mobile-auth-buttons" class="pt-4 pb-3 border-t border-blue-700">
                     <!-- Mobile login/logout button here -->
                     <button
-                        class="bg-blue-500 text-white w-full px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-colors duration-200 flex items-center justify-center space-x-2">
+                        class="bg-blue-500 text-white w-full px-4 py-2 rounded-md hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 transition-colors duration-200 flex items-center justify-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                             xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1150,24 +393,24 @@
                     <!-- Dashboard cards will be injected here -->
                 </div>
                 <!-- Table and filters -->
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                         <h2 class="text-xl font-semibold">รายการไฟล์ทั้งหมด</h2>
                         <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                             <input id="home-search-input" type="text" placeholder="ค้นหาด้วยชื่อเรื่อง..."
-                                class="form-input w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="form-input w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <select id="home-group-filter"
-                                class="form-select w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <!-- Group options will be injected here -->
                             </select>
                             <select id="home-type-filter"
-                                class="form-select w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                                class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
                             <!-- ✅ เพิ่ม -->
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-warm-50">
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1197,20 +440,20 @@
 
             <!-- Page: Group View -->
             <div id="page-group" class="page">
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
                         <h2 id="group-page-title" class="text-xl font-semibold"></h2>
                         <div class="flex items-center gap-4 w-full md:w-auto">
                             <input id="group-search-input" type="text" placeholder="ค้นหาด้วยชื่อเรื่อง..."
-                                class="form-input w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="form-input w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <select id="group-type-filter"
-                                class="form-select w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                                class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
                             <!-- ✅ เพิ่ม -->
                         </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                            <thead class="bg-warm-50">
                                 <tr>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1239,7 +482,7 @@
             <div id="page-stats" class="page">
                 <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
                     <span
-                        class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 rounded-lg">📊</span>
+                        class="bg-accent/10 text-accent px-4 py-2 rounded-lg">📊</span>
                     สถิติและภาพรวมระบบ
                 </h1>
 
@@ -1247,13 +490,13 @@
                 <div id="kpi-dashboard" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <!-- KPI Card 1: Total Files -->
                     <div
-                        class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-5 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                        class="bg-white border border-warm-200 card-hover text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-xl transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-blue-100 text-sm font-medium">ไฟล์ทั้งหมด</p>
-                                <p id="kpi-total-files" class="text-3xl font-bold mt-1">-</p>
+                                <p class="text-warm-500 text-sm font-medium">ไฟล์ทั้งหมด</p>
+                                <p id="kpi-total-files" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
                             </div>
-                            <div class="bg-blue-400/30 p-3 rounded-full">
+                            <div class="bg-accent/10 text-accent p-3 rounded-full">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M7 21h10a2 2 0 002-2V9l-7-7H7a2 2 0 00-2 2v16a2 2 0 002 2z"></path>
@@ -1264,13 +507,13 @@
 
                     <!-- KPI Card 2: Total Downloads -->
                     <div
-                        class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-5 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                        class="bg-white border border-warm-200 card-hover text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-xl transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-emerald-100 text-sm font-medium">ดาวน์โหลดรวม</p>
-                                <p id="kpi-total-downloads" class="text-3xl font-bold mt-1">-</p>
+                                <p class="text-warm-500 text-sm font-medium">ดาวน์โหลดรวม</p>
+                                <p id="kpi-total-downloads" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
                             </div>
-                            <div class="bg-emerald-400/30 p-3 rounded-full">
+                            <div class="bg-sage/10 text-sage p-3 rounded-full">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -1281,13 +524,13 @@
 
                     <!-- KPI Card 3: Total Cooperatives -->
                     <div
-                        class="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-5 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                        class="bg-white border border-warm-200 card-hover text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-xl transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-amber-100 text-sm font-medium">สหกรณ์/กลุ่มเกษตรกร</p>
-                                <p id="kpi-total-coops" class="text-3xl font-bold mt-1">-</p>
+                                <p class="text-warm-500 text-sm font-medium">สหกรณ์/กลุ่มเกษตรกร</p>
+                                <p id="kpi-total-coops" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
                             </div>
-                            <div class="bg-amber-400/30 p-3 rounded-full">
+                            <div class="bg-accent/10 text-accent p-3 rounded-full">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
@@ -1299,13 +542,13 @@
 
                     <!-- KPI Card 4: Avg Satisfaction -->
                     <div
-                        class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-5 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
+                        class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-xl transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-purple-100 text-sm font-medium">ความพึงพอใจเฉลี่ย</p>
-                                <p id="kpi-avg-satisfaction" class="text-3xl font-bold mt-1">-</p>
+                                <p class="text-warm-500 text-sm font-medium">ความพึงพอใจเฉลี่ย</p>
+                                <p id="kpi-avg-satisfaction" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
                             </div>
-                            <div class="bg-purple-400/30 p-3 rounded-full">
+                            <div class="bg-accent/10 text-accent p-3 rounded-full">
                                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
@@ -1319,9 +562,9 @@
                 <!-- ========== Charts Section ========== -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <!-- Chart 1: Files per Group -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover border border-gray-100">
                         <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-700">
-                            <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg">📁</span>
+                            <span class="bg-emerald-100 text-accent p-2 rounded-lg">📁</span>
                             จำนวนไฟล์ในแต่ละกลุ่มงาน
                         </h2>
                         <div class="relative" style="height: 280px;">
@@ -1330,7 +573,7 @@
                     </div>
 
                     <!-- Chart 2: Satisfaction -->
-                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                    <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover border border-gray-100">
                         <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-gray-700">
                             <span class="bg-purple-100 text-purple-600 p-2 rounded-lg">⭐</span>
                             ระดับความพึงพอใจ
@@ -1342,7 +585,7 @@
                 </div>
 
                 <!-- ========== Cooperative Comparison Section ========== -->
-                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover border border-gray-100 mb-8">
                     <h2 class="text-xl font-semibold mb-6 flex items-center gap-2 text-gray-700">
                         <span class="bg-amber-100 text-amber-600 p-2 rounded-lg">🏢</span>
                         เปรียบเทียบข้อมูลสหกรณ์
@@ -1350,14 +593,14 @@
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <!-- Chart: Files per Coop -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="bg-warm-50 p-4 rounded-lg">
                             <h3 class="text-sm font-semibold text-gray-600 mb-3">📊 จำนวนไฟล์ต่อสหกรณ์ (Top 10)</h3>
                             <div class="relative" style="height: 300px;">
                                 <canvas id="filesPerCoopChart"></canvas>
                             </div>
                         </div>
                         <!-- Chart: Downloads per Coop -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="bg-warm-50 p-4 rounded-lg">
                             <h3 class="text-sm font-semibold text-gray-600 mb-3">📥 ยอดดาวน์โหลดต่อสหกรณ์ (Top 10)</h3>
                             <div class="relative" style="height: 300px;">
                                 <canvas id="downloadsPerCoopChart"></canvas>
@@ -1366,13 +609,13 @@
                     </div>
 
                     <!-- Cooperative Summary Table -->
-                    <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="bg-warm-50 p-4 rounded-lg">
                         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
                             <h3 class="text-sm font-semibold text-gray-600">📋 ตารางสรุปข้อมูลสหกรณ์/กลุ่มเกษตรกร</h3>
                             <!-- Filter Tabs -->
                             <div class="flex gap-2">
                                 <button data-filter="all"
-                                    class="coop-filter-btn active px-4 py-2 text-xs font-semibold rounded-full bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                                    class="coop-filter-btn active px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent-hover transition-colors">
                                     ทั้งหมด <span id="filter-count-all"
                                         class="ml-1 bg-white/20 px-2 py-0.5 rounded-full">0</span>
                                 </button>
@@ -1390,7 +633,7 @@
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 text-sm">
-                                <thead class="bg-gray-100 sticky top-0">
+                                <thead class="bg-warm-100 sticky top-0">
                                     <tr>
                                         <th class="px-4 py-3 text-left font-semibold text-gray-600">ลำดับ</th>
                                         <th class="px-4 py-3 text-left font-semibold text-gray-600">ชื่อ</th>
@@ -1415,7 +658,7 @@
                 <div id="admin-dashboard-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <!-- Admin dashboard cards will be injected here -->
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
                     <h2 class="text-xl font-semibold mb-4">ภาพรวมจำนวนไฟล์แต่ละกลุ่มงาน</h2>
                     <div class="relative h-96 w-full">
                         <canvas id="adminFilesPerGroupChart"></canvas>
@@ -1428,13 +671,13 @@
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold">จัดการผู้ใช้งาน</h1>
                     <button id="add-user-btn"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2">
+                        class="bg-accent text-white px-4 py-2 rounded-md hover:bg-accent-hover flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> เพิ่มผู้ใช้
                     </button>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1463,13 +706,13 @@
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-3xl font-bold">จัดการกลุ่มงาน</h1>
                     <button id="add-group-btn"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2">
+                        class="bg-accent text-white px-4 py-2 rounded-md hover:bg-accent-hover flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5"></i> เพิ่มกลุ่มงาน
                     </button>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1504,7 +747,7 @@
                 </div>
 
                 <!-- ✅ ฟอร์มนำเข้า -->
-                <div id="import-form-container" class="bg-white p-6 rounded-lg shadow-lg mb-8 hidden">
+                <div id="import-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
                     <h2 class="text-2xl font-semibold mb-4">📂 นำเข้าเอกสารจากโฟลเดอร์สหกรณ์</h2>
                     <p class="text-gray-600 mb-4 text-sm">
                         ระบุข้อมูลของสหกรณ์และโฟลเดอร์หลัก (ซึ่งมี 19 โฟลเดอร์ย่อยภายใน)
@@ -1515,7 +758,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🏢 ชื่อสหกรณ์</label>
                             <input list="coop-list" id="import-coop-name"
-                                class="border border-gray-300 rounded-md w-full px-3 py-2" placeholder="ชื่อสหกรณ์"
+                                class="border border-warm-200 rounded-md w-full px-3 py-2" placeholder="ชื่อสหกรณ์"
                                 required>
                             <datalist id="coop-list"></datalist>
                         </div>
@@ -1523,14 +766,14 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">🧩 กลุ่มงาน</label>
                             <select id="import-group"
-                                class="border border-gray-300 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="border border-warm-200 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                                 required></select>
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">👤 ผู้บันทึก</label>
                             <select id="import-user"
-                                class="border border-gray-300 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                class="border border-warm-200 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                                 required></select>
                         </div>
 
@@ -1539,11 +782,11 @@
                                 ของสหกรณ์</label>
                             <div class="flex gap-2">
                                 <input type="url" id="import-folder-url"
-                                    class="border border-gray-300 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
+                                    class="border border-warm-200 rounded-md w-full px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                                     placeholder="https://drive.google.com/drive/folders/xxxxxxxxxxxxxxxxxxxx" required>
                                 
                                 <button type="button" id="save-link-btn" onclick="saveDriveLink()"
-                                    class="bg-gray-100 text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-200 flex-shrink-0 flex items-center gap-2 transition-colors">
+                                    class="bg-warm-100 text-gray-700 border border-warm-200 px-4 py-2 rounded-md hover:bg-gray-200 flex-shrink-0 flex items-center gap-2 transition-colors">
                                     <i data-lucide="save" class="w-4 h-4"></i>
                                     <span>บันทึก</span>
                                 </button>
@@ -1570,7 +813,7 @@
                                 🌟 นำเข้าข้อมูลรวม
                             </button>
                             <button type="button" id="check-duplicates-btn" onclick="handleCheckDuplicates()"
-                                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2">
+                                class="bg-accent text-white px-6 py-2 rounded-md hover:bg-accent-hover flex items-center gap-2">
                                 🔍 ตรวจสอบไฟล์
                             </button>
                             <button type="submit"
@@ -1581,7 +824,7 @@
 
                         <!-- ✅ ผลการตรวจสอบไฟล์ซ้ำ -->
                         <div id="duplicate-check-result" class="col-span-1 md:col-span-2 lg:col-span-3 mt-4 hidden">
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+                            <div class="bg-white border border-warm-200 rounded-xl border border-warm-200 card-hover overflow-hidden">
                                 <!-- Header -->
                                 <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4">
                                     <h3 class="text-lg font-bold flex items-center gap-2">📊 ผลการตรวจสอบไฟล์</h3>
@@ -1591,7 +834,7 @@
                                 </div>
                                 
                                 <!-- Tabs -->
-                                <div class="border-b border-gray-200 px-4">
+                                <div class="border-b border-warm-200 px-4">
                                     <nav class="flex gap-1 -mb-px">
                                         <button onclick="switchDupTab('new')" id="dup-tab-new"
                                             class="dup-tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-green-500 text-green-600">
@@ -1642,11 +885,11 @@
 
                                 <!-- Tab Content: มีอยู่แล้ว -->
                                 <div id="dup-panel-existing" class="dup-panel p-4 max-h-72 overflow-y-auto hidden">
-                                    <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mb-3 text-sm text-gray-600">
+                                    <div class="bg-warm-50 border border-warm-200 p-3 rounded-lg mb-3 text-sm text-gray-600">
                                         ✅ ไฟล์เหล่านี้มีอยู่ในระบบแล้ว (ชื่อ + ขนาด + ประเภทเดียวกัน) — จะถูก<strong>ข้าม</strong>ไม่นำเข้าซ้ำ
                                     </div>
                                     <table class="min-w-full text-sm">
-                                        <thead class="bg-gray-100">
+                                        <thead class="bg-warm-100">
                                             <tr>
                                                 <th class="px-3 py-2 text-left font-medium text-gray-600">ชื่อไฟล์</th>
                                                 <th class="px-3 py-2 text-left font-medium text-gray-600">ประเภท</th>
@@ -1659,7 +902,7 @@
                                 </div>
 
                                 <!-- Action Buttons -->
-                                <div class="bg-gray-50 px-6 py-4 flex flex-wrap justify-end gap-3 border-t">
+                                <div class="bg-warm-50 px-6 py-4 flex flex-wrap justify-end gap-3 border-t">
                                     <button type="button" onclick="handleImportNewOnly()"
                                         id="btn-import-new-only"
                                         class="bg-green-600 text-white px-5 py-2.5 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2 shadow-sm transition-colors">
@@ -1696,21 +939,21 @@
                 <!-- ✅ ช่องค้นหาและกรอง -->
                 <div class="flex flex-col md:flex-row justify-between items-center my-6 gap-4">
                     <div class="flex flex-col md:flex-row items-center gap-4 w-full">
-                        <input id="admin-search-input" type="text" placeholder="ค้นหาด้วยชื่อเรื่อง..." class="form-input w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md
+                        <input id="admin-search-input" type="text" placeholder="ค้นหาด้วยชื่อเรื่อง..." class="form-input w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md
                     focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <select id="admin-group-filter" class="form-select w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md
+                        <select id="admin-group-filter" class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md
                      focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </select>
-                        <select id="admin-type-filter" class="form-select w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md
+                        <select id="admin-type-filter" class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-md
                      focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </select>
                     </div>
                 </div>
 
                 <!-- ✅ ตารางไฟล์ -->
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ชื่อเรื่อง
                                 </th>
@@ -1744,9 +987,9 @@
             <!-- Page: Admin Import Logs -->
             <div id="page-admin-import-logs" class="page">
                 <h1 class="text-3xl font-bold mb-6">📜 ประวัติการนำเข้าไฟล์</h1>
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1778,9 +1021,9 @@
             <!-- ✅ PAGE: ADMIN DELETE REQUESTS -->
             <div id="page-admin-delete-requests" class="page">
                 <h1 class="text-3xl font-bold mb-6">📤 คำขอลบไฟล์</h1>
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ชื่อไฟล์
                                 </th>
@@ -1828,13 +1071,13 @@
                 </div>
 
                 <!-- Table -->
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-red-50">
                             <tr>
                                 <th class="px-3 py-3 text-left">
                                     <input type="checkbox" id="select-all-recycle"
-                                        class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
+                                        class="w-4 h-4 text-red-600 border-warm-200 rounded focus:ring-red-500"
                                         onchange="toggleSelectAllRecycle(this)">
                                 </th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase">ชื่อเรื่อง
@@ -1862,22 +1105,22 @@
                 <h1 class="text-3xl font-bold mb-6">📊 Activity Log</h1>
 
                 <!-- Filters -->
-                <div class="bg-white p-4 rounded-lg shadow-lg mb-6">
+                <div class="bg-white p-4 rounded-lg border border-warm-200 card-hover mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">วันที่เริ่มต้น</label>
                             <input type="date" id="activity-date-from"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-3 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">วันที่สิ้นสุด</label>
                             <input type="date" id="activity-date-to"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-3 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ประเภทผู้ใช้</label>
                             <select id="activity-role-filter"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-3 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="all">ทั้งหมด</option>
                                 <option value="admin">Admin</option>
                                 <option value="subadmin">Subadmin</option>
@@ -1888,7 +1131,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ประเภทกิจกรรม</label>
                             <select id="activity-action-filter"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                class="w-full px-3 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="all">ทั้งหมด</option>
                                 <option value="login">เข้าสู่ระบบ</option>
                                 <option value="upload">อัปโหลดไฟล์</option>
@@ -1909,7 +1152,7 @@
                     </div>
                     <div class="mt-4 flex justify-end gap-2">
                         <button onclick="loadActivitySummary()"
-                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+                            class="bg-accent text-white px-4 py-2 rounded-md hover:bg-accent-hover transition">
                             <i data-lucide="refresh-cw" class="w-4 h-4 inline mr-1"></i> โหลดข้อมูล
                         </button>
                     </div>
@@ -1918,13 +1161,13 @@
                 <!-- View Tabs -->
                 <div class="mb-4">
                     <button id="tab-timeline" onclick="switchActivityTab('timeline')"
-                        class="px-4 py-2 rounded-t-lg bg-blue-600 text-white font-medium">📅 Timeline View</button>
+                        class="px-4 py-2 rounded-t-lg bg-accent text-white font-medium">📅 Timeline View</button>
                     <button id="tab-detail" onclick="switchActivityTab('detail')"
                         class="px-4 py-2 rounded-t-lg bg-gray-200 text-gray-700 font-medium">📋 รายละเอียด</button>
                 </div>
 
                 <!-- Timeline View -->
-                <div id="activity-timeline-view" class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div id="activity-timeline-view" class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <div id="activity-timeline-container">
                         <!-- Timeline will be rendered here -->
                         <p class="text-gray-500 text-center py-8">กดปุ่ม "โหลดข้อมูล" เพื่อดูกิจกรรม</p>
@@ -1932,9 +1175,9 @@
                 </div>
 
                 <!-- Detail View (Hidden by default) -->
-                <div id="activity-detail-view" class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto hidden">
+                <div id="activity-detail-view" class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto hidden">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">เวลา</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ผู้ใช้</th>
@@ -1957,7 +1200,7 @@
                 <div id="subadmin-dashboard-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     <!-- subadmin dashboard cards will be injected here -->
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
                     <h2 class="text-xl font-semibold mb-4">ภาพรวมไฟล์ทั้งหมด</h2>
                     <div class="relative h-96 w-full">
                         <canvas id="subadminFilesPerGroupChart"></canvas>
@@ -1971,7 +1214,7 @@
                     ไฟล์ทั้งหมด (Subadmin)
                     <!-- Toggle Button for Upload Form -->
                     <button id="toggle-subadmin-upload-form-btn"
-                        class="bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-emerald-700 flex items-center gap-1.5 shadow-sm ml-4">
+                        class="bg-accent text-white px-3 py-1.5 rounded-md text-sm hover:bg-accent-hover flex items-center gap-1.5 shadow-sm ml-4">
                         <i data-lucide="plus" class="w-4 h-4"></i>
                         <span>เปิดฟอร์มเพิ่มไฟล์</span>
                     </button>
@@ -1979,7 +1222,7 @@
 
 
                 <!-- ✅ Subadmin Upload Form -->
-                <div id="subadmin-upload-form-container" class="bg-white p-6 rounded-lg shadow-lg mb-8 hidden">
+                <div id="subadmin-upload-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
                     <h2 class="text-xl font-semibold mb-4 text-emerald-700">เพิ่มไฟล์ใหม่ (Subadmin)</h2>
                     <form id="subadmin-upload-form">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -1987,14 +1230,14 @@
                                 <label for="subadmin-upload-title"
                                     class="block text-sm font-medium text-gray-700">ชื่อเรื่อง</label>
                                 <input type="text" id="subadmin-upload-title"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent/20 focus:border-accent"
                                     required>
                             </div>
                             <div>
                                 <label for="subadmin-upload-subtitle"
                                     class="block text-sm font-medium text-gray-700">ชื่อเพิ่มเติม</label>
                                 <input type="text" id="subadmin-upload-subtitle"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500">
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent/20 focus:border-accent">
                             </div>
                         </div>
 
@@ -2003,7 +1246,7 @@
                                 <label for="subadmin-upload-type"
                                     class="block text-sm font-medium text-gray-700">ประเภทเอกสาร</label>
                                 <select id="subadmin-upload-type"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent/20 focus:border-accent"
                                     required>
                                 </select>
                             </div>
@@ -2011,7 +1254,7 @@
                                 <label for="subadmin-upload-holdtype"
                                     class="block text-sm font-medium text-gray-700">สถานะเอกสาร</label>
                                 <select id="subadmin-upload-holdtype"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                                     <option value="">-- เลือกสถานะเอกสาร --</option>
                                     <option value="รับจดทะเบียน">รับจดทะเบียน</option>
                                     <option value="ถือใช้">ถือใช้</option>
@@ -2020,7 +1263,7 @@
                                     <option value="อื่นๆ">อื่นๆ</option>
                                 </select>
                                 <input type="text" id="subadmin-upload-holdtype-custom" placeholder="ระบุสถานะอื่น ๆ"
-                                    class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md hidden">
+                                    class="mt-2 block w-full px-3 py-2 border border-warm-200 rounded-md hidden">
                             </div>
                         </div>
 
@@ -2028,7 +1271,7 @@
                             <label for="subadmin-upload-holddate"
                                 class="block text-sm font-medium text-gray-700">วันที่</label>
                             <input type="date" id="subadmin-upload-holddate"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                         </div>
 
                         <div class="mb-6">
@@ -2044,13 +1287,13 @@
 
                         <div class="flex items-center gap-4">
                             <button type="submit"
-                                class="bg-emerald-600 text-white py-2 px-4 rounded-md hover:bg-emerald-700">บันทึกข้อมูล</button>
+                                class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึกข้อมูล</button>
                         </div>
                     </form>
                 </div>
 
                 <!-- Subadmin Edit File Form -->
-                <div id="subadmin-file-form-container" class="bg-white p-6 rounded-lg shadow-lg mb-8 hidden">
+                <div id="subadmin-file-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
                     <h2 id="subadmin-file-form-title" class="text-xl font-semibold mb-4 text-purple-700">แก้ไขข้อมูลไฟล์
                     </h2>
                     <form id="subadmin-file-form">
@@ -2060,14 +1303,14 @@
                                 <label for="subadmin-file-title"
                                     class="block text-sm font-medium text-gray-700">ชื่อเรื่อง</label>
                                 <input type="text" id="subadmin-file-title"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                                     required>
                             </div>
                             <div>
                                 <label for="subadmin-file-subtitle"
                                     class="block text-sm font-medium text-gray-700">ชื่อเพิ่มเติม</label>
                                 <input type="text" id="subadmin-file-subtitle"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -2075,14 +1318,14 @@
                                 <label for="subadmin-file-coop"
                                     class="block text-sm font-medium text-gray-700">ชื่อสหกรณ์</label>
                                 <input list="coop-list" id="subadmin-file-coop"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
                                     placeholder="เลือกชื่อสหกรณ์" required>
                             </div>
                             <div>
                                 <label for="subadmin-file-group"
                                     class="block text-sm font-medium text-gray-700">กลุ่มงาน</label>
                                 <select id="subadmin-file-group"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                                     required>
                                 </select>
                             </div>
@@ -2092,7 +1335,7 @@
                                 <label for="subadmin-file-type"
                                     class="block text-sm font-medium text-gray-700">ประเภทเอกสาร</label>
                                 <select id="subadmin-file-type"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
                                     required>
                                 </select>
                             </div>
@@ -2100,7 +1343,7 @@
                                 <label for="subadmin-file-holdtype"
                                     class="block text-sm font-medium text-gray-700">สถานะเอกสาร</label>
                                 <select id="subadmin-file-holdtype"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                                     <option value="">-- เลือกสถานะเอกสาร --</option>
                                     <option value="รับจดทะเบียน">รับจดทะเบียน</option>
                                     <option value="ถือใช้">ถือใช้</option>
@@ -2109,7 +1352,7 @@
                                     <option value="อื่นๆ">อื่นๆ</option>
                                 </select>
                                 <input type="text" id="subadmin-file-holdtype-custom"
-                                    class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md hidden"
+                                    class="mt-2 block w-full px-3 py-2 border border-warm-200 rounded-md hidden"
                                     placeholder="ระบุสถานะอื่นๆ">
                             </div>
                         </div>
@@ -2118,7 +1361,7 @@
                                 <label for="subadmin-file-holddate"
                                     class="block text-sm font-medium text-gray-700">วันที่</label>
                                 <input type="date" id="subadmin-file-holddate"
-                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                             </div>
                         </div>
                         <div class="flex items-center gap-4">
@@ -2133,18 +1376,18 @@
                 <div
                     class="flex flex-col md:flex-row flex-wrap md:flex-nowrap justify-start md:justify-between items-center mb-4 gap-4 w-full">
                     <input id="subadmin-search-input" type="text" placeholder="ค้นหาชื่อเรื่อง..."
-                        class="flex-1 form-input px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        class="flex-1 form-input px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                     <select id="subadmin-group-filter"
-                        class="flex-1 form-select px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        class="flex-1 form-select px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                         <option value="all">กลุ่มงานทั้งหมด</option>
                     </select>
                     <select id="subadmin-type-filter"
-                        class="flex-1 form-select px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        class="flex-1 form-select px-4 py-2 border border-warm-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
                         <option value="all">ประเภททั้งหมด</option>
                     </select>
                 </div>
                 <!-- Files Table -->
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-purple-50">
                             <tr>
@@ -2178,7 +1421,7 @@
                 <div id="officer-dashboard-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <!-- officer dashboard cards will be injected here -->
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
                     <h2 class="text-xl font-semibold mb-4">ภาพรวมไฟล์ของคุณ</h2>
                     <div class="relative h-96 w-full">
                         <canvas id="officerFilesPerGroupChart"></canvas>
@@ -2189,31 +1432,31 @@
             <!-- Page: officer Profile -->
             <div id="page-officer-profile" class="page">
                 <h1 class="text-3xl font-bold mb-6">แก้ไขข้อมูลส่วนตัว</h1>
-                <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
+                <div class="bg-white p-8 rounded-lg border border-warm-200 card-hover max-w-lg mx-auto">
                     <form id="profile-form">
                         <input type="hidden" id="profile-userid">
                         <div class="mb-4">
                             <label for="profile-fullname"
                                 class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล</label>
                             <input type="text" id="profile-fullname"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 required>
                         </div>
                         <div class="mb-4">
                             <label for="profile-username"
                                 class="block text-sm font-medium text-gray-700">Username</label>
                             <input type="text" id="profile-username"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 required>
                         </div>
                         <div class="mb-6">
                             <label for="profile-password" class="block text-sm font-medium text-gray-700">รหัสผ่านใหม่
                                 (เว้นว่างไว้หากไม่ต้องการเปลี่ยน)</label>
                             <input type="password" id="profile-password"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <button type="submit"
-                            class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">บันทึกการเปลี่ยนแปลง</button>
+                            class="w-full bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึกการเปลี่ยนแปลง</button>
                     </form>
                 </div>
             </div>
@@ -2223,39 +1466,39 @@
                 <h1 class="text-3xl font-bold mb-6 flex justify-between items-center">
                     จัดการไฟล์ของคุณ
                     <button id="toggle-file-form-btn"
-                        class="bg-emerald-600 text-white px-3 py-1.5 rounded-md text-sm hover:bg-emerald-700 flex items-center gap-1.5 shadow-sm ml-4">
+                        class="bg-accent text-white px-3 py-1.5 rounded-md text-sm hover:bg-accent-hover flex items-center gap-1.5 shadow-sm ml-4">
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         <span>เปิดฟอร์มเพิ่มไฟล์</span>
                     </button>
                 </h1>
                 <!-- Add/Edit File Form -->
-                <div id="file-form-container" class="bg-white p-6 rounded-lg shadow-lg mb-8 hidden">
+                <div id="file-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
                     <h2 id="file-form-title" class="text-xl font-semibold mb-4">เพิ่มไฟล์ใหม่</h2>
                     <form id="file-form">
                         <input type="hidden" id="file-id">
                         <div class="mb-4">
                             <label for="file-title" class="block text-sm font-medium text-gray-700">ชื่อเรื่อง</label>
                             <input type="text" id="file-title"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 required>
                         </div>
                         <div class="mb-4">
                             <label for="file-subtitle"
                                 class="block text-sm font-medium text-gray-700">ชื่อเพิ่มเติม</label>
                             <input type="text" id="file-subtitle"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div class="mb-4">
                             <label for="file-coop" class="block text-sm font-medium text-gray-700">ชื่อสหกรณ์</label>
                             <input list="coop-list-user" id="file-coop"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="เลือกชื่อสหกรณ์" required>
                             <datalist id="coop-list-user"></datalist>
                         </div>
                         <div class="mb-4">
                             <label for="file-group" class="block text-sm font-medium text-gray-700">กลุ่มงาน</label>
                             <select id="file-group"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 required>
                                 <!-- Group options injected here -->
                             </select>
@@ -2263,7 +1506,7 @@
                         <div class="mb-4">
                             <label for="file-type" class="block text-sm font-medium text-gray-700">ประเภทเอกสาร</label>
                             <select id="file-type"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                                 required>
                                 <!-- Type options injected here -->
                             </select>
@@ -2274,7 +1517,7 @@
                             <label for="file-holdtype"
                                 class="block text-sm font-medium text-gray-700">สถานะเอกสาร</label>
                             <select id="file-holdtype"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                                 <option value="">-- เลือกสถานะเอกสาร --</option>
                                 <option value="รับจดทะเบียน">รับจดทะเบียน</option>
                                 <option value="ถือใช้">ถือใช้</option>
@@ -2283,13 +1526,13 @@
                                 <option value="อื่นๆ">อื่นๆ</option>
                             </select>
                             <input type="text" id="file-holdtype-custom" placeholder="ระบุสถานะอื่น ๆ"
-                                class="mt-2 block w-full px-3 py-2 border border-gray-300 rounded-md hidden">
+                                class="mt-2 block w-full px-3 py-2 border border-warm-200 rounded-md hidden">
                         </div>
 
                         <div class="mb-4">
                             <label for="file-holddate" class="block text-sm font-medium text-gray-700">วันที่</label>
                             <input type="date" id="file-holddate"
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                             <p class="text-xs text-gray-500 mt-1">เลือกข้อมูล วัน/เดือน/ปี ที่เกี่ยวข้องกับเอกสาร
                                 (ถ้ามี)</p>
                         </div>
@@ -2311,7 +1554,7 @@
                         </div>
                         <div class="flex items-center gap-4">
                             <button type="submit"
-                                class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">บันทึกข้อมูล</button>
+                                class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึกข้อมูล</button>
                             <button type="button" id="cancel-edit-file-btn"
                                 class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300 hidden">ยกเลิก</button>
                         </div>
@@ -2320,21 +1563,21 @@
                 <!-- ✅ Filter Section for Officer Files -->
                 <div
                     class="flex flex-col md:flex-row flex-wrap md:flex-nowrap justify-start md:justify-between items-center mb-4 gap-4 w-full">
-                    <input id="officer-search-input" type="text" placeholder="ค้นหาชื่อเรื่อง..." class="flex-1 form-input px-4 py-2 border border-gray-300 rounded-md 
+                    <input id="officer-search-input" type="text" placeholder="ค้นหาชื่อเรื่อง..." class="flex-1 form-input px-4 py-2 border border-warm-200 rounded-md 
                 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <select id="officer-group-filter" class="flex-1 form-select px-4 py-2 border border-gray-300 rounded-md 
+                    <select id="officer-group-filter" class="flex-1 form-select px-4 py-2 border border-warm-200 rounded-md 
                  focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <!-- Group options will be injected here -->
                     </select>
-                    <select id="officer-type-filter" class="flex-1 form-select px-4 py-2 border border-gray-300 rounded-md 
+                    <select id="officer-type-filter" class="flex-1 form-select px-4 py-2 border border-warm-200 rounded-md 
                  focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <!-- Type options will be injected here -->
                     </select>
                 </div>
                 <!-- Officer's Files Table -->
-                <div class="bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+                <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-warm-50">
                             <tr>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -2414,23 +1657,23 @@
     <!-- Modals -->
     <!-- Login Modal -->
     <div id="login-modal" class="modal">
-        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm">
+        <div class="modal-content max-w-sm">
             <h2 class="text-2xl font-bold text-center mb-6">เข้าสู่ระบบ</h2>
             <form id="login-form">
                 <div class="mb-4">
                     <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
                     <input type="text" id="username"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required>
                 </div>
                 <div class="mb-6">
                     <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
                     <input type="password" id="password"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         required>
                 </div>
                 <button type="submit"
-                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">Login</button>
+                    class="w-full bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">Login</button>
                 <button type="button" id="close-login-modal"
                     class="w-full mt-2 bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">Close</button>
             </form>
@@ -2446,22 +1689,22 @@
                 <div class="mb-4">
                     <label for="user-fullname" class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล</label>
                     <input type="text" id="user-fullname"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md" required>
                 </div>
                 <div class="mb-4">
                     <label for="user-username" class="block text-sm font-medium text-gray-700">Username</label>
                     <input type="text" id="user-username"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md" required>
                 </div>
                 <div class="mb-4">
                     <label for="user-password" class="block text-sm font-medium text-gray-700">Password</label>
                     <input type="password" id="user-password"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
                     <p class="text-xs text-gray-500 mt-1">เว้นว่างไว้หากไม่ต้องการเปลี่ยนรหัสผ่าน</p>
                 </div>
                 <div class="mb-6">
                     <label for="user-role" class="block text-sm font-medium text-gray-700">Role</label>
-                    <select id="user-role" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                    <select id="user-role" class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md"
                         required>
                         <option value="officer">Officer</option>
                         <option value="subadmin">Subadmin</option>
@@ -2472,7 +1715,7 @@
                     <button type="button" id="close-user-modal"
                         class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">ยกเลิก</button>
                     <button type="submit"
-                        class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">บันทึก</button>
+                        class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึก</button>
                 </div>
             </form>
         </div>
@@ -2480,20 +1723,20 @@
 
     <!-- Group Modal -->
     <div id="group-modal" class="modal">
-        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-sm">
+        <div class="modal-content max-w-sm">
             <h2 id="group-modal-title" class="text-2xl font-bold mb-6"></h2>
             <form id="group-form">
                 <input type="hidden" id="group-id">
                 <div class="mb-6">
                     <label for="group-name" class="block text-sm font-medium text-gray-700">ชื่อกลุ่มงาน</label>
                     <input type="text" id="group-name"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md" required>
                 </div>
                 <div class="flex justify-end gap-4">
                     <button type="button" id="close-group-modal"
                         class="bg-gray-200 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-300">ยกเลิก</button>
                     <button type="submit"
-                        class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">บันทึก</button>
+                        class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึก</button>
                 </div>
             </form>
         </div>
@@ -2501,7 +1744,7 @@
 
     <!-- Satisfaction Modal -->
     <div id="satisfaction-modal" class="modal" style="z-index: 9999;">
-        <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+        <div class="modal-content max-w-md text-center">
             <h2 class="text-xl font-bold mb-4">โปรดให้คะแนนความพึงพอใจ</h2>
             <div class="flex justify-center items-center gap-4 text-5xl mb-6">
                 <span class="cursor-pointer satisfaction-emoji" data-score="1">😞</span>
@@ -2518,10 +1761,10 @@
 
     <!-- ✅ File Preview Modal -->
     <div id="file-preview-modal" class="modal" style="z-index: 9998;">
-        <div class="bg-white rounded-xl shadow-2xl preview-modal-content overflow-hidden">
+        <div class="modal-content max-w-6xl !p-0 overflow-hidden">
             <!-- Header -->
             <div
-                class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-600 to-indigo-600">
+                class="flex justify-between items-center px-6 py-4 border-b border-warm-200 bg-gradient-to-r from-blue-600 to-indigo-600">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">
                     <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -2542,7 +1785,7 @@
                 </button>
             </div>
             <!-- Preview Area -->
-            <div class="flex-1 p-2 bg-gray-100 overflow-hidden flex items-center justify-center"
+            <div class="flex-1 p-2 bg-warm-100 overflow-hidden flex items-center justify-center"
                 style="position:relative;">
                 <!-- Loading Overlay -->
                 <div id="preview-loading" style="display:flex;" class="flex flex-col items-center justify-center gap-3">
@@ -2553,13 +1796,13 @@
                             style="width: 0%"></div>
                     </div>
                 </div>
-                <iframe id="preview-iframe" class="w-full h-full rounded-lg border border-gray-300 bg-white"
+                <iframe id="preview-iframe" class="w-full h-full rounded-lg border border-warm-200 bg-white"
                     style="display:none;" frameborder="0" allowfullscreen></iframe>
                 <img id="preview-image" class="max-w-full max-h-full rounded-lg object-contain" style="display:none;"
                     alt="Preview" />
             </div>
             <!-- Footer -->
-            <div class="flex gap-3 px-6 py-4 border-t border-gray-200 bg-white">
+            <div class="flex gap-3 px-6 py-4 border-t border-warm-200 bg-white">
                 <button id="preview-download-btn"
                     class="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors font-medium">
                     <i data-lucide="download" class="w-4 h-4"></i>
@@ -2596,9 +1839,9 @@
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="mt-4 pt-4 border-t border-warm-200">
                 <button onclick="closeFileTypeModal()"
-                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
+                    class="w-full bg-warm-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
                     ปิด
                 </button>
             </div>
@@ -2618,25 +1861,25 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">หัวข้อคำขอ *</label>
                     <input type="text" id="req-title" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder="เช่น ขอเอกสารข้อบังคับ สหกรณ์ ABC">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">รายละเอียด</label>
                     <textarea id="req-description" rows="3"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                         placeholder="อธิบายเพิ่มเติมเกี่ยวกับเอกสารที่ต้องการ..."></textarea>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">มอบหมายให้</label>
                     <select id="req-assigned-to"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">-- เลือกผู้รับผิดชอบ --</option>
                     </select>
                 </div>
                 <div class="flex gap-3 pt-4">
                     <button type="button" onclick="closeCreateRequestModal()"
-                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        class="flex-1 px-4 py-2 border border-warm-200 rounded-lg text-gray-700 hover:bg-warm-50">
                         ยกเลิก
                     </button>
                     <button type="submit"
@@ -2664,7 +1907,7 @@
             </div>
 
             <!-- Status & Info -->
-            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <div class="px-6 py-4 border-b border-warm-200 bg-warm-50">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <span id="req-detail-status" class="px-3 py-1 rounded-full text-sm font-medium"></span>
@@ -2678,24 +1921,24 @@
             </div>
 
             <!-- Chat Messages -->
-            <div id="req-detail-chat" class="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50"
+            <div id="req-detail-chat" class="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-warm-50"
                 style="max-height: 350px;">
                 <!-- Chat messages will be injected here -->
             </div>
 
             <!-- Reply Box -->
-            <div class="px-6 py-4 border-t border-gray-200 bg-white rounded-b-xl">
+            <div class="px-6 py-4 border-t border-warm-200 bg-white rounded-b-xl">
                 <div class="flex gap-2 items-center">
                     <input type="text" id="req-reply-message" placeholder="พิมพ์ข้อความ..."
-                        class="flex-1 min-w-0 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="flex-1 min-w-0 px-4 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                     <div class="relative w-48 flex-shrink-0" id="req-reply-file-container">
-                        <div class="flex items-center justify-between w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer" onclick="toggleFileDropdown(event)">
+                        <div class="flex items-center justify-between w-full px-3 py-2 border border-warm-200 rounded-lg text-sm bg-white cursor-pointer" onclick="toggleFileDropdown(event)">
                             <span id="req-reply-file-text" class="truncate text-gray-400">📎 อ้างอิงไฟล์</span>
                             <i data-lucide="chevron-up" class="w-4 h-4 ml-1 text-gray-400 rotate-180 transition-transform duration-200" id="req-reply-file-icon"></i>
                         </div>
-                        <div id="req-reply-file-dropdown" class="absolute bottom-full left-0 w-64 mb-1 bg-white border border-gray-200 rounded-lg shadow-xl hidden z-50 flex-col max-h-64">
+                        <div id="req-reply-file-dropdown" class="absolute bottom-full left-0 w-64 mb-1 bg-white border border-warm-200 rounded-lg shadow-xl hidden z-50 flex-col max-h-64">
                             <div class="p-2 border-b border-gray-100 sticky top-0 bg-white rounded-t-lg">
-                                <input type="text" id="req-reply-file-search" placeholder="ค้นหาชื่อไฟล์..." class="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" onkeyup="filterFileDropdown()">
+                                <input type="text" id="req-reply-file-search" placeholder="ค้นหาชื่อไฟล์..." class="w-full px-3 py-2 border border-warm-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" onkeyup="filterFileDropdown()">
                             </div>
                             <div id="req-reply-file-list" class="overflow-y-auto flex-1 p-1 space-y-1">
                                 <div class="text-sm text-gray-500 text-center py-2">กำลังโหลด...</div>
@@ -2842,7 +2085,7 @@
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <!-- Dropdown Panel -->
-                    <div class="absolute left-0 mt-0 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block transition-all duration-200 z-50">
+                    <div class="absolute left-0 mt-0 w-64 rounded-md border border-warm-200 card-hover bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block transition-all duration-200 z-50">
                         <div class="py-2 max-h-[80vh] overflow-y-auto" role="menu">`;
 
                 // Add separator for mobile
@@ -2922,7 +2165,7 @@
                 <button id="logout-btn" class="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600">ออกจากระบบ</button>
             `;
             } else {
-                authHtml = `<button id="login-btn" class="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">เข้าสู่ระบบ</button>`;
+                authHtml = `<button id="login-btn" class="bg-accent text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-accent-hover">เข้าสู่ระบบ</button>`;
             }
 
             authContainer.innerHTML = authHtml;
@@ -3037,7 +2280,7 @@
             container.classList.add('hidden');
             const totalFiles = appState.allFiles.length;
             const colors = [
-                { bg: 'bg-emerald-700', text: 'text-white' },   // เขียวหลัก
+                { bg: 'bg-accent-hover', text: 'text-white' },   // เขียวหลัก
                 { bg: 'bg-amber-400', text: 'text-white' },     // ทองอ่อน
                 { bg: 'bg-lime-600', text: 'text-white' },      // เขียวมะกอก
                 { bg: 'bg-slate-700', text: 'text-white' },     // เทาเข้ม
@@ -3116,7 +2359,7 @@
 
             // Color mapping for group badges, consistent with renderHomeDashboard
             const colors = [
-                { bg: 'bg-emerald-700', text: 'text-white' },   // เขียวหลัก
+                { bg: 'bg-accent-hover', text: 'text-white' },   // เขียวหลัก
                 { bg: 'bg-amber-400', text: 'text-white' },     // ทองอ่อน
                 { bg: 'bg-lime-600', text: 'text-white' },      // เขียวมะกอก
                 { bg: 'bg-slate-700', text: 'text-white' },     // เทาเข้ม
@@ -3144,7 +2387,7 @@
 
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
                 const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // Check pending status (though usually home shows all; ensure logic handles it if home displays pending)
@@ -3377,7 +2620,7 @@
                 <h3 class="text-lg font-medium">การแสดงผลมือถือ</h3>
             </div>
             <div class="w-full">
-                <select id="admin-table-mode-select" class="text-gray-900 border border-gray-300 rounded-md px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-purple-300">
+                <select id="admin-table-mode-select" class="text-gray-900 border border-warm-200 rounded-md px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-purple-300">
                     <option value="scroll">เลื่อนแนวนอน (Default)</option>
                     <option value="card">Card View (แนะนำ)</option>
                     <option value="hide">ซ่อนคอลัมน์</option>
@@ -3392,12 +2635,12 @@
                 <h3 class="text-lg font-medium">ธีมเทศกาล</h3>
             </div>
             <div class="w-full space-y-2">
-                <select id="setting-theme" class="text-gray-900 border border-gray-300 rounded-md px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-pink-300">
+                <select id="setting-theme" class="text-gray-900 border border-warm-200 rounded-md px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-pink-300">
                     <option value="none">ปกติ (ไม่มีเอฟเฟค)</option>
                     <option value="new_year">ปีใหม่ (New Year)</option>
                     <option value="valentine">วาเลนไทน์ (Valentine)</option>
                 </select>
-                <button onclick="saveTheme()" class="w-full bg-white text-pink-600 font-bold py-1 px-3 rounded hover:bg-gray-100 text-sm shadow">
+                <button onclick="saveTheme()" class="w-full bg-white text-pink-600 font-bold py-1 px-3 rounded hover:bg-warm-100 text-sm shadow">
                     บันทึกธีม
                 </button>
             </div>
@@ -3421,7 +2664,7 @@
                 ${renderAppearanceRow('ประเภท', 'type')}
             </div>
             
-            <button onclick="handleSaveAppearance()" class="w-full bg-white text-blue-600 font-bold py-2 px-4 rounded hover:bg-gray-100 transition duration-200 shadow">
+            <button onclick="handleSaveAppearance()" class="w-full bg-white text-blue-600 font-bold py-2 px-4 rounded hover:bg-warm-100 transition duration-200 shadow">
                 บันทึกการตั้งค่า (ทั่วไป)
             </button>
         </div>
@@ -3442,7 +2685,7 @@
                 ${renderAppearanceRow('ประเภท', 'p-type')}
             </div>
 
-            <button onclick="handleSaveAppearance()" class="w-full bg-white text-red-600 font-bold py-2 px-4 rounded hover:bg-gray-100 transition duration-200 shadow">
+            <button onclick="handleSaveAppearance()" class="w-full bg-white text-red-600 font-bold py-2 px-4 rounded hover:bg-warm-100 transition duration-200 shadow">
                 บันทึกการตั้งค่า (Pending)
             </button>
         </div>
@@ -3498,18 +2741,18 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 text-sm mb-2 border-b border-gray-100 pb-2 last:border-0">
         <span class="font-medium w-full md:w-24 shrink-0 text-gray-700">${label}</span>
         <div class="grid grid-cols-[1fr,1fr,auto] gap-2 w-full md:w-auto flex-1">
-            <select id="setting-${idPrefix}-size" class="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
+            <select id="setting-${idPrefix}-size" class="w-full border border-warm-200 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
                 <option value="0.75rem">เล็ก</option>
                 <option value="0.875rem">ปกติ</option>
                 <option value="1rem">กลาง</option>
                 <option value="1.125rem">ใหญ่</option>
                 <option value="1.25rem">ใหญ่+</option>
             </select>
-            <select id="setting-${idPrefix}-weight" class="w-full border border-gray-300 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
+            <select id="setting-${idPrefix}-weight" class="w-full border border-warm-200 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-pink-500 bg-white">
                 <option value="normal">ปกติ</option>
                 <option value="bold">ตัวหนา</option>
             </select>
-            <input type="color" id="setting-${idPrefix}-color" class="w-8 h-8 p-0 border border-gray-300 rounded cursor-pointer">
+            <input type="color" id="setting-${idPrefix}-color" class="w-8 h-8 p-0 border border-warm-200 rounded cursor-pointer">
         </div>
     </div>`;
         }
@@ -3731,10 +2974,10 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${user.FullName}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.Username}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.Role === 'admin' ? 'bg-red-100 text-red-800' : user.Role === 'subadmin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'}">${user.Role}</span></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.Role === 'admin' ? 'bg-red-100 text-red-800' : user.Role === 'subadmin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-warm-600'}">${user.Role}</span></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${user.DateCreated}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                    <button data-userid="${user.UserID}" class="edit-user-btn text-indigo-600 hover:text-indigo-900 mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
+                                    <button data-userid="${user.UserID}" class="edit-user-btn text-accent hover:text-accent-hover mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
                                     <button data-userid="${user.UserID}" class="delete-user-btn text-red-600 hover:text-red-900"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                                 </td>
                             </tr>
@@ -3757,7 +3000,7 @@
 
             // Color mapping for group badges, consistent with renderHomeDashboard
             const colors = [
-                { bg: 'bg-emerald-700', text: 'text-white' },   // เขียวหลัก
+                { bg: 'bg-accent-hover', text: 'text-white' },   // เขียวหลัก
                 { bg: 'bg-amber-400', text: 'text-white' },     // ทองอ่อน
                 { bg: 'bg-lime-600', text: 'text-white' },      // เขียวมะกอก
                 { bg: 'bg-slate-700', text: 'text-white' },     // เทาเข้ม
@@ -3773,7 +3016,7 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${groupBadge}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${group.DateCreated}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <button data-groupid="${group.GroupID}" class="edit-group-btn text-indigo-600 hover:text-indigo-900 mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
+                    <button data-groupid="${group.GroupID}" class="edit-group-btn text-accent hover:text-accent-hover mr-4"><i data-lucide="edit" class="w-5 h-5"></i></button>
                     <button data-groupid="${group.GroupID}" class="delete-group-btn text-red-600 hover:text-red-900"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                 </td>
             </tr>
@@ -3815,7 +3058,7 @@
 
             // Color mapping for group badges, consistent with renderHomeDashboard
             const colors = [
-                { bg: 'bg-emerald-700', text: 'text-white' },   // เขียวหลัก
+                { bg: 'bg-accent-hover', text: 'text-white' },   // เขียวหลัก
                 { bg: 'bg-amber-400', text: 'text-white' },     // ทองอ่อน
                 { bg: 'bg-lime-600', text: 'text-white' },      // เขียวมะกอก
                 { bg: 'bg-slate-700', text: 'text-white' },     // เทาเข้ม
@@ -3827,7 +3070,7 @@
             if (thead && !thead.querySelector('.select-all-header')) {
                 const th = document.createElement('th');
                 th.className = "px-6 py-3 text-center select-all-header"; // Add class to avoid duplicate
-                th.innerHTML = `<input type="checkbox" id="select-all-files" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">`;
+                th.innerHTML = `<input type="checkbox" id="select-all-files" class="w-4 h-4 rounded border-warm-200 text-blue-600 focus:ring-blue-500">`;
                 thead.insertBefore(th, thead.firstChild);
             }
 
@@ -3850,7 +3093,7 @@
 
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === file.GroupName);
-                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
                 const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // ✅ ตรวจสอบสถานะ pending
@@ -3861,7 +3104,7 @@
                 const row = `
     <tr>
         <td class="px-6 py-4 text-center">
-            <input type="checkbox" class="file-checkbox w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" value="${file.FileID}">
+            <input type="checkbox" class="file-checkbox w-4 h-4 rounded border-warm-200 text-blue-600 focus:ring-blue-500" value="${file.FileID}">
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
           <div class="file-title">${file.Title} ${pendingBadge}</div>
@@ -3962,7 +3205,7 @@
 
             // สีสำหรับ group badge ให้เหมือนทุกหน้า
             const colors = [
-                { bg: 'bg-emerald-700', text: 'text-white' },
+                { bg: 'bg-accent-hover', text: 'text-white' },
                 { bg: 'bg-amber-400', text: 'text-white' },
                 { bg: 'bg-lime-600', text: 'text-white' },
                 { bg: 'bg-slate-700', text: 'text-white' },
@@ -3987,7 +3230,7 @@
                 ).join('');
 
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
                 const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 const deleteButton = `
@@ -4019,7 +3262,7 @@
 
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
         <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium" data-label="จัดการ">
-          <button data-fileid="${file.FileID}" class="edit-file-btn text-indigo-600 hover:text-indigo-900 mr-4">
+          <button data-fileid="${file.FileID}" class="edit-file-btn text-accent hover:text-accent-hover mr-4">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
             </svg>
@@ -4145,7 +3388,7 @@
 
             // Group color mapping
             const colors = [
-                { bg: 'bg-emerald-700', text: 'text-white' },
+                { bg: 'bg-accent-hover', text: 'text-white' },
                 { bg: 'bg-amber-400', text: 'text-white' },
                 { bg: 'bg-lime-600', text: 'text-white' },
                 { bg: 'bg-slate-700', text: 'text-white' },
@@ -4154,7 +3397,7 @@
 
             paginatedFiles.forEach((file, index) => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
-                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-gray-500', text: 'text-white' };
+                const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
                 const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // Find uploader name
@@ -4162,7 +3405,7 @@
                 const uploaderName = uploader ? uploader.FullName : 'ไม่ระบุ';
 
                 // Subadmin can always edit and request delete
-                const editButton = `<button data-fileid="${file.FileID}" class="subadmin-edit-file-btn text-indigo-600 hover:text-indigo-900 mr-2" title="แก้ไข">
+                const editButton = `<button data-fileid="${file.FileID}" class="subadmin-edit-file-btn text-accent hover:text-accent-hover mr-2" title="แก้ไข">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                     </svg>
@@ -4382,7 +3625,7 @@
             const listContainer = document.getElementById('subadmin-upload-file-list');
             if (!listContainer) return;
             listContainer.innerHTML = filesToUploadSubadmin.map((f, i) =>
-                `<div class="flex items-center justify-between bg-gray-50 p-2 rounded mb-1">
+                `<div class="flex items-center justify-between bg-warm-50 p-2 rounded mb-1">
                     <span class="text-sm truncate">${f.name}</span>
                     <button type="button" class="text-red-500 hover:text-red-700 font-bold" onclick="removeSubadminFile(${i})">x</button>
                 </div>`
@@ -4661,7 +3904,7 @@
                 }
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-warm-50">
                         <td class="px-4 py-3 text-gray-600" data-label="ลำดับ">${index + 1}</td>
                         <td class="px-4 py-3 font-medium text-gray-800" data-label="ชื่อ">
                             ${typeBadge}${coop.coopName}
@@ -4697,11 +3940,11 @@
                     const filterType = this.dataset.filter;
                     // Update button styles
                     document.querySelectorAll('.coop-filter-btn').forEach(b => {
-                        b.classList.remove('bg-emerald-600', 'text-white', 'active');
+                        b.classList.remove('bg-accent', 'text-white', 'active');
                         b.classList.add('bg-gray-200', 'text-gray-700');
                     });
                     this.classList.remove('bg-gray-200', 'text-gray-700');
-                    this.classList.add('bg-emerald-600', 'text-white', 'active');
+                    this.classList.add('bg-accent', 'text-white', 'active');
                     // Re-render table with filter
                     renderCoopSummaryTable(allCoopData, allCoopTotalFiles, filterType);
                 };
@@ -4791,11 +4034,11 @@
                 </div>
                 <div class="mb-3 flex gap-2">
                     <button onclick="sortFileTypeModal('order')" 
-                        class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${currentFileTypeSortMode === 'order' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
+                        class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${currentFileTypeSortMode === 'order' ? 'bg-accent text-white' : 'bg-warm-100 text-gray-600 hover:bg-gray-200'}">
                         📋 ลำดับแฟ้มเอกสาร
                     </button>
                     <button onclick="sortFileTypeModal('count')" 
-                        class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${currentFileTypeSortMode === 'count' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
+                        class="flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${currentFileTypeSortMode === 'count' ? 'bg-accent text-white' : 'bg-warm-100 text-gray-600 hover:bg-gray-200'}">
                         📊 ลำดับจำนวนไฟล์
                     </button>
                 </div>
@@ -4842,8 +4085,8 @@
                     statusIcon = '📝';
                     statusText = 'ขาดเอกสาร';
                     barColor = 'bg-gray-400';
-                    bgColor = 'bg-gray-50 border-gray-200';
-                    badgeColor = 'bg-gray-100 text-gray-500';
+                    bgColor = 'bg-warm-50 border-warm-200';
+                    badgeColor = 'bg-warm-100 text-gray-500';
                 }
 
                 html += `
@@ -5510,13 +4753,13 @@
             
             if (hasLink) {
                 input.readOnly = true;
-                input.classList.add('bg-gray-100', 'text-gray-500');
+                input.classList.add('bg-warm-100', 'text-gray-500');
                 saveBtn.style.display = 'none';
                 editBtn.style.display = 'flex';
                 deleteBtn.style.display = 'flex';
             } else {
                 input.readOnly = false;
-                input.classList.remove('bg-gray-100', 'text-gray-500');
+                input.classList.remove('bg-warm-100', 'text-gray-500');
                 saveBtn.style.display = 'flex';
                 editBtn.style.display = 'none';
                 deleteBtn.style.display = 'none';
@@ -6755,9 +5998,9 @@
             <td class="px-4 py-2">${req.RequestDate || '-'}</td>
             <td class="px-4 py-2 text-center">
               <span class="inline-block px-2 py-1 rounded text-xs font-medium ${req.Status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                req.Status === 'approved' ? 'bg-green-100 text-green-800' :
+                                req.Status === 'approved' ? 'bg-green-100 text-warm-600' :
                                     req.Status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                        'bg-gray-100 text-gray-800'
+                                        'bg-warm-100 text-gray-800'
                             }">${req.Status}</span>
             </td>
             <td class="px-4 py-2 text-center">
@@ -6825,13 +6068,13 @@
                         } else if (daysRemaining <= 90) {
                             expiryBadge = `<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">📅 อีก ${daysRemaining} วัน</span>`;
                         } else {
-                            expiryBadge = `<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">📅 อีก ${daysRemaining} วัน</span>`;
+                            expiryBadge = `<span class="px-2 py-1 text-xs font-medium bg-green-100 text-warm-600 rounded">📅 อีก ${daysRemaining} วัน</span>`;
                         }
 
                         const row = `
                             <tr class="hover:bg-red-50 border-b">
                                 <td class="px-3 py-3">
-                                    <input type="checkbox" class="recycle-checkbox w-4 h-4 text-red-600 border-gray-300 rounded" 
+                                    <input type="checkbox" class="recycle-checkbox w-4 h-4 text-red-600 border-warm-200 rounded" 
                                         value="${file.RecycleID}" onchange="updateRecycleBulkButtons()">
                                 </td>
                                 <td class="px-4 py-3">
@@ -6842,12 +6085,12 @@
                                 <td class="px-4 py-3 text-sm text-gray-600">${file.DeletedBy || '-'}</td>
                                 <td class="px-4 py-3 text-sm text-gray-600">${file.DeletedDate || '-'}</td>
                                 <td class="px-4 py-3">
-                                    <span class="px-2 py-1 text-xs font-medium ${file.DeleteSource === 'auto_delete' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'} rounded">${sourceLabel}</span>
+                                    <span class="px-2 py-1 text-xs font-medium ${file.DeleteSource === 'auto_delete' ? 'bg-blue-100 text-blue-800' : 'bg-warm-100 text-gray-800'} rounded">${sourceLabel}</span>
                                 </td>
                                 <td class="px-4 py-3 text-center">${expiryBadge}</td>
                                 <td class="px-4 py-3 text-center">
                                     <button onclick="handleRestoreFile('${file.RecycleID}')" 
-                                        class="text-green-600 hover:text-green-800 font-medium mr-3" title="กู้คืน">
+                                        class="text-green-600 hover:text-warm-600 font-medium mr-3" title="กู้คืน">
                                         🔄 กู้คืน
                                     </button>
                                     <button onclick="handlePermanentDelete('${file.RecycleID}')" 
@@ -7119,13 +6362,13 @@
                 const statusConfig = {
                     'pending': { icon: '🟡', text: 'รอดำเนินการ', bg: 'bg-yellow-100', color: 'text-yellow-800' },
                     'in_progress': { icon: '🔵', text: 'กำลังดำเนินการ', bg: 'bg-blue-100', color: 'text-blue-800' },
-                    'completed': { icon: '🟢', text: 'เสร็จสิ้น', bg: 'bg-green-100', color: 'text-green-800' }
+                    'completed': { icon: '🟢', text: 'เสร็จสิ้น', bg: 'bg-green-100', color: 'text-warm-600' }
                 };
                 const status = statusConfig[req.Status] || statusConfig.pending;
 
                 return `
                     <div onclick="showRequestDetail('${req.RequestID}')" 
-                        class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-100 overflow-hidden">
+                        class="bg-white rounded-xl shadow-md hover:border border-warm-200 card-hover transition-shadow cursor-pointer border border-gray-100 overflow-hidden">
                         <div class="p-4">
                             <div class="flex items-start justify-between mb-2">
                                 <h3 class="font-semibold text-gray-800 text-sm line-clamp-2">${req.Title}</h3>
@@ -7143,7 +6386,7 @@
                             </div>
                             ${req.AssigneeName && req.AssigneeName !== 'ไม่ระบุ' ? `
                                 <div class="text-xs text-gray-500 mt-1">
-                                    → ถึง: <span class="font-medium text-indigo-600">${req.AssigneeName}</span>
+                                    → ถึง: <span class="font-medium text-accent">${req.AssigneeName}</span>
                                 </div>
                             ` : ''}
                         </div>
@@ -7230,7 +6473,7 @@
                     const statusConfig = {
                         'pending': { text: '🟡 รอดำเนินการ', bg: 'bg-yellow-100', color: 'text-yellow-800' },
                         'in_progress': { text: '🔵 กำลังดำเนินการ', bg: 'bg-blue-100', color: 'text-blue-800' },
-                        'completed': { text: '🟢 เสร็จสิ้น', bg: 'bg-green-100', color: 'text-green-800' }
+                        'completed': { text: '🟢 เสร็จสิ้น', bg: 'bg-green-100', color: 'text-warm-600' }
                     };
                     const status = statusConfig[request.Status] || statusConfig.pending;
 
@@ -7257,7 +6500,7 @@
                         appState.currentUser.Role === 'subadmin') && request.Status === 'pending') {
                         actionsEl.innerHTML += `
                             <button onclick="updateRequestStatus('in_progress')" 
-                                class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+                                class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm hover:bg-accent">
                                 รับเรื่อง
                             </button>`;
                     }
@@ -7304,7 +6547,7 @@
                                         <p class="text-sm">${reply.Message}</p>
                                         ${reply.LinkedFileName ? `
                                             <div class="flex items-center gap-2 mt-1">
-                                                <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-indigo-600'} flex items-center gap-1">
+                                                <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-accent'} flex items-center gap-1">
                                                     <span>📎</span>
                                                     ${reply.LinkedFileDriveID ? `
                                                         <a href="javascript:void(0)" 
@@ -7410,7 +6653,7 @@
                                             <p class="text-sm">${reply.Message}</p>
                                             ${reply.LinkedFileName ? `
                                                 <div class="flex items-center gap-2 mt-1">
-                                                    <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-indigo-600'} flex items-center gap-1">
+                                                    <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-accent'} flex items-center gap-1">
                                                         <span>📎</span>
                                                         ${reply.LinkedFileDriveID ? `
                                                             <a href="javascript:void(0)" 
@@ -7473,7 +6716,7 @@
             if (!listContainer) return;
 
             let html = `
-                <div class="px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100 text-sm text-gray-700" onclick="selectFileReference('', '📎 อ้างอิงไฟล์')">
+                <div class="px-3 py-2 cursor-pointer rounded-md hover:bg-warm-100 text-sm text-gray-700" onclick="selectFileReference('', '📎 อ้างอิงไฟล์')">
                     <span class="text-gray-500">📎 ย้ายการเลิกอ้างอิงไฟล์ (ไม่ระบุ)</span>
                 </div>
             `;
@@ -7484,7 +6727,7 @@
                 filesToRender.forEach(f => {
                     const safeTitle = f.Title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                     html += `
-                        <div class="px-3 py-2 cursor-pointer rounded-md hover:bg-gray-100 text-sm text-gray-700 truncate" 
+                        <div class="px-3 py-2 cursor-pointer rounded-md hover:bg-warm-100 text-sm text-gray-700 truncate" 
                              onclick="selectFileReference('${f.FileID}', '${safeTitle}')" title="${f.Title}">
                             ${f.Title}
                         </div>
@@ -7521,7 +6764,7 @@
         function selectFileReference(id, title) {
             document.getElementById('req-reply-file').value = id;
             document.getElementById('req-reply-file-text').textContent = id ? title : '📎 อ้างอิงไฟล์';
-            document.getElementById('req-reply-file-text').className = id ? 'truncate text-indigo-600 font-medium w-36 inline-block' : 'truncate text-gray-400 w-36 inline-block';
+            document.getElementById('req-reply-file-text').className = id ? 'truncate text-accent font-medium w-36 inline-block' : 'truncate text-gray-400 w-36 inline-block';
             
             const dropdown = document.getElementById('req-reply-file-dropdown');
             const icon = document.getElementById('req-reply-file-icon');
@@ -7634,7 +6877,7 @@
                                     <div class="text-center">
                                         <p class="text-gray-600 mb-3">คำขอนี้ได้รับการดำเนินการเรียบร้อยแล้ว</p>
                                         <div class="bg-indigo-50 rounded-lg p-4 inline-block">
-                                            <p class="text-sm text-indigo-600 mb-1">⏱️ ระยะเวลาดำเนินการ</p>
+                                            <p class="text-sm text-accent mb-1">⏱️ ระยะเวลาดำเนินการ</p>
                                             <p class="text-2xl font-bold text-indigo-700">${res.processingTime.text}</p>
                                         </div>
                                     </div>
@@ -7949,7 +7192,7 @@
                 existingBody.innerHTML = '<tr><td colspan="4" class="px-3 py-4 text-center text-gray-400">ไม่มีไฟล์ซ้ำ</td></tr>';
             } else {
                 existingBody.innerHTML = result.existingFiles.map(f => `
-                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <tr class="border-b border-gray-100 hover:bg-warm-50">
                         <td class="px-3 py-2 text-gray-600">${f.fileName}</td>
                         <td class="px-3 py-2 text-gray-400">${f.typeName || '-'}</td>
                         <td class="px-3 py-2 text-right text-gray-400">${formatFileSize(f.fileSize)}</td>
@@ -8353,12 +7596,12 @@
             const detailView = document.getElementById('activity-detail-view');
 
             if (tab === 'timeline') {
-                timelineTab.className = 'px-4 py-2 rounded-t-lg bg-blue-600 text-white font-medium';
+                timelineTab.className = 'px-4 py-2 rounded-t-lg bg-accent text-white font-medium';
                 detailTab.className = 'px-4 py-2 rounded-t-lg bg-gray-200 text-gray-700 font-medium';
                 timelineView.classList.remove('hidden');
                 detailView.classList.add('hidden');
             } else {
-                detailTab.className = 'px-4 py-2 rounded-t-lg bg-blue-600 text-white font-medium';
+                detailTab.className = 'px-4 py-2 rounded-t-lg bg-accent text-white font-medium';
                 timelineTab.className = 'px-4 py-2 rounded-t-lg bg-gray-200 text-gray-700 font-medium';
                 detailView.classList.remove('hidden');
                 timelineView.classList.add('hidden');
@@ -8400,7 +7643,7 @@
                 'move_to_recycle': 'bg-orange-500',
                 'restore_file': 'bg-emerald-500',
                 'permanent_delete': 'bg-red-700',
-                'auto_cleanup_recycle': 'bg-gray-500',
+                'auto_cleanup_recycle': 'bg-warm-500',
                 'security_violation': 'bg-red-800'
             };
 
@@ -8436,7 +7679,7 @@
             let html = `
                 <table class="w-full border-collapse">
                     <thead>
-                        <tr class="bg-gray-100">
+                        <tr class="bg-warm-100">
                             <th class="px-4 py-3 text-left font-medium text-gray-700 border-b min-w-[200px]">ผู้ใช้</th>
                             <th class="px-4 py-3 text-left font-medium text-gray-700 border-b min-w-[150px]">สรุป</th>
             `;
@@ -8453,7 +7696,7 @@
 
             // User rows
             users.forEach((user, idx) => {
-                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-warm-50';
                 const roleColor = roleColors[user.UserRole] || 'bg-gray-400';
 
                 // Summary totals
@@ -8508,7 +7751,7 @@
 
             // Legend
             html += `
-                <div class="mt-4 p-3 bg-gray-50 rounded-lg">
+                <div class="mt-4 p-3 bg-warm-50 rounded-lg">
                     <p class="text-sm font-medium text-gray-700 mb-2">คำอธิบายสี:</p>
                     <div class="flex flex-wrap gap-3 text-xs">
                         <span><span class="bg-green-500 w-3 h-3 rounded-sm inline-block mr-1"></span>อัปโหลด</span>
@@ -8586,7 +7829,7 @@
                 'edit_user': 'text-yellow-700',
                 'delete_user': 'text-red-700',
                 'move_to_recycle': 'text-orange-600',
-                'restore_file': 'text-emerald-600',
+                'restore_file': 'text-accent',
                 'permanent_delete': 'text-red-700',
                 'auto_cleanup_recycle': 'text-gray-600',
                 'security_violation': 'text-red-800 font-bold'
@@ -8599,7 +7842,7 @@
                 const actionLabel = actionLabels[log.Action] || log.Action;
 
                 html += `
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-warm-50">
                         <td class="px-4 py-2 whitespace-nowrap text-sm">
                             <div>${log.TimestampFormatted || ''}</div>
                             <div class="text-xs text-gray-400">${log.TimeFormatted || ''}</div>
@@ -8617,7 +7860,7 @@
             tbody.innerHTML = html;
 
             // Pagination UI
-            let paginationHtml = `<div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 w-full">
+            let paginationHtml = `<div class="flex items-center justify-between border-t border-warm-200 bg-white px-4 py-3 sm:px-6 w-full">
                 <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                     <div>
                         <p class="text-sm text-gray-700">
@@ -8626,7 +7869,7 @@
                     </div>
                     <div>
                         <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                            <button onclick="changeActivityPage(${activityCurrentPage - 1})" ${activityCurrentPage === 1 ? 'disabled' : ''} class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${activityCurrentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+                            <button onclick="changeActivityPage(${activityCurrentPage - 1})" ${activityCurrentPage === 1 ? 'disabled' : ''} class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-warm-50 focus:z-20 focus:outline-offset-0 ${activityCurrentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
                                 <span class="sr-only">Previous</span>
                                 <i data-lucide="chevron-left" class="h-5 w-5"></i>
                             </button>
@@ -8642,14 +7885,14 @@
             for (let i = startPage; i <= endPage; i++) {
                 const isActive = i === activityCurrentPage;
                 paginationHtml += `
-                    <button onclick="changeActivityPage(${i})" aria-current="${isActive ? 'page' : ''}" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold ${isActive ? 'bg-blue-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600' : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'}">
+                    <button onclick="changeActivityPage(${i})" aria-current="${isActive ? 'page' : ''}" class="relative inline-flex items-center px-4 py-2 text-sm font-semibold ${isActive ? 'bg-accent text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600' : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-warm-50 focus:z-20 focus:outline-offset-0'}">
                         ${i}
                     </button>
                 `;
             }
 
             paginationHtml += `
-                            <button onclick="changeActivityPage(${activityCurrentPage + 1})" ${activityCurrentPage === totalPages ? 'disabled' : ''} class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${activityCurrentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+                            <button onclick="changeActivityPage(${activityCurrentPage + 1})" ${activityCurrentPage === totalPages ? 'disabled' : ''} class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-warm-50 focus:z-20 focus:outline-offset-0 ${activityCurrentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
                                 <span class="sr-only">Next</span>
                                 <i data-lucide="chevron-right" class="h-5 w-5"></i>
                             </button>
@@ -8757,11 +8000,11 @@
                 // Generate file list HTML
                 let fileListHtml = '';
                 if (totalNew > 0 || totalUpdated > 0) {
-                    fileListHtml += `<div class="mt-4 max-h-64 overflow-y-auto border border-gray-200 rounded p-3 text-sm text-gray-700 bg-gray-50 space-y-3">`;
+                    fileListHtml += `<div class="mt-4 max-h-64 overflow-y-auto border border-warm-200 rounded p-3 text-sm text-gray-700 bg-warm-50 space-y-3">`;
                     allCoopsDupCheckResults.forEach(res => {
                         if (res.totalNew > 0 || res.totalUpdated > 0) {
                             fileListHtml += `<div>`;
-                            fileListHtml += `<p class="font-bold text-gray-900 border-b border-gray-200 mb-1 pb-1">${res.coop.CoopName}</p>`;
+                            fileListHtml += `<p class="font-bold text-gray-900 border-b border-warm-200 mb-1 pb-1">${res.coop.CoopName}</p>`;
                             if (res.totalNew > 0) {
                                 res.newFiles.forEach(f => {
                                     fileListHtml += `<p class="text-green-600 truncate ml-2">🟢 [ใหม่] ${f.fileName}</p>`;
