@@ -214,6 +214,14 @@
       .responsive-table {
         display: block;
         width: 100%;
+        min-width: unset !important;
+      }
+
+      /* allow cards to fill container without horizontal scroll */
+      .overflow-x-auto:has(> .responsive-table) {
+        overflow-x: visible;
+        padding-left: 0;
+        padding-right: 0;
       }
 
       .responsive-table thead {
@@ -238,11 +246,15 @@
       .responsive-table tbody td {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
+        gap: 12px;
         padding: 10px 0;
         border-bottom: 1px solid var(--border-subtle);
         text-align: right !important;
         font-size: 0.875rem;
+        white-space: normal !important;
+        word-break: break-word;
+        overflow-wrap: anywhere;
       }
 
       .responsive-table tbody td:last-child {
@@ -259,6 +271,7 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
+        max-width: 40%;
       }
     }
   </style>
