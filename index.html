@@ -2221,7 +2221,7 @@
 
             if (appState.currentUser) {
                 authHtml = `
-                <span class="bg-green-500 text-white inline-block px-2 py-1 rounded text-sm mr-4 hover:text-blue-300 transition-colors duration-200">สวัสดี, ${appState.currentUser.FullName}</span>
+                <span class="bg-green-500 text-white inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-current/10 shadow-sm mr-4 hover:text-blue-300 transition-colors duration-200">สวัสดี, ${appState.currentUser.FullName}</span>
                 <button id="logout-btn" class="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600">ออกจากระบบ</button>
             `;
             } else {
@@ -2448,7 +2448,7 @@
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
                 const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-current/10 shadow-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // Check pending status (though usually home shows all; ensure logic handles it if home displays pending)
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -3069,7 +3069,7 @@
 
             appState.allGroups.forEach((group, index) => {
                 const color = colors[index % colors.length];
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${group.GroupName}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-current/10 shadow-sm">${group.GroupName}</span>`;
 
                 const row = `
             <tr>
@@ -3154,7 +3154,7 @@
                 // Find the group index to assign the correct color
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupName === file.GroupName);
                 const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-current/10 shadow-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // ✅ ตรวจสอบสถานะ pending
                 const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
@@ -3291,7 +3291,7 @@
 
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
                 const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-current/10 shadow-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 const deleteButton = `
     <button data-fileid="${file.FileID}" class="request-delete-btn text-red-600 hover:text-red-900">
@@ -3458,7 +3458,7 @@
             paginatedFiles.forEach((file, index) => {
                 const groupIndex = appState.allGroups.findIndex(g => g.GroupID === file.GroupID);
                 const color = groupIndex !== -1 ? colors[groupIndex % colors.length] : { bg: 'bg-warm-500', text: 'text-white' };
-                const groupBadge = `<span class="${color.bg} ${color.text} inline-block px-2 py-1 rounded text-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
+                const groupBadge = `<span class="${color.bg} ${color.text} inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border border-current/10 shadow-sm">${file.GroupName || 'เอกสารกลาง'}</span>`;
 
                 // Find uploader name
                 const uploader = appState.allUsers.find(u => u.UserID === file.UserID);
