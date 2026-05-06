@@ -8017,6 +8017,48 @@ function renderUsersTable() {
       } catch (err) {
         console.error("⚠️ Mourning mode error:", err);
       }
+
+      // ===== Responsive Tables =====
+      function initResponsiveTables() {
+        const containers = document.querySelectorAll('.overflow-x-auto');
+        containers.forEach(container => {
+          const table = container.querySelector('table');
+          if (!table) return;
+          table.classList.add('responsive-table');
+          const thead = table.querySelector('thead');
+          const tbody = table.querySelector('tbody');
+          if (!thead || !tbody) return;
+          const headers = Array.from(thead.querySelectorAll('th')).map(th => th.textContent.trim());
+          const rows = tbody.querySelectorAll('tr');
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            cells.forEach((cell, index) => {
+              if (headers[index]) {
+                cell.setAttribute('data-label', headers[index]);
+              }
+            });
+          });
+        });
+      }
+
+      initResponsiveTables();
+
+      // Re-apply when tables are dynamically rendered
+      const tableObserver = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            const addedTables = Array.from(mutation.addedNodes).filter(node =>
+              node.nodeType === 1 && (node.matches && node.matches('table') || node.querySelector && node.querySelector('table'))
+            );
+            if (addedTables.length > 0) {
+              initResponsiveTables();
+              break;
+            }
+          }
+        }
+      });
+
+      tableObserver.observe(document.body, { childList: true, subtree: true });
     });
   </script>
 
