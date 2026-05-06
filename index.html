@@ -244,13 +244,10 @@
       }
 
       .responsive-table tbody td {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
+        display: block;
         padding: 10px 0;
         border-bottom: 1px solid var(--border-subtle);
-        text-align: right !important;
+        text-align: left !important;
         font-size: 0.875rem;
         white-space: normal !important;
         word-break: break-word;
@@ -263,15 +260,13 @@
 
       .responsive-table tbody td::before {
         content: attr(data-label);
+        display: block;
         font-weight: 600;
         color: var(--text-secondary);
-        margin-right: 12px;
-        text-align: left;
-        flex-shrink: 0;
+        margin-bottom: 4px;
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        max-width: 40%;
       }
     }
   </style>
