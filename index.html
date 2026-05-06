@@ -209,6 +209,14 @@
       padding-left: 20px !important;
     }
 
+    /* ===== Smaller group/type columns on all screens ===== */
+    tbody td[data-label="กลุ่มงาน"],
+    tbody td[data-label="ประเภทเอกสาร"],
+    tbody td[data-label="ประเภท"] {
+      font-size: 0.8rem !important;
+      color: var(--text-secondary);
+    }
+
     /* ===== Responsive Table (Mobile Card Layout) ===== */
     @media (max-width: 768px) {
       .responsive-table {
@@ -305,16 +313,15 @@
       .responsive-table tbody td[data-label="กลุ่มงาน"],
       .responsive-table tbody td[data-label="ประเภทเอกสาร"],
       .responsive-table tbody td[data-label="ประเภท"] {
-        font-size: 0.75rem;
+        font-size: 0.75rem !important;
         padding-top: 6px;
         padding-bottom: 6px;
       }
 
-      .responsive-table tbody td[data-label="กลุ่มงาน"] span,
-      .responsive-table tbody td[data-label="ประเภทเอกสาร"] span,
-      .responsive-table tbody td[data-label="ประเภท"] span {
-        font-size: 0.7rem !important;
-        padding: 2px 8px !important;
+      .responsive-table tbody td[data-label="กลุ่มงาน"] *,
+      .responsive-table tbody td[data-label="ประเภทเอกสาร"] *,
+      .responsive-table tbody td[data-label="ประเภท"] * {
+        font-size: inherit !important;
       }
     }
   </style>
