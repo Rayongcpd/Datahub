@@ -1821,7 +1821,7 @@
 
     <!-- ✅ File Preview Modal -->
     <div id="file-preview-modal" class="modal" style="z-index: 9998;">
-        <div class="modal-content max-w-6xl !p-0 overflow-hidden">
+        <div class="modal-content max-w-6xl !p-0 overflow-hidden flex flex-col" style="height: 85vh;">
             <!-- Header -->
             <div
                 class="flex justify-between items-center px-6 py-4 border-b border-warm-200 bg-white">
@@ -1845,7 +1845,7 @@
                 </button>
             </div>
             <!-- Preview Area -->
-            <div class="flex-1 p-2 bg-warm-100 overflow-hidden flex items-center justify-center"
+            <div class="flex-1 bg-warm-50 overflow-hidden flex items-center justify-center p-0"
                 style="position:relative;">
                 <!-- Loading Overlay -->
                 <div id="preview-loading" style="display:flex;" class="flex flex-col items-center justify-center gap-3">
@@ -1856,7 +1856,7 @@
                             style="width: 0%"></div>
                     </div>
                 </div>
-                <iframe id="preview-iframe" class="w-full h-full rounded-lg border border-warm-200 bg-white"
+                <iframe id="preview-iframe" class="w-full h-full border-0 bg-white"
                     style="display:none;" frameborder="0" allowfullscreen></iframe>
                 <img id="preview-image" class="max-w-full max-h-full rounded-lg object-contain" style="display:none;"
                     alt="Preview" />
