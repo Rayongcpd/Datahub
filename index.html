@@ -209,12 +209,22 @@
       padding-left: 20px !important;
     }
 
-    /* ===== Smaller group/type columns on all screens ===== */
+    /* ===== Group/type: tiny & gray on all screens ===== */
     tbody td[data-label="กลุ่มงาน"],
     tbody td[data-label="ประเภทเอกสาร"],
     tbody td[data-label="ประเภท"] {
-      font-size: 0.8rem !important;
-      color: var(--text-secondary);
+      font-size: 0.65rem !important;
+      color: var(--text-tertiary) !important;
+    }
+
+    tbody td[data-label="กลุ่มงาน"] span,
+    tbody td[data-label="ประเภทเอกสาร"] span,
+    tbody td[data-label="ประเภท"] span {
+      font-size: 0.6rem !important;
+      padding: 1px 6px !important;
+      background: var(--bg-muted) !important;
+      color: var(--text-tertiary) !important;
+      border: 1px solid var(--border-subtle) !important;
     }
 
     /* ===== Responsive Table (Mobile Card Layout) ===== */
@@ -313,9 +323,9 @@
       .responsive-table tbody td[data-label="กลุ่มงาน"],
       .responsive-table tbody td[data-label="ประเภทเอกสาร"],
       .responsive-table tbody td[data-label="ประเภท"] {
-        font-size: 0.75rem !important;
-        padding-top: 6px;
-        padding-bottom: 6px;
+        font-size: 0.65rem !important;
+        padding-top: 4px;
+        padding-bottom: 4px;
       }
 
       .responsive-table tbody td[data-label="กลุ่มงาน"] *,
