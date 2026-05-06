@@ -193,6 +193,31 @@
             0%, 40%, 100% { transform: translateY(0); }
             20% { transform: translateY(-8px); }
         }
+    
+        /* Dropdown Enhancements */
+        #group-dropdown {
+            background: white !important;
+            border: 1px solid var(--border-subtle) !important;
+            box-shadow: 0 10px 25px rgba(45, 42, 38, 0.1) !important;
+            border-radius: 12px !important;
+            padding: 8px !important;
+            min-width: 220px !important;
+        }
+
+        #group-dropdown a {
+            color: var(--text-primary) !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            transition: all 0.2s ease !important;
+            font-size: 0.925rem !important;
+            display: block !important;
+        }
+
+        #group-dropdown a:hover {
+            background-color: var(--bg-muted) !important;
+            color: var(--accent) !important;
+            padding-left: 20px !important;
+        }
     </style>
 <body class="antialiased text-warm-700">
 
@@ -302,7 +327,32 @@
                     transform: translateY(-6px);
                 }
             }
-        </style>
+        
+        /* Dropdown Enhancements */
+        #group-dropdown {
+            background: white !important;
+            border: 1px solid var(--border-subtle) !important;
+            box-shadow: 0 10px 25px rgba(45, 42, 38, 0.1) !important;
+            border-radius: 12px !important;
+            padding: 8px !important;
+            min-width: 220px !important;
+        }
+
+        #group-dropdown a {
+            color: var(--text-primary) !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            transition: all 0.2s ease !important;
+            font-size: 0.925rem !important;
+            display: block !important;
+        }
+
+        #group-dropdown a:hover {
+            background-color: var(--bg-muted) !important;
+            color: var(--accent) !important;
+            padding-left: 20px !important;
+        }
+    </style>
     </div>
 
 
@@ -324,12 +374,12 @@
                             <div id="main-menu" class="ml-10 flex items-center space-x-6">
                                 <!-- Menu items will be injected here -->
                                 <a href="#"
-                                    class="text-warm-600 hover:text-accent px-1 py-2 text-sm font-medium transition-all duration-200 relative group">
+                                    class="text-warm-700 hover:text-accent font-medium px-1 py-2 text-sm font-medium transition-all duration-200 relative group">
                                     หน้าแรก
                                     <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-200 group-hover:w-full"></span>
                                 </a>
                                 <a href="#"
-                                    class="text-warm-600 hover:text-accent px-1 py-2 text-sm font-medium transition-all duration-200 relative group">
+                                    class="text-warm-700 hover:text-accent font-medium px-1 py-2 text-sm font-medium transition-all duration-200 relative group">
                                     กลุ่มงาน
                                     <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-200 group-hover:w-full"></span>
                                 </a>
@@ -371,9 +421,9 @@
                 <div id="mobile-main-menu" class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                     <!-- Mobile menu items will be injected here -->
                     <a href="#"
-                        class="text-white hover:text-blue-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>
+                        class="text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>
                     <a href="#"
-                        class="text-white hover:text-blue-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">กลุ่มงาน</a>
+                        class="text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">กลุ่มงาน</a>
                 </div>
                 <div id="mobile-auth-buttons" class="pt-4 pb-3 border-t border-blue-700">
                     <!-- Mobile login/logout button here -->
@@ -2084,13 +2134,13 @@
 
             // If no user is logged in, show public menus
             if (!appState.currentUser) {
-                menuHtml += `<a href="#" data-page="home" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>`;
-                mobileMenuHtml += `<a href="#" data-page="home" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>`;
+                menuHtml += `<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>`;
+                mobileMenuHtml += `<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>`;
 
                 // --- Desktop Dropdown ---
                 menuHtml += `
                 <div class="relative group z-50">
-                    <button class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center">
+                    <button class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center">
                         <span>กลุ่มงาน</span>
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
@@ -2099,14 +2149,14 @@
                         <div class="py-2 max-h-[80vh] overflow-y-auto" role="menu">`;
 
                 // Add separator for mobile
-                mobileMenuHtml += `<div class="px-3 py-2 text-green-200/50 text-xs font-semibold uppercase tracking-wider mt-2">กลุ่มงาน</div>`;
+                mobileMenuHtml += `<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">กลุ่มงาน</div>`;
 
                 appState.allGroups.forEach(group => {
                     // Desktop Item
-                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link block px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700" role="menuitem">${group.GroupName}</a>`;
+                    menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">${group.GroupName}</a>`;
 
                     // Mobile Item
-                    mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
                 });
 
                 menuHtml += `
@@ -2114,48 +2164,48 @@
                     </div>
                 </div>`;
 
-                menuHtml += `<a href="#" data-page="stats" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>`;
-                mobileMenuHtml += `<a href="#" data-page="stats" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">สถิติ</a>`;
+                menuHtml += `<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>`;
+                mobileMenuHtml += `<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">สถิติ</a>`;
             }
 
             // Role-based menus
             if (appState.currentUser) {
                 if (appState.currentUser.Role === 'admin') {
-                    menuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
-                    menuHtml += `<a href="#" data-page="admin-users" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
-                    menuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
-                    menuHtml += `<a href="#" data-page="admin-files" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-                    menuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
-                    menuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
-                    menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-white hover:text-yellow-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-yellow-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+                    menuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
+                    menuHtml += `<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
+                    menuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
+                    menuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
+                    menuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
+                    menuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
+                    menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                 } else if (appState.currentUser.Role === 'subadmin') {
                     // Subadmin: Dashboard, ไฟล์ทั้งหมด, Activity Log (ไม่มีสิทธิ์เข้าหน้าคำขอลบ, ถังขยะ, จัดการผู้ใช้/กลุ่ม)
-                    menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
-                    menuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-                    menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-white hover:text-purple-300 block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+                    menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
+                    menuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
+                    menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent font-semibold block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                 } else if (appState.currentUser.Role === 'officer') {
-                    menuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>`;
-                    menuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
-                    menuHtml += `<a href="#" data-page="officer-files" class="nav-link text-white hover:text-green-300 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการไฟล์</a>`;
-                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (officer)</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="officer-files" class="nav-link text-white hover:text-green-300 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>`;
-                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-white hover:text-indigo-300 px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+                    menuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>`;
+                    menuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
+                    menuHtml += `<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการไฟล์</a>`;
+                    menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (officer)</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>`;
+                    mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent font-semibold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
                 }
             }
 
@@ -5165,7 +5215,32 @@
                                             <style>
                                                 body { margin: 0; padding: 0; }
                                                 iframe { width: 100%; height: 100vh; border: none; }
-                                            </style>
+                                            
+        /* Dropdown Enhancements */
+        #group-dropdown {
+            background: white !important;
+            border: 1px solid var(--border-subtle) !important;
+            box-shadow: 0 10px 25px rgba(45, 42, 38, 0.1) !important;
+            border-radius: 12px !important;
+            padding: 8px !important;
+            min-width: 220px !important;
+        }
+
+        #group-dropdown a {
+            color: var(--text-primary) !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            transition: all 0.2s ease !important;
+            font-size: 0.925rem !important;
+            display: block !important;
+        }
+
+        #group-dropdown a:hover {
+            background-color: var(--bg-muted) !important;
+            color: var(--accent) !important;
+            padding-left: 20px !important;
+        }
+    </style>
                                         </head>
                                         <body>
                                             <iframe src="${blobUrl}" onload="setTimeout(function(){ window.print(); }, 500);"></iframe>
@@ -5208,7 +5283,32 @@
                                     max-width: 100%; max-height: 100vh;
                                     object-fit: contain;
                                 }
-                            </style>
+                            
+        /* Dropdown Enhancements */
+        #group-dropdown {
+            background: white !important;
+            border: 1px solid var(--border-subtle) !important;
+            box-shadow: 0 10px 25px rgba(45, 42, 38, 0.1) !important;
+            border-radius: 12px !important;
+            padding: 8px !important;
+            min-width: 220px !important;
+        }
+
+        #group-dropdown a {
+            color: var(--text-primary) !important;
+            padding: 10px 16px !important;
+            border-radius: 8px !important;
+            transition: all 0.2s ease !important;
+            font-size: 0.925rem !important;
+            display: block !important;
+        }
+
+        #group-dropdown a:hover {
+            background-color: var(--bg-muted) !important;
+            color: var(--accent) !important;
+            padding-left: 20px !important;
+        }
+    </style>
                         </head>
                         <body>
                             <img src="${img.src}" onload="window.print(); window.close();" />
