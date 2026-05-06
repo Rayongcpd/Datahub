@@ -208,6 +208,59 @@
       color: var(--accent) !important;
       padding-left: 20px !important;
     }
+
+    /* ===== Responsive Table (Mobile Card Layout) ===== */
+    @media (max-width: 768px) {
+      .responsive-table {
+        display: block;
+        width: 100%;
+      }
+
+      .responsive-table thead {
+        display: none;
+      }
+
+      .responsive-table tbody {
+        display: block;
+        width: 100%;
+      }
+
+      .responsive-table tbody tr {
+        display: block;
+        margin-bottom: 16px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        background: var(--bg-elevated);
+        padding: 12px 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      }
+
+      .responsive-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-subtle);
+        text-align: right !important;
+        font-size: 0.875rem;
+      }
+
+      .responsive-table tbody td:last-child {
+        border-bottom: none;
+      }
+
+      .responsive-table tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-right: 12px;
+        text-align: left;
+        flex-shrink: 0;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    }
   </style>
 <body class="antialiased text-warm-700">
 
@@ -8041,18 +8094,22 @@ function renderUsersTable() {
 
       initResponsiveTables();
 
-      // Re-apply when tables are dynamically rendered
+      // Re-apply when table rows are dynamically rendered
       const tableObserver = new MutationObserver((mutations) => {
+        let shouldUpdate = false;
         for (const mutation of mutations) {
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            const addedTables = Array.from(mutation.addedNodes).filter(node =>
-              node.nodeType === 1 && (node.matches && node.matches('table') || node.querySelector && node.querySelector('table'))
-            );
-            if (addedTables.length > 0) {
-              initResponsiveTables();
-              break;
+            for (const node of mutation.addedNodes) {
+              if (node.nodeType === 1 && node.closest && node.closest('.responsive-table')) {
+                shouldUpdate = true;
+                break;
+              }
             }
           }
+          if (shouldUpdate) break;
+        }
+        if (shouldUpdate) {
+          initResponsiveTables();
         }
       });
 
