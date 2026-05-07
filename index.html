@@ -2191,22 +2191,37 @@
       // Role-based menus
       if (appState.currentUser) {
         if (appState.currentUser.Role === 'admin') {
-          menuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
-          menuHtml += `<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
-          menuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
-          menuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-          menuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
-          menuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
-          menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-          menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Admin)</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการผู้ใช้</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการกลุ่มงาน</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">คำขอลบไฟล์</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">🗑️ ถังขยะ</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-          mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+          // --- Desktop: Admin dropdown ---
+          menuHtml += `
+          <div class="relative group z-50">
+            <button class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center">
+              <span>จัดการระบบ</span>
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute left-0 mt-0 w-56 rounded-md border border-warm-200 card-hover bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block transition-all duration-200 z-50">
+              <div class="py-2" role="menu">
+                <a href="#" data-page="admin-dashboard" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">Dashboard</a>
+                <a href="#" data-page="admin-users" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">จัดการผู้ใช้</a>
+                <a href="#" data-page="admin-groups" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">จัดการกลุ่มงาน</a>
+                <a href="#" data-page="admin-files" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">ไฟล์ทั้งหมด</a>
+                <a href="#" data-page="admin-delete-requests" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">คำขอลบไฟล์</a>
+                <a href="#" data-page="admin-recycle-bin" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">ถังขยะ</a>
+                <a href="#" data-page="admin-activity-log" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">Activity Log</a>
+              </div>
+            </div>
+          </div>`;
+          menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ขอรับบริการข้อมูล</a>`;
+
+          // --- Mobile: grouped admin menus ---
+          mobileMenuHtml += `<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">จัดการระบบ</div>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Dashboard</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการผู้ใช้</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการกลุ่มงาน</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ไฟล์ทั้งหมด</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">คำขอลบไฟล์</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ถังขยะ</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Activity Log</a>`;
+          mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ขอรับบริการข้อมูล</a>`;
         } else if (appState.currentUser.Role === 'subadmin') {
           // Subadmin: Dashboard, ไฟล์ทั้งหมด, Activity Log (ไม่มีสิทธิ์เข้าหน้าคำขอลบ, ถังขยะ, จัดการผู้ใช้/กลุ่ม)
           menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
