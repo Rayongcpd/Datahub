@@ -2478,7 +2478,7 @@
         const row = `
   <tr>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-400" data-label="#">${start + index + 1}</td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
+    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
      <div class="file-title">${file.Title} ${pendingBadge}</div>
      ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
      ${file.HoldDate
@@ -2556,7 +2556,7 @@
         const row = `
       <tr>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-400" data-label="#">${start + index + 1}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
          <div class="file-title">${file.Title} ${pendingBadge}</div>
          ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
          ${file.HoldDate
@@ -3033,7 +3033,7 @@ function renderUsersTable() {
     <td class="px-6 py-4 text-center">
       <input type="checkbox" class="file-checkbox w-4 h-4 rounded border-warm-200 text-accent focus:ring-accent" value="${file.FileID}">
     </td>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
+    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
      <div class="file-title">${file.Title} ${pendingBadge}</div>
      ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
      ${file.HoldDate
@@ -3177,7 +3177,7 @@ function renderUsersTable() {
 
         const row = `
    <tr>
-    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="เรื่อง">
+    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
      <div class="file-title">${file.Title} ${pendingBadge}</div>
      ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
      ${file.HoldDate
