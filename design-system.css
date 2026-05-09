@@ -28,7 +28,7 @@
   --danger: #b85c5c;
 
   /* Typography */
-  --font-heading: 'Playfair Display', 'Noto Serif Thai', Georgia, serif;
+  --font-heading: 'Inter', 'Sarabun', system-ui, sans-serif;
   --font-body: 'Inter', 'Sarabun', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
