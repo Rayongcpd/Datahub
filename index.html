@@ -2106,6 +2106,16 @@
 
         document.getElementById('visitor-count').textContent = response.data.visitorCount;
 
+        // ✅ กู้คืน session ผู้ใช้จาก localStorage (ถ้ามี)
+        const savedUser = localStorage.getItem('datahub_user');
+        if (savedUser) {
+          try {
+            appState.currentUser = JSON.parse(savedUser);
+          } catch (e) {
+            localStorage.removeItem('datahub_user');
+          }
+        }
+
         renderAll();
 
         // ✅ เพิ่ม 2 บรรทัดนี้
@@ -4860,6 +4870,7 @@ function renderUsersTable() {
           hideLoading();
           if (response.success) {
             appState.currentUser = response.user;
+            localStorage.setItem('datahub_user', JSON.stringify(response.user));
             document.getElementById('login-modal').classList.remove('flex');
             document.getElementById('login-form').reset();
             showToast('เข้าสู่ระบบสำเร็จ!', 'success');
@@ -4895,6 +4906,7 @@ function renderUsersTable() {
       }).then((result) => {
         if (result.isConfirmed) {
           appState.currentUser = null;
+          localStorage.removeItem('datahub_user');
           appState.currentPage = 'home'; // Reset to home page on logout
           showToast('ออกจากระบบแล้ว', 'info');
           renderAll();
