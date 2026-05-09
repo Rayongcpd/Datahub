@@ -2248,8 +2248,8 @@
         }
       }
 
-      mainMenu.innerHTML = menuHtml;
-      mobileMainMenu.innerHTML = mobileMenuHtml;
+      if (mainMenu) mainMenu.innerHTML = menuHtml;
+      if (mobileMainMenu) mobileMainMenu.innerHTML = mobileMenuHtml;
       updateActiveMenu();
     }
 
@@ -2267,8 +2267,8 @@
         authHtml = `<button id="login-btn" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-400 shadow-sm transition-smooth">เข้าสู่ระบบ</button>`;
       }
 
-      authContainer.innerHTML = authHtml;
-      mobileAuthContainer.innerHTML = `<div class="px-5">${authHtml.replace('id="logout-btn"', 'id="mobile-logout-btn"').replace('id="login-btn"', 'id="mobile-login-btn"')}</div>`;
+      if (authContainer) authContainer.innerHTML = authHtml;
+      if (mobileAuthContainer) mobileAuthContainer.innerHTML = `<div class="px-5">${authHtml.replace('id="logout-btn"', 'id="mobile-logout-btn"').replace('id="login-btn"', 'id="mobile-login-btn"')}</div>`;
     }
 
     function navigate(pageId, options = {}) {
@@ -2380,7 +2380,8 @@
 
     function renderHomeDashboard() {
       const container = document.getElementById('home-dashboard');
-      container.classList.add('hidden');
+      if (!container) return;
+      container.classList.remove('hidden');
       const totalFiles = appState.allFiles.length;
       const colors = [
         { bg: 'bg-accent', text: 'text-white' },
@@ -4201,14 +4202,6 @@ function renderUsersTable() {
       selectElement.innerHTML = '<option value="">-- เลือกกลุ่มงาน --</option>';
       appState.allGroups.forEach(group => {
         selectElement.innerHTML += `<option value="${group.GroupID}">${group.GroupName}</option>`;
-      });
-    }
-
-    function populateTypeDropdown(selectElement) {
-      if (!selectElement) return;
-      selectElement.innerHTML = '<option value="">-- เลือกประเภทเอกสาร --</option>';
-      appState.allTypes.forEach(type => {
-        selectElement.innerHTML += `<option value="${type.ID}">${type.ประเภท}</option>`;
       });
     }
 
@@ -6335,8 +6328,11 @@ function renderUsersTable() {
         btn.classList.remove('bg-accent', 'text-white');
         btn.classList.add('bg-warm-200', 'text-warm-700');
       });
-      document.getElementById(`req-tab-${tab}`).classList.remove('bg-warm-200', 'text-warm-700');
-      document.getElementById(`req-tab-${tab}`).classList.add('bg-accent', 'text-white');
+      const tabBtn = document.getElementById(`req-tab-${tab}`);
+      if (tabBtn) {
+        tabBtn.classList.remove('bg-warm-200', 'text-warm-700');
+        tabBtn.classList.add('bg-accent', 'text-white');
+      }
       filterAndRenderRequests();
     }
 
@@ -6430,7 +6426,8 @@ function renderUsersTable() {
     }
 
     function closeCreateRequestModal() {
-      document.getElementById('create-request-modal').classList.remove('flex');
+      const modal = document.getElementById('create-request-modal');
+      if (modal) modal.classList.remove('flex');
     }
 
     // Form submit handler
@@ -6599,14 +6596,17 @@ function renderUsersTable() {
           loadFilesForReference();
 
           // ✅ Clear input fields เพื่อป้องกันข้อความค้างจาก session อื่น
-          document.getElementById('req-reply-message').value = '';
-          document.getElementById('req-reply-file').value = '';
+          const replyMsg = document.getElementById('req-reply-message');
+          const replyFile = document.getElementById('req-reply-file');
+          if (replyMsg) replyMsg.value = '';
+          if (replyFile) replyFile.value = '';
 
-          document.getElementById('request-detail-modal').classList.add('flex');
+          const detailModal = document.getElementById('request-detail-modal');
+          if (detailModal) detailModal.classList.add('flex');
           lucide.createIcons();
 
           // Scroll to bottom of chat
-          chatEl.scrollTop = chatEl.scrollHeight;
+          if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
 
           // ✅ เริ่ม Real-time Chat Polling
           lastMessageCount = replies.length;
@@ -6617,7 +6617,8 @@ function renderUsersTable() {
     }
 
     function closeRequestDetailModal() {
-      document.getElementById('request-detail-modal').classList.remove('flex');
+      const modal = document.getElementById('request-detail-modal');
+      if (modal) modal.classList.remove('flex');
       currentRequestId = null;
       stopChatPolling(); // ✅ หยุด polling เมื่อปิด modal
     }
@@ -6763,13 +6764,17 @@ function renderUsersTable() {
       if(e) e.stopPropagation();
       const dropdown = document.getElementById('req-reply-file-dropdown');
       const icon = document.getElementById('req-reply-file-icon');
+      if (!dropdown) return;
       if (dropdown.classList.contains('hidden')) {
         dropdown.classList.remove('hidden');
         dropdown.classList.add('flex');
         if (icon) icon.classList.remove('rotate-180');
         renderFileDropdown(referenceFilesData.slice(0, 50));
-        document.getElementById('req-reply-file-search').value = '';
-        setTimeout(() => document.getElementById('req-reply-file-search').focus(), 50);
+        const searchInput = document.getElementById('req-reply-file-search');
+        if (searchInput) {
+          searchInput.value = '';
+          setTimeout(() => searchInput.focus(), 50);
+        }
       } else {
         dropdown.classList.add('hidden');
         dropdown.classList.remove('flex');
@@ -6784,9 +6789,13 @@ function renderUsersTable() {
     }
 
     function selectFileReference(id, title) {
-      document.getElementById('req-reply-file').value = id;
-      document.getElementById('req-reply-file-text').textContent = id ? title : '📎 อ้างอิงไฟล์';
-      document.getElementById('req-reply-file-text').className = id ? 'truncate text-accent font-medium w-36 inline-block' : 'truncate text-warm-400 w-36 inline-block';
+      const fileInput = document.getElementById('req-reply-file');
+      const fileText = document.getElementById('req-reply-file-text');
+      if (fileInput) fileInput.value = id;
+      if (fileText) {
+        fileText.textContent = id ? title : '📎 อ้างอิงไฟล์';
+        fileText.className = id ? 'truncate text-accent font-medium w-36 inline-block' : 'truncate text-warm-400 w-36 inline-block';
+      }
       
       const dropdown = document.getElementById('req-reply-file-dropdown');
       const icon = document.getElementById('req-reply-file-icon');
@@ -6811,8 +6820,16 @@ function renderUsersTable() {
     });
 
     function sendRequestReply() {
-      const message = document.getElementById('req-reply-message').value.trim();
-      const linkedFileId = document.getElementById('req-reply-file').value;
+      const msgInput = document.getElementById('req-reply-message');
+      const fileInput = document.getElementById('req-reply-file');
+      
+      if (!msgInput || !fileInput) {
+        showToast('ไม่พบช่องกรอกข้อความ', 'error');
+        return;
+      }
+      
+      const message = msgInput.value.trim();
+      const linkedFileId = fileInput.value;
 
       if (!message && !linkedFileId) {
         showToast('กรุณาพิมพ์ข้อความหรือเลือกไฟล์อ้างอิง', 'warning');
@@ -6821,9 +6838,9 @@ function renderUsersTable() {
 
       // ✅ Optimistic UI Update - แสดงข้อความทันทีก่อน server ตอบกลับ
       const chatEl = document.getElementById('req-detail-chat');
+      if (!chatEl) return;
+      
       const tempId = 'temp-msg-' + Date.now();
-      const now = new Date();
-      const tempTimeStr = `${now.getDate()} ${['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'][now.getMonth()]} ${now.getFullYear() + 543} เวลา ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} น.`;
 
       // สร้าง element ข้อความชั่วคราว
       const tempMsgHtml = `
@@ -6843,8 +6860,8 @@ function renderUsersTable() {
       chatEl.scrollTop = chatEl.scrollHeight;
 
       // ✅ เคลียร์ input ทันที
-      document.getElementById('req-reply-message').value = '';
-      document.getElementById('req-reply-file').value = '';
+      msgInput.value = '';
+      fileInput.value = '';
       
       const fileText = document.getElementById('req-reply-file-text');
       if (fileText) {
@@ -6854,7 +6871,6 @@ function renderUsersTable() {
 
       // ✅ Disable ปุ่มชั่วคราว
       const sendBtn = document.querySelector('#request-detail-modal button[onclick="sendRequestReply()"]');
-      const msgInput = document.getElementById('req-reply-message');
       if (sendBtn) sendBtn.disabled = true;
 
       google.script.run
@@ -6979,7 +6995,7 @@ function renderUsersTable() {
         // ✅ ตรวจสอบว่าล็อกอินอยู่หรือไม่
         if (!appState.currentUser || !appState.currentUser.UserID) {
           showToast('กรุณาเข้าสู่ระบบใหม่', 'error');
-          showPage('home');
+          navigate('home');
           return;
         }
 
@@ -7021,7 +7037,7 @@ function renderUsersTable() {
         // ✅ ตรวจสอบว่าล็อกอินอยู่หรือไม่
         if (!appState.currentUser || !appState.currentUser.UserID) {
           showToast('กรุณาเข้าสู่ระบบใหม่', 'error');
-          showPage('home');
+          navigate('home');
           return;
         }
 
