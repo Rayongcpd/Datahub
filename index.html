@@ -162,6 +162,10 @@
       animation: modalFadeIn 0.3s ease-out;
     }
 
+    .modal.flex {
+      display: flex !important;
+    }
+
     .modal-content {
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
@@ -1981,7 +1985,7 @@
           <h2 id="req-detail-title" class="text-xl font-semibold text-warm-700">หัวข้อคำขอ</h2>
           <p id="req-detail-meta" class="text-warm-400 text-sm mt-1"></p>
         </div>
-        <button onclick="closeRequestDetailModal()" class="text-white/80 hover:text-white">
+        <button onclick="closeRequestDetailModal()" class="text-warm-400 hover:text-warm-600">
           <i data-lucide="x" class="w-6 h-6"></i>
         </button>
       </div>
@@ -2265,6 +2269,10 @@
 
       authContainer.innerHTML = authHtml;
       mobileAuthContainer.innerHTML = `<div class="px-5">${authHtml.replace('id="logout-btn"', 'id="mobile-logout-btn"').replace('id="login-btn"', 'id="mobile-login-btn"')}</div>`;
+    }
+
+    function navigate(pageId, options = {}) {
+      renderPageContent(pageId, options);
     }
 
     function renderPageContent(pageId = appState.currentPage, options = {}) {
@@ -6395,21 +6403,34 @@ function renderUsersTable() {
         return;
       }
 
-      // Populate dropdowns
-      const assignedSelect = document.getElementById('req-assigned-to');
-      assignedSelect.innerHTML = '<option value="">-- เลือกผู้รับผิดชอบ --</option>';
-      appState.allUsers.forEach(u => {
-        assignedSelect.innerHTML += `<option value="${u.UserID}">${u.FullName}</option>`;
-      });
+      try {
+        // Populate dropdowns
+        const assignedSelect = document.getElementById('req-assigned-to');
+        if (assignedSelect) {
+          assignedSelect.innerHTML = '<option value="">-- เลือกผู้รับผิดชอบ --</option>';
+          (appState.allUsers || []).forEach(u => {
+            if (u && u.UserID) {
+              assignedSelect.innerHTML += `<option value="${u.UserID}">${u.FullName || u.UserID}</option>`;
+            }
+          });
+        }
 
-      // Reset form
-      document.getElementById('create-request-form').reset();
-      document.getElementById('create-request-modal').classList.add('active');
-      lucide.createIcons();
+        // Reset form
+        const form = document.getElementById('create-request-form');
+        if (form) form.reset();
+
+        const modal = document.getElementById('create-request-modal');
+        if (modal) modal.classList.add('flex');
+
+        lucide.createIcons();
+      } catch (err) {
+        console.error('Error opening create request modal:', err);
+        showToast('เกิดข้อผิดพลาดในการเปิดหน้าต่าง', 'error');
+      }
     }
 
     function closeCreateRequestModal() {
-      document.getElementById('create-request-modal').classList.remove('active');
+      document.getElementById('create-request-modal').classList.remove('flex');
     }
 
     // Form submit handler
@@ -6455,10 +6476,17 @@ function renderUsersTable() {
             return;
           }
 
-          const { request, replies } = res.data;
+          const request = res.data && res.data.request ? res.data.request : null;
+          const replies = res.data && res.data.replies ? res.data.replies : [];
+
+          if (!request) {
+            hideLoading();
+            showToast('ไม่พบข้อมูลคำขอ', 'error');
+            return;
+          }
 
           // Header
-          document.getElementById('req-detail-title').textContent = request.Title;
+          document.getElementById('req-detail-title').textContent = request.Title || 'ไม่มีหัวข้อ';
           document.getElementById('req-detail-meta').textContent =
             `จาก: ${request.RequesterName} → ถึง: ${request.AssigneeName || 'ไม่ระบุ'}`;
 
@@ -6574,7 +6602,7 @@ function renderUsersTable() {
           document.getElementById('req-reply-message').value = '';
           document.getElementById('req-reply-file').value = '';
 
-          document.getElementById('request-detail-modal').classList.add('active');
+          document.getElementById('request-detail-modal').classList.add('flex');
           lucide.createIcons();
 
           // Scroll to bottom of chat
@@ -6589,7 +6617,7 @@ function renderUsersTable() {
     }
 
     function closeRequestDetailModal() {
-      document.getElementById('request-detail-modal').classList.remove('active');
+      document.getElementById('request-detail-modal').classList.remove('flex');
       currentRequestId = null;
       stopChatPolling(); // ✅ หยุด polling เมื่อปิด modal
     }
@@ -6932,14 +6960,7 @@ function renderUsersTable() {
                 showToast('ลบคำขอเรียบร้อยแล้ว', 'success');
                 closeRequestDetailModal();
                 // Refresh list
-                const activeTab = document.querySelector('.tab-btn.active');
-                if (activeTab && activeTab.id === 'tab-req-mine') {
-                  filterRequests('mine');
-                } else if (activeTab && activeTab.id === 'tab-req-assigned') {
-                  filterRequests('assigned');
-                } else {
-                  renderDocumentRequests();
-                }
+                renderDocumentRequests();
               } else {
                 showToast(res.message, 'error');
               }
