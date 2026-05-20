@@ -6186,7 +6186,7 @@ function renderUsersTable() {
               }
             })
             .withFailureHandler(onFailure)
-            .restoreMultipleFiles(recycleIds);
+            .restoreMultipleFiles(recycleIds, appState.currentUser.UserID);
         }
       });
     }

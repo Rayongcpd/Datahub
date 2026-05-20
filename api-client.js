@@ -263,6 +263,9 @@ window.google.script = window.google.script || {};
                             case 'restoreFile':
                                 params = { recycleId: args[0], callerId: args[1] };
                                 break;
+                            case 'restoreMultipleFiles':
+                                params = { recycleIds: args[0], callerId: args[1] };
+                                break;
                             case 'requestDeleteFile':
                                 params = { fileId: args[0], requestedBy: args[1], reason: args[2] };
                                 break;
