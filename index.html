@@ -192,39 +192,57 @@
     /* ===== File type label inside title cell ===== */
     .file-type {
       display: inline-block;
-      font-size: 0.6rem !important;
-      color: var(--text-tertiary) !important;
+      font-size: 0.75rem !important;
+      color: var(--text-secondary) !important;
       background: var(--bg-muted);
       border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 1px 8px;
-      margin-top: 4px;
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-top: 6px;
       line-height: 1.4;
+      font-weight: 500;
     }
 
     /* ===== Title: readable size on desktop ===== */
     tbody td[data-label="ชื่อเรื่อง"] {
-      font-size: 1rem !important;
+      font-size: 0.95rem !important;
       font-weight: 500;
-      line-height: 1.5;
+      line-height: 1.6;
+    }
+
+    .file-title {
+      font-size: 0.95rem !important;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .file-subtitle {
+      font-size: 0.8125rem !important;
+      color: var(--text-secondary) !important;
+      margin-top: 3px;
+      font-weight: 400;
+    }
+
+    .file-hold {
+      font-size: 0.8125rem !important;
+      color: var(--text-tertiary) !important;
+      margin-top: 3px;
     }
 
     /* ===== Group/type: tiny & gray on all screens ===== */
     tbody td[data-label="กลุ่มงาน"],
     tbody td[data-label="ประเภทเอกสาร"],
     tbody td[data-label="ประเภท"] {
-      font-size: 0.65rem !important;
-      color: var(--text-tertiary) !important;
+      font-size: 0.875rem !important;
+      color: var(--text-secondary) !important;
     }
 
+    /* Allow original colorful badges designed in JS to show correctly */
     tbody td[data-label="กลุ่มงาน"] span,
     tbody td[data-label="ประเภทเอกสาร"] span,
     tbody td[data-label="ประเภท"] span {
-      font-size: 0.6rem !important;
-      padding: 1px 6px !important;
-      background: var(--bg-muted) !important;
-      color: var(--text-tertiary) !important;
-      border: 1px solid var(--border-subtle) !important;
+      font-size: 0.75rem !important;
+      padding: 3px 8px !important;
     }
 
     /* ===== Responsive Table (Mobile Card Layout) ===== */
@@ -319,11 +337,11 @@
         line-height: 1.5;
       }
 
-      /* Group / type field: much smaller than title */
+      /* Group / type field: clean and readable on mobile */
       .responsive-table tbody td[data-label="กลุ่มงาน"],
       .responsive-table tbody td[data-label="ประเภทเอกสาร"],
       .responsive-table tbody td[data-label="ประเภท"] {
-        font-size: 0.65rem !important;
+        font-size: 0.8125rem !important;
         padding-top: 4px;
         padding-bottom: 4px;
       }
