@@ -1816,11 +1816,8 @@
             <select id="template-category-filter" onchange="filterTemplates()"
               class="w-full md:w-48 px-3 py-2 bg-warm-50 border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-accent focus:border-accent">
               <option value="all">-- ทุกหมวดหมู่ --</option>
-              <option value="1. จัดตั้งและข้อบังคับสหกรณ์">1. จัดตั้งและข้อบังคับสหกรณ์</option>
-              <option value="2. การประชุมคณะกรรมการ/ใหญ่">2. การประชุมคณะกรรมการ/ใหญ่</option>
-              <option value="3. การเงินและการบัญชีสหกรณ์">3. การเงินและการบัญชีสหกรณ์</option>
-              <option value="4. ระเบียบและข้อกำหนดสหกรณ์">4. ระเบียบและข้อกำหนดสหกรณ์</option>
-              <option value="5. อื่นๆ">5. อื่นๆ</option>
+              <option value="ข้อบังคับ">ข้อบังคับ</option>
+              <option value="ระเบียบ">ระเบียบ</option>
             </select>
           </div>
         </div>
@@ -1881,11 +1878,8 @@
             <select id="template-category" required
               class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
               <option value="">-- เลือกหมวดหมู่ --</option>
-              <option value="1. จัดตั้งและข้อบังคับสหกรณ์">1. จัดตั้งและข้อบังคับสหกรณ์</option>
-              <option value="2. การประชุมคณะกรรมการ/ใหญ่">2. การประชุมคณะกรรมการ/ใหญ่</option>
-              <option value="3. การเงินและการบัญชีสหกรณ์">3. การเงินและการบัญชีสหกรณ์</option>
-              <option value="4. ระเบียบและข้อกำหนดสหกรณ์">4. ระเบียบและข้อกำหนดสหกรณ์</option>
-              <option value="5. อื่นๆ">5. อื่นๆ</option>
+              <option value="ข้อบังคับ">ข้อบังคับ</option>
+              <option value="ระเบียบ">ระเบียบ</option>
             </select>
           </div>
           <div>
@@ -8743,11 +8737,8 @@ function renderUsersTable() {
 
       // หมวดหมู่และสี Badge
       const categoryColors = {
-        '1. จัดตั้งและข้อบังคับสหกรณ์': 'bg-sage text-white',
-        '2. การประชุมคณะกรรมการ/ใหญ่': 'bg-accent text-white',
-        '3. การเงินและการบัญชีสหกรณ์': 'bg-brick text-white',
-        '4. ระเบียบและข้อกำหนดสหกรณ์': 'bg-warm-700 text-white',
-        '5. อื่นๆ': 'bg-warm-200 text-warm-800'
+        'ข้อบังคับ': 'bg-sage text-white',
+        'ระเบียบ': 'bg-brick text-white'
       };
 
       container.innerHTML = '';
