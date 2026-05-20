@@ -268,3 +268,288 @@ body {
     letter-spacing: 0.05em;
   }
 }
+
+/* ===== MODERN ACTIONS & PREVIEWS (UX/UI Upgrade) ===== */
+.action-btn-group {
+  display: inline-flex;
+  gap: 6px;
+  background: var(--bg-muted);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-btn:hover {
+  transform: translateY(-1.5px) scale(1.05);
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn.preview-btn:hover {
+  color: var(--accent);
+  box-shadow: 0 4px 12px rgba(194, 123, 83, 0.15);
+}
+
+.action-btn.download-btn {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.action-btn.download-btn:hover {
+  background: var(--accent-hover);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(194, 123, 83, 0.25);
+}
+
+/* ===== DYNAMIC DOCUMENT TYPE BADGES ===== */
+.file-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.7rem !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.file-badge i {
+  flex-shrink: 0;
+}
+
+.file-badge-pdf {
+  background: rgba(184, 92, 92, 0.08);
+  color: var(--danger);
+  border-color: rgba(184, 92, 92, 0.15);
+}
+.file-badge-pdf:hover {
+  background: rgba(184, 92, 92, 0.15);
+}
+
+.file-badge-excel {
+  background: rgba(90, 124, 90, 0.08);
+  color: var(--success);
+  border-color: rgba(90, 124, 90, 0.15);
+}
+.file-badge-excel:hover {
+  background: rgba(90, 124, 90, 0.15);
+}
+
+.file-badge-word {
+  background: rgba(59, 130, 246, 0.08);
+  color: #3b82f6;
+  border-color: rgba(59, 130, 246, 0.15);
+}
+.file-badge-word:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.file-badge-zip {
+  background: rgba(245, 158, 11, 0.08);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.15);
+}
+.file-badge-zip:hover {
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.file-badge-default {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+/* ===== MICRO-INTERACTIONS & SHADOWS ===== */
+.btn-primary, .btn-secondary, .btn-ghost, .btn-danger {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.btn-primary:active, .btn-secondary:active, .btn-ghost:active {
+  transform: scale(0.96);
+}
+
+.card, .glass-card, #page-stats .card-hover {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.25s ease !important;
+}
+
+.card:hover, .glass-card:hover, #page-stats .card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(45, 42, 38, 0.04);
+}
+
+.glass-header {
+  background-color: rgba(250, 248, 245, 0.8) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ===== TRUE DARK MODE OVERRIDES ===== */
+body[data-theme="dark"] {
+  --bg-primary: #11100e;
+  --bg-elevated: #1a1816;
+  --bg-muted: #24211e;
+  --border-subtle: #302d29;
+  --border-focus: #45403a;
+  --text-primary: #f2ede4;
+  --text-secondary: #bbb4a9;
+  --text-tertiary: #878177;
+  
+  --accent: #d28c63;
+  --accent-hover: #e09e76;
+  --accent-muted: #2d231b;
+  
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"] .glass-header {
+  background-color: rgba(26, 24, 22, 0.8) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+/* Map Tailwind colors to Dark Variables */
+body[data-theme="dark"] .bg-white {
+  background-color: var(--bg-elevated) !important;
+}
+
+body[data-theme="dark"] .bg-warm-50 {
+  background-color: var(--bg-muted) !important;
+}
+
+body[data-theme="dark"] .bg-warm-100 {
+  background-color: var(--bg-muted) !important;
+}
+
+body[data-theme="dark"] .border-warm-200,
+body[data-theme="dark"] .divide-warm-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border-subtle) !important;
+}
+
+body[data-theme="dark"] .text-warm-700,
+body[data-theme="dark"] .text-warm-800 {
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"] .text-warm-500,
+body[data-theme="dark"] .text-warm-600 {
+  color: var(--text-secondary) !important;
+}
+
+body[data-theme="dark"] .text-warm-400 {
+  color: var(--text-tertiary) !important;
+}
+
+/* Inputs and Forms Dark Mode */
+body[data-theme="dark"] input,
+body[data-theme="dark"] select,
+body[data-theme="dark"] textarea {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"] input::placeholder {
+  color: var(--text-tertiary) !important;
+}
+
+body[data-theme="dark"] input:focus,
+body[data-theme="dark"] select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(210, 140, 99, 0.2) !important;
+}
+
+/* Modals Dark Mode */
+body[data-theme="dark"] .modal-content {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"] .modal {
+  background-color: rgba(17, 16, 14, 0.6) !important;
+}
+
+/* SweetAlert Dark Mode Custom Styles */
+body[data-theme="dark"] .swal2-popup {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-subtle) !important;
+}
+
+body[data-theme="dark"] .swal2-title,
+body[data-theme="dark"] .swal2-html-container {
+  color: var(--text-primary) !important;
+}
+
+body[data-theme="dark"] .swal2-validation-message {
+  background-color: var(--bg-muted) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ===== NAV LINKS & DROPDOWNS (Glassmorphism & Physics Animations) ===== */
+.nav-link {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent);
+  transition: width 0.25s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.nav-link:hover::after {
+  width: 80%;
+  left: 10%;
+}
+
+.nav-link:active {
+  transform: scale(0.95);
+}
+
+/* Glassmorphic Dropdown Panels */
+.group:hover > div[role="menu"],
+.group:hover > div {
+  animation: dropdownFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
