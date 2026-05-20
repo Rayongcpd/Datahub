@@ -2459,18 +2459,15 @@
       paginatedFiles.forEach((file, index) => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          return `<div class="flex flex-col gap-1 mb-2">
-            <div class="action-btn-group">
-              <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
-                class="action-btn preview-btn" title="ดูตัวอย่าง">
-                <i data-lucide="eye" class="w-4 h-4"></i>
-              </button>
-              <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-                class="action-btn download-btn" title="ดาวน์โหลด">
-                <i data-lucide="download" class="w-4 h-4"></i>
-              </button>
-            </div>
-            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
+          return `<div class="action-btn-group mb-2">
+            <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+              class="action-btn preview-btn" title="ดูตัวอย่าง">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+            <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+              class="action-btn download-btn" title="ดาวน์โหลด">
+              <i data-lucide="download" class="w-4 h-4"></i>
+            </button>
           </div>`;
         }).join('');
 
@@ -2543,18 +2540,15 @@
       paginatedFiles.forEach((file, index) => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          return `<div class="flex flex-col gap-1 mb-2">
-            <div class="action-btn-group">
-              <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
-                class="action-btn preview-btn" title="ดูตัวอย่าง">
-                <i data-lucide="eye" class="w-4 h-4"></i>
-              </button>
-              <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-                class="action-btn download-btn" title="ดาวน์โหลด">
-                <i data-lucide="download" class="w-4 h-4"></i>
-              </button>
-            </div>
-            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
+          return `<div class="action-btn-group mb-2">
+            <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+              class="action-btn preview-btn" title="ดูตัวอย่าง">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+            <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+              class="action-btn download-btn" title="ดาวน์โหลด">
+              <i data-lucide="download" class="w-4 h-4"></i>
+            </button>
           </div>`;
         }).join('');
 
@@ -3075,18 +3069,15 @@ function renderUsersTable() {
       paginatedFiles.forEach(file => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          return `<div class="flex flex-col gap-1 mb-2">
-            <div class="action-btn-group">
-              <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
-                class="action-btn preview-btn" title="ดูตัวอย่าง">
-                <i data-lucide="eye" class="w-4 h-4"></i>
-              </button>
-              <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-                class="action-btn download-btn" title="ดาวน์โหลด">
-                <i data-lucide="download" class="w-4 h-4"></i>
-              </button>
-            </div>
-            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
+          return `<div class="action-btn-group mb-2">
+            <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+              class="action-btn preview-btn" title="ดูตัวอย่าง">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+            <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+              class="action-btn download-btn" title="ดาวน์โหลด">
+              <i data-lucide="download" class="w-4 h-4"></i>
+            </button>
           </div>`;
         }).join('');
 
@@ -3216,18 +3207,15 @@ function renderUsersTable() {
       paginatedFiles.forEach(file => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          return `<div class="flex flex-col gap-1 mb-2">
-            <div class="action-btn-group">
-              <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
-                class="action-btn preview-btn" title="ดูตัวอย่าง">
-                <i data-lucide="eye" class="w-4 h-4"></i>
-              </button>
-              <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-                class="action-btn download-btn" title="ดาวน์โหลด">
-                <i data-lucide="download" class="w-4 h-4"></i>
-              </button>
-            </div>
-            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
+          return `<div class="action-btn-group mb-2">
+            <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+              class="action-btn preview-btn" title="ดูตัวอย่าง">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+            </button>
+            <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+              class="action-btn download-btn" title="ดาวน์โหลด">
+              <i data-lucide="download" class="w-4 h-4"></i>
+            </button>
           </div>`;
         }).join('');
 

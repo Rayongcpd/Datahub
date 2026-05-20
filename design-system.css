@@ -272,6 +272,7 @@ body {
 /* ===== MODERN ACTIONS & PREVIEWS (UX/UI Upgrade) ===== */
 .action-btn-group {
   display: inline-flex;
+  width: fit-content;
   gap: 6px;
   background: var(--bg-muted);
   padding: 4px;
