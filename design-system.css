@@ -830,4 +830,232 @@ body[data-theme="dark"] select.form-input-premium {
   }
 }
 
+/* ===== PREMIUM STATISTICS PAGE REDESIGN ===== */
+
+/* Grid and Spacing */
+.stats-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .stats-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+}
+
+/* Premium KPI Card */
+.stats-kpi-card {
+  position: relative;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 24px 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(45, 42, 38, 0.015);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Subtle Gradient Glow Overlays on Cards */
+.stats-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.04;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* Colors for specific KPI cards */
+.stats-kpi-card-files::before { background: linear-gradient(135deg, var(--accent), transparent); }
+.stats-kpi-card-downloads::before { background: linear-gradient(135deg, var(--success), transparent); }
+.stats-kpi-card-coops::before { background: linear-gradient(135deg, #3b82f6, transparent); }
+.stats-kpi-card-rating::before { background: linear-gradient(135deg, var(--warning), transparent); }
+
+.stats-kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(45, 42, 38, 0.06);
+  border-color: var(--border-focus);
+}
+
+.stats-kpi-card:hover::before {
+  opacity: 0.08;
+}
+
+body[data-theme="dark"] .stats-kpi-card:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.stats-kpi-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.stats-kpi-card:hover .stats-kpi-icon-wrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Modern Segmented Control for Table Filter */
+.stats-segmented-control {
+  display: flex;
+  background: var(--bg-muted);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  width: fit-content;
+}
+
+.stats-segmented-control .coop-filter-btn {
+  background: transparent !important;
+  color: var(--text-secondary);
+  border: none;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-segmented-control .coop-filter-btn span {
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+}
+
+body[data-theme="dark"] .stats-segmented-control .coop-filter-btn span {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stats-segmented-control .coop-filter-btn.active {
+  background: var(--bg-elevated) !important;
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+}
+
+body[data-theme="dark"] .stats-segmented-control .coop-filter-btn.active {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stats-segmented-control .coop-filter-btn.active span {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+/* Premium Gradient Progress Bar for Table */
+.stats-progress-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.stats-progress-track {
+  flex-grow: 1;
+  background: var(--bg-muted);
+  height: 8px;
+  border-radius: 99px;
+  overflow: hidden;
+  position: relative;
+}
+
+.stats-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--success) 100%);
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Shine overlay effect on progress bar */
+.stats-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+  animation: progressShine 3s infinite linear;
+}
+
+@keyframes progressShine {
+  0% { transform: translateX(-30px); }
+  100% { transform: translateX(300px); }
+}
+
+/* Center Label styling for Doughnut Chart */
+.satisfaction-chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.satisfaction-chart-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.satisfaction-chart-score {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+  font-family: var(--font-heading);
+}
+
+.satisfaction-chart-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Extra animations */
+.fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 

@@ -591,7 +591,7 @@
       </div>
 
       <!-- Page: Statistics (Redesigned) -->
-      <div id="page-stats" class="page">
+      <div id="page-stats" class="page fade-in-up">
         <h1 class="text-3xl font-bold mb-6 flex items-center gap-3">
           <span
             class="bg-accent-muted text-accent px-4 py-2 rounded-lg">📊</span>
@@ -599,17 +599,16 @@
         </h1>
 
         <!-- ========== KPI Dashboard Cards ========== -->
-        <div id="kpi-dashboard" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div id="kpi-dashboard" class="stats-kpi-grid mb-8">
           <!-- KPI Card 1: Total Files -->
-          <div
-            class="bg-white border border-warm-200 card-hover text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-sm transition-shadow">
+          <div class="stats-kpi-card stats-kpi-card-files">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-warm-500 text-sm font-medium">ไฟล์ทั้งหมด</p>
                 <p id="kpi-total-files" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
               </div>
-              <div class="bg-accent-muted text-accent p-3 rounded-full">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="stats-kpi-icon-wrapper bg-accent-muted text-accent">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M7 21h10a2 2 0 002-2V9l-7-7H7a2 2 0 00-2 2v16a2 2 0 002 2z"></path>
                 </svg>
@@ -618,15 +617,14 @@
           </div>
 
           <!-- KPI Card 2: Total Downloads -->
-          <div
-            class="bg-white border border-warm-200 card-hover text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-sm transition-shadow">
+          <div class="stats-kpi-card stats-kpi-card-downloads">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-warm-500 text-sm font-medium">ดาวน์โหลดรวม</p>
                 <p id="kpi-total-downloads" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
               </div>
-              <div class="bg-sage/10 text-sage p-3 rounded-full">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="stats-kpi-icon-wrapper bg-sage/10 text-sage">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
@@ -635,15 +633,14 @@
           </div>
 
           <!-- KPI Card 3: Total Cooperatives -->
-          <div
-            class="bg-white border border-warm-200 card-hover text-white p-5 rounded-xl border border-warm-200 card-hover hover:shadow-sm transition-shadow">
+          <div class="stats-kpi-card stats-kpi-card-coops">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-warm-500 text-sm font-medium">สหกรณ์/กลุ่มเกษตรกร</p>
                 <p id="kpi-total-coops" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
               </div>
-              <div class="bg-accent-muted text-accent p-3 rounded-full">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="stats-kpi-icon-wrapper bg-blue-500/10 text-blue-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                   </path>
@@ -653,15 +650,14 @@
           </div>
 
           <!-- KPI Card 4: Avg Satisfaction -->
-          <div
-            class="bg-white border border-warm-200 card-hover p-5 rounded-xl hover:shadow-sm transition-shadow">
+          <div class="stats-kpi-card stats-kpi-card-rating">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-warm-500 text-sm font-medium">ความพึงพอใจเฉลี่ย</p>
                 <p id="kpi-avg-satisfaction" class="text-3xl font-heading font-bold mt-1 text-warm-700">-</p>
               </div>
-              <div class="bg-accent-muted text-accent p-3 rounded-lg">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="stats-kpi-icon-wrapper bg-amber-500/10 text-amber-500">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z">
                   </path>
@@ -674,7 +670,7 @@
         <!-- ========== Charts Section ========== -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <!-- Chart 1: Files per Group -->
-          <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover border border-warm-100">
+          <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover">
             <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-warm-700">
               <span class="bg-sage/10 text-accent p-2 rounded-lg">📁</span>
               จำนวนไฟล์ในแต่ละกลุ่มงาน
@@ -685,19 +681,23 @@
           </div>
 
           <!-- Chart 2: Satisfaction -->
-          <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover border border-warm-100">
+          <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover">
             <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-warm-700">
               <span class="bg-accent-muted text-accent p-2 rounded-lg">⭐</span>
               ระดับความพึงพอใจ
             </h2>
-            <div class="relative" style="height: 280px;">
+            <div class="satisfaction-chart-wrapper">
               <canvas id="satisfactionChart"></canvas>
+              <div class="satisfaction-chart-center">
+                <span id="satisfaction-center-score" class="satisfaction-chart-score">-</span>
+                <span class="satisfaction-chart-label">เฉลี่ย</span>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- ========== Cooperative Comparison Section ========== -->
-        <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover border border-warm-100 mb-8">
+        <div class="bg-white p-6 rounded-xl border border-warm-200 card-hover mb-8">
           <h2 class="text-xl font-semibold mb-6 flex items-center gap-2 text-warm-700">
             <span class="bg-accent-muted text-amber-600 p-2 rounded-lg">🏢</span>
             เปรียบเทียบข้อมูลสหกรณ์
@@ -724,22 +724,16 @@
           <div class="bg-warm-50 p-4 rounded-lg">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
               <h3 class="text-sm font-semibold text-warm-600">📋 ตารางสรุปข้อมูลสหกรณ์/กลุ่มเกษตรกร</h3>
-              <!-- Filter Tabs -->
-              <div class="flex gap-2">
-                <button data-filter="all"
-                  class="coop-filter-btn active px-4 py-2 text-xs font-semibold rounded-md bg-accent text-white hover:bg-accent-hover transition-colors">
-                  ทั้งหมด <span id="filter-count-all"
-                    class="ml-1 bg-white/20 px-2 py-0.5 rounded-full">0</span>
+              <!-- Filter Tabs: Segmented Control -->
+              <div class="stats-segmented-control">
+                <button data-filter="all" class="coop-filter-btn active">
+                  ทั้งหมด <span id="filter-count-all">0</span>
                 </button>
-                <button data-filter="coop"
-                  class="coop-filter-btn px-4 py-2 text-xs font-semibold rounded-md bg-warm-200 text-warm-700 hover:bg-warm-100 transition-colors">
-                  สหกรณ์ <span id="filter-count-coop"
-                    class="ml-1 bg-warm-300 px-2 py-0.5 rounded-full">0</span>
+                <button data-filter="coop" class="coop-filter-btn">
+                  สหกรณ์ <span id="filter-count-coop">0</span>
                 </button>
-                <button data-filter="group"
-                  class="coop-filter-btn px-4 py-2 text-xs font-semibold rounded-md bg-warm-200 text-warm-700 hover:bg-warm-100 transition-colors">
-                  กลุ่มเกษตรกร <span id="filter-count-group"
-                    class="ml-1 bg-warm-300 px-2 py-0.5 rounded-full">0</span>
+                <button data-filter="group" class="coop-filter-btn">
+                  กลุ่มเกษตรกร <span id="filter-count-group">0</span>
                 </button>
               </div>
             </div>
@@ -2671,6 +2665,7 @@
         .withSuccessHandler(response => {
           if (response.success) {
             const data = response.data;
+            appState.lastStatsData = data; // Cache data for theme toggle re-renders
 
             // Render KPI Dashboard
             if (data.kpi) {
@@ -3827,21 +3822,30 @@ function renderUsersTable() {
       const ctx = document.getElementById('filesPerGroupChart').getContext('2d');
       if (appState.charts.filesPerGroup) appState.charts.filesPerGroup.destroy();
 
-      // Color mapping for groups, consistent with renderHomeDashboard
-      const colors = [
-        { bg: '#047857' }, // emerald-700
-        { bg: '#fbbf24' }, // amber-400
-        { bg: '#65a30d' }, // lime-600
-        { bg: '#334155' }, // slate-700
-        { bg: '#fef9c3' } // yellow-100
-      ];
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#bbb4a9' : '#6b6560';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
+      const fontName = 'Sarabun, sans-serif';
 
-      // Map colors to groups based on their index in appState.allGroups
-      const backgroundColors = data.map(d => {
+      // Create beautiful gradients for group bars
+      const backgroundColors = data.map((d, index) => {
         const groupIndex = appState.allGroups.findIndex(g => g.GroupName === d.groupName);
-        return groupIndex !== -1 ? colors[groupIndex % colors.length].bg : '#6b7280';
+        const idx = groupIndex !== -1 ? groupIndex : index;
+        
+        let start, end;
+        switch(idx % 5) {
+          case 0: start = '#047857'; end = '#10b981'; break; // Emerald
+          case 1: start = '#d97706'; end = '#fbbf24'; break; // Amber
+          case 2: start = '#65a30d'; end = '#84cc16'; break; // Lime
+          case 3: start = '#334155'; end = '#475569'; break; // Slate
+          case 4: start = '#c27b53'; end = '#e3a683'; break; // Terracotta / Accent
+        }
+        
+        const g = ctx.createLinearGradient(0, 0, 0, 250);
+        g.addColorStop(0, start);
+        g.addColorStop(1, end);
+        return g;
       });
-      const borderColors = backgroundColors; // Use same colors for borders
 
       appState.charts.filesPerGroup = new Chart(ctx, {
         type: 'bar',
@@ -3851,16 +3855,32 @@ function renderUsersTable() {
             label: 'จำนวนไฟล์',
             data: data.map(d => d.count),
             backgroundColor: backgroundColors,
-            borderColor: borderColors,
-            borderWidth: 1
+            borderColor: 'transparent',
+            borderWidth: 0,
+            borderRadius: 8,
+            borderSkipped: false
           }]
         },
         options: {
           maintainAspectRatio: false,
           responsive: true,
-          scales: { y: { beginAtZero: true } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { family: fontName } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: textColor, font: { family: fontName } }
+            }
+          },
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            tooltip: {
+              titleFont: { family: fontName },
+              bodyFont: { family: fontName }
+            }
           }
         }
       });
@@ -3869,6 +3889,34 @@ function renderUsersTable() {
     function renderSatisfactionChart(data) {
       const ctx = document.getElementById('satisfactionChart').getContext('2d');
       if (appState.charts.satisfaction) appState.charts.satisfaction.destroy();
+
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#bbb4a9' : '#6b6560';
+      const fontName = 'Sarabun, sans-serif';
+
+      // Update Center score label
+      const scoreEl = document.getElementById('satisfaction-center-score');
+      if (scoreEl) {
+        const avgScore = (appState.lastStatsData && appState.lastStatsData.kpi) 
+          ? appState.lastStatsData.kpi.avgSatisfaction 
+          : '5.0';
+        scoreEl.textContent = avgScore + ' / 5';
+      }
+
+      // Create smooth gradients for doughnut sections
+      const satisfactionColors = [
+        ['#ef4444', '#f87171'], // 1 star
+        ['#f97316', '#fb923c'], // 2 stars
+        ['#eab308', '#facc15'], // 3 stars
+        ['#84cc16', '#a3e635'], // 4 stars
+        ['#22c55e', '#34d399']  // 5 stars
+      ].map(([end, start]) => {
+        const g = ctx.createLinearGradient(0, 0, 0, 250);
+        g.addColorStop(0, start);
+        g.addColorStop(1, end);
+        return g;
+      });
+
       appState.charts.satisfaction = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -3876,14 +3924,30 @@ function renderUsersTable() {
           datasets: [{
             label: 'ความพึงพอใจ',
             data: data,
-            backgroundColor: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'],
+            backgroundColor: satisfactionColors,
+            borderColor: isDark ? '#1a1816' : '#ffffff',
+            borderWidth: 2,
+            hoverOffset: 4
           }]
         },
         options: {
           maintainAspectRatio: false,
           responsive: true,
+          cutout: '75%',
           plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: textColor,
+                font: { family: fontName, size: 11 },
+                padding: 12,
+                boxWidth: 12
+              }
+            },
+            tooltip: {
+              titleFont: { family: fontName },
+              bodyFont: { family: fontName }
+            }
           }
         }
       });
@@ -3895,18 +3959,31 @@ function renderUsersTable() {
       if (!ctx) return;
       if (appState.charts.filesPerCoop) appState.charts.filesPerCoop.destroy();
 
-      const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1'];
-      const fullNames = data.map(d => d.coopName); // เก็บชื่อเต็มสำหรับ tooltip
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#bbb4a9' : '#6b6560';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
+      const fontName = 'Sarabun, sans-serif';
 
-      appState.charts.filesPerCoop = new Chart(ctx.getContext('2d'), {
+      const fullNames = data.map(d => d.coopName);
+
+      // Create Terracotta gradient
+      const canvasCtx = ctx.getContext('2d');
+      const gradient = canvasCtx.createLinearGradient(0, 0, 300, 0);
+      gradient.addColorStop(0, '#c27b53');
+      gradient.addColorStop(1, '#e3a683');
+
+      appState.charts.filesPerCoop = new Chart(canvasCtx, {
         type: 'bar',
         data: {
-          labels: data.map(d => d.coopName.length > 20 ? d.coopName.substring(0, 20) + '...' : d.coopName),
+          labels: data.map(d => d.coopName.length > 18 ? d.coopName.substring(0, 18) + '...' : d.coopName),
           datasets: [{
             label: 'จำนวนไฟล์',
             data: data.map(d => d.count),
-            backgroundColor: colors,
-            borderRadius: 4
+            backgroundColor: gradient,
+            borderColor: 'transparent',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false
           }]
         },
         options: {
@@ -3914,8 +3991,15 @@ function renderUsersTable() {
           maintainAspectRatio: false,
           responsive: true,
           scales: {
-            x: { beginAtZero: true, grid: { display: false } },
-            y: { grid: { display: false } }
+            x: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { family: fontName } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: textColor, font: { family: fontName } }
+            }
           },
           plugins: {
             legend: { display: false },
@@ -3927,7 +4011,9 @@ function renderUsersTable() {
                 label: function (context) {
                   return 'จำนวนไฟล์: ' + context.parsed.x.toLocaleString();
                 }
-              }
+              },
+              titleFont: { family: fontName },
+              bodyFont: { family: fontName }
             }
           }
         }
@@ -3939,19 +4025,32 @@ function renderUsersTable() {
       if (!ctx) return;
       if (appState.charts.downloadsPerCoop) appState.charts.downloadsPerCoop.destroy();
 
-      const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16', '#f97316', '#6366f1'];
-      const sortedData = [...data].sort((a, b) => b.downloads - a.downloads).slice(0, 10);
-      const fullNames = sortedData.map(d => d.coopName); // เก็บชื่อเต็มสำหรับ tooltip
+      const isDark = document.body.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#bbb4a9' : '#6b6560';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)';
+      const fontName = 'Sarabun, sans-serif';
 
-      appState.charts.downloadsPerCoop = new Chart(ctx.getContext('2d'), {
+      const sortedData = [...data].sort((a, b) => b.downloads - a.downloads).slice(0, 10);
+      const fullNames = sortedData.map(d => d.coopName);
+
+      // Create Emerald gradient
+      const canvasCtx = ctx.getContext('2d');
+      const gradient = canvasCtx.createLinearGradient(0, 0, 300, 0);
+      gradient.addColorStop(0, '#10b981');
+      gradient.addColorStop(1, '#6ee7b7');
+
+      appState.charts.downloadsPerCoop = new Chart(canvasCtx, {
         type: 'bar',
         data: {
-          labels: sortedData.map(d => d.coopName.length > 20 ? d.coopName.substring(0, 20) + '...' : d.coopName),
+          labels: sortedData.map(d => d.coopName.length > 18 ? d.coopName.substring(0, 18) + '...' : d.coopName),
           datasets: [{
             label: 'ยอดดาวน์โหลด',
             data: sortedData.map(d => d.downloads),
-            backgroundColor: colors,
-            borderRadius: 4
+            backgroundColor: gradient,
+            borderColor: 'transparent',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false
           }]
         },
         options: {
@@ -3959,8 +4058,15 @@ function renderUsersTable() {
           maintainAspectRatio: false,
           responsive: true,
           scales: {
-            x: { beginAtZero: true, grid: { display: false } },
-            y: { grid: { display: false } }
+            x: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { family: fontName } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { color: textColor, font: { family: fontName } }
+            }
           },
           plugins: {
             legend: { display: false },
@@ -3972,7 +4078,9 @@ function renderUsersTable() {
                 label: function (context) {
                   return 'ยอดดาวน์โหลด: ' + context.parsed.x.toLocaleString();
                 }
-              }
+              },
+              titleFont: { family: fontName },
+              bodyFont: { family: fontName }
             }
           }
         }
@@ -4015,39 +4123,41 @@ function renderUsersTable() {
         const percentage = totalFiles > 0 ? ((coop.count / totalFiles) * 100).toFixed(1) : 0;
         const progressWidth = Math.min(percentage, 100);
 
-        // Add type badge
+        // Add type badge using premium file-badge styles
         let typeBadge = '';
         if (coop.coopName.includes('สหกรณ์')) {
-          typeBadge = '<span class="bg-sage/10 text-sage px-2 py-0.5 rounded text-xs mr-2">สหกรณ์</span>';
+          typeBadge = '<span class="file-badge file-badge-excel mr-2">สหกรณ์</span>';
         } else if (coop.coopName.includes('กลุ่มเกษตรกร')) {
-          typeBadge = '<span class="bg-accent-muted text-accent px-2 py-0.5 rounded text-xs mr-2">กลุ่มเกษตรกร</span>';
+          typeBadge = '<span class="file-badge file-badge-zip mr-2">กลุ่มเกษตรกร</span>';
         }
 
         tbody.innerHTML += `
-          <tr class="hover:bg-warm-50">
+          <tr class="hover:bg-warm-50 transition-colors duration-150">
             <td class="px-4 py-3 text-warm-600" data-label="ลำดับ">${index + 1}</td>
             <td class="px-4 py-3 font-medium text-warm-800" data-label="ชื่อ">
-              ${typeBadge}${coop.coopName}
+              <div class="flex items-center">${typeBadge}${coop.coopName}</div>
             </td>
             <td class="px-4 py-3 text-center" data-label="จำนวนไฟล์">
-              <span class="bg-accent-muted text-accent px-2 py-1 rounded-md text-xs font-semibold">${coop.count.toLocaleString()}</span>
-              <button onclick="showFileTypeBreakdown('${coop.coopId || coop.coopName}', '${coop.coopName.replace(/'/g, "\\'")}')" 
-                class="ml-2 text-amber-500 hover:text-accent hover:bg-accent-muted p-1 rounded-full transition-all" 
-                title="ดูรายละเอียดประเภทไฟล์">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-              </button>
+              <div class="inline-flex items-center justify-center">
+                <span class="bg-accent-muted text-accent px-2 py-1 rounded-md text-xs font-semibold">${coop.count.toLocaleString()}</span>
+                <button onclick="showFileTypeBreakdown('${coop.coopId || coop.coopName}', '${coop.coopName.replace(/'/g, "\\'")}')" 
+                  class="ml-2 text-amber-500 hover:text-accent hover:bg-accent-muted p-1 rounded-full transition-all" 
+                  title="ดูรายละเอียดประเภทไฟล์">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </button>
+              </div>
             </td>
             <td class="px-4 py-3 text-center" data-label="ดาวน์โหลด">
               <span class="bg-sage/10 text-sage px-2 py-1 rounded-full text-xs font-semibold">${coop.downloads.toLocaleString()}</span>
             </td>
             <td class="px-4 py-3" data-label="สัดส่วน">
-              <div class="flex items-center gap-2">
-                <div class="flex-1 bg-warm-200 rounded-full h-2">
-                  <div class="bg-sage h-2 rounded-full" style="width: ${progressWidth}%"></div>
+              <div class="stats-progress-container">
+                <div class="stats-progress-track">
+                  <div class="stats-progress-fill" style="width: ${progressWidth}%"></div>
                 </div>
-                <span class="text-xs text-warm-500 w-12 text-right">${percentage}%</span>
+                <span class="text-xs font-semibold text-warm-600 w-10 text-right">${percentage}%</span>
               </div>
             </td>
           </tr>
@@ -4058,13 +4168,11 @@ function renderUsersTable() {
       document.querySelectorAll('.coop-filter-btn').forEach(btn => {
         btn.onclick = function () {
           const filterType = this.dataset.filter;
-          // Update button styles
+          // Update button styles for segmented control
           document.querySelectorAll('.coop-filter-btn').forEach(b => {
-            b.classList.remove('bg-accent', 'text-white', 'active');
-            b.classList.add('bg-warm-200', 'text-warm-700');
+            b.classList.remove('active');
           });
-          this.classList.remove('bg-warm-200', 'text-warm-700');
-          this.classList.add('bg-accent', 'text-white', 'active');
+          this.classList.add('active');
           // Re-render table with filter
           renderCoopSummaryTable(allCoopData, allCoopTotalFiles, filterType);
         };
@@ -4421,6 +4529,17 @@ function renderUsersTable() {
           const newTheme = currentTheme === 'dark' ? 'none' : 'dark';
           localStorage.setItem('user-theme', newTheme);
           initTheme(newTheme);
+          
+          // Re-render statistics charts with new theme colors if on stats page
+          if (appState.currentPage === 'stats' && appState.lastStatsData) {
+            const data = appState.lastStatsData;
+            renderFilesPerGroupChart(data.filesPerGroup);
+            renderSatisfactionChart(data.satisfaction);
+            if (data.filesPerCoop && data.filesPerCoop.length > 0) {
+              renderFilesPerCoopChart(data.filesPerCoop.slice(0, 10));
+              renderDownloadsPerCoopChart(data.filesPerCoop);
+            }
+          }
         });
       }
 
