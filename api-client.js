@@ -358,6 +358,12 @@ window.google.script = window.google.script || {};
                             case 'getFilesForReference':
                                 params = { userId: args[0] };
                                 break;
+                            case 'saveTemplate':
+                                params = { templateData: args[0], callerId: args[1] };
+                                break;
+                            case 'deleteTemplate':
+                                params = { templateId: args[0], callerId: args[1] };
+                                break;
                             default:
                                 if (args.length > 0) {
                                     params = { args };

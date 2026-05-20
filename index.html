@@ -1784,7 +1784,162 @@
           </div>
         </div>
       </div>
+
+      <!-- ✅ Page: Standard Templates Hub (คลังแม่แบบเอกสารมาตรฐานสำหรับสหกรณ์) -->
+      <div id="page-templates-hub" class="page">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+          <div>
+            <h1 class="text-3xl font-serif font-bold text-warm-800 flex items-center gap-3">
+              <span class="bg-accent/10 text-accent p-2 rounded-xl">📂</span>
+              คลังแม่แบบเอกสารมาตรฐานสำหรับสหกรณ์
+            </h1>
+            <p class="text-warm-500 text-sm mt-1">แหล่งรวบรวมแบบฟอร์ม ข้อบังคับ และระเบียบมาตรฐานสำหรับการดำเนินงานของสหกรณ์</p>
+          </div>
+          <div id="template-admin-actions" class="hidden">
+            <button onclick="openAddTemplateModal()" class="bg-accent text-white px-5 py-2.5 rounded-lg hover:bg-accent-hover flex items-center gap-2 shadow-sm font-medium transition-smooth">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              เพิ่มแม่แบบใหม่
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters & Search Bar -->
+        <div class="bg-white rounded-xl border border-warm-200 p-4 mb-6 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div class="relative w-full md:max-w-md">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-warm-400">
+              <i data-lucide="search" class="w-5 h-5"></i>
+            </span>
+            <input type="text" id="template-search-input" onkeyup="filterTemplates()" placeholder="ค้นหาชื่อแม่แบบ คำอธิบาย..." 
+              class="w-full pl-10 pr-4 py-2 bg-warm-50 border border-warm-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent">
+          </div>
+          <div class="flex gap-2 w-full md:w-auto">
+            <select id="template-category-filter" onchange="filterTemplates()"
+              class="w-full md:w-48 px-3 py-2 bg-warm-50 border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-accent focus:border-accent">
+              <option value="all">-- ทุกหมวดหมู่ --</option>
+              <option value="1. จัดตั้งและข้อบังคับสหกรณ์">1. จัดตั้งและข้อบังคับสหกรณ์</option>
+              <option value="2. การประชุมคณะกรรมการ/ใหญ่">2. การประชุมคณะกรรมการ/ใหญ่</option>
+              <option value="3. การเงินและการบัญชีสหกรณ์">3. การเงินและการบัญชีสหกรณ์</option>
+              <option value="4. ระเบียบและข้อกำหนดสหกรณ์">4. ระเบียบและข้อกำหนดสหกรณ์</option>
+              <option value="5. อื่นๆ">5. อื่นๆ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Templates Grid -->
+        <div id="templates-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Template cards will be dynamically injected here -->
+          <div class="col-span-full text-center py-16 text-warm-400 bg-white rounded-xl border border-warm-100 shadow-sm">
+            <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent mx-auto mb-4"></div>
+            <span>กำลังโหลดข้อมูลคลังแม่แบบ...</span>
+          </div>
+        </div>
+      </div>
     </main>
+
+    <!-- QR Code Share Modal -->
+    <div id="qr-modal" class="modal">
+      <div class="bg-white rounded-xl shadow-lg w-full max-w-sm p-6 flex flex-col items-center">
+        <div class="w-full flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-warm-800">แชร์ผ่าน QR Code</h3>
+          <button onclick="closeQRModal()" class="text-warm-400 hover:text-warm-600">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+        <div id="qr-container" class="bg-warm-50 p-4 rounded-xl border border-warm-200 flex items-center justify-center mb-4 w-56 h-56">
+          <img id="qr-image" src="" alt="QR Code" class="w-48 h-48 hidden" onload="document.getElementById('qr-loading').style.display='none'; this.classList.remove('hidden')">
+          <div id="qr-loading" class="w-48 h-48 flex flex-col items-center justify-center text-warm-500">
+            <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent mb-2"></div>
+            <span class="text-xs">กำลังสร้าง QR Code...</span>
+          </div>
+        </div>
+        <p id="qr-title" class="text-center font-medium text-warm-700 text-sm mb-2">ชื่อแม่แบบเอกสาร</p>
+        <input type="text" id="qr-url" readonly class="w-full text-center text-xs text-warm-500 bg-warm-50 border border-warm-200 p-2 rounded-lg select-all mb-4">
+        <div class="flex gap-2 w-full">
+          <button onclick="copyQRUrl()" class="flex-1 py-2 px-3 bg-warm-100 hover:bg-warm-200 text-warm-700 text-sm font-medium rounded-lg flex items-center justify-center gap-1">
+            <i data-lucide="copy" class="w-4 h-4"></i> คัดลอกลิงก์
+          </button>
+          <button onclick="closeQRModal()" class="flex-1 py-2 px-3 bg-accent hover:bg-accent-hover text-white text-sm font-medium rounded-lg">
+            ปิด
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add/Edit Template Modal -->
+    <div id="template-modal" class="modal">
+      <div class="bg-white rounded-xl shadow-lg w-full max-w-lg">
+        <div class="bg-warm-100 border-b border-warm-200 px-6 py-4 rounded-t-xl flex justify-between items-center">
+          <h2 id="template-modal-title" class="text-xl font-serif font-bold text-warm-800">เพิ่มแม่แบบเอกสารใหม่</h2>
+          <button onclick="closeTemplateModal()" class="text-warm-400 hover:text-warm-600">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+        <form id="template-form" onsubmit="handleTemplateSubmit(event)" class="p-6 space-y-4">
+          <input type="hidden" id="template-id">
+          <div>
+            <label class="block text-sm font-medium text-warm-700 mb-1">หมวดหมู่เอกสาร</label>
+            <select id="template-category" required
+              class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+              <option value="">-- เลือกหมวดหมู่ --</option>
+              <option value="1. จัดตั้งและข้อบังคับสหกรณ์">1. จัดตั้งและข้อบังคับสหกรณ์</option>
+              <option value="2. การประชุมคณะกรรมการ/ใหญ่">2. การประชุมคณะกรรมการ/ใหญ่</option>
+              <option value="3. การเงินและการบัญชีสหกรณ์">3. การเงินและการบัญชีสหกรณ์</option>
+              <option value="4. ระเบียบและข้อกำหนดสหกรณ์">4. ระเบียบและข้อกำหนดสหกรณ์</option>
+              <option value="5. อื่นๆ">5. อื่นๆ</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-warm-700 mb-1">ชื่อแม่แบบเอกสาร</label>
+            <input type="text" id="template-title" required
+              class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent"
+              placeholder="เช่น แบบฟอร์มการขอจัดตั้งสหกรณ์">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-warm-700 mb-1">คำอธิบายรายละเอียด</label>
+            <textarea id="template-description" rows="3" required
+              class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent"
+              placeholder="คำอธิบายสั้นๆ เกี่ยวกับวิธีการใช้งานเอกสารนี้..."></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-warm-700 mb-1">รูปแบบไฟล์ (FileType)</label>
+            <select id="template-filetype" required
+              class="w-full px-3 py-2 border border-warm-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent">
+              <option value="PDF">PDF</option>
+              <option value="Word">Word (.doc, .docx)</option>
+              <option value="Excel">Excel (.xls, .xlsx)</option>
+              <option value="PowerPoint">PowerPoint (.ppt, .pptx)</option>
+              <option value="ZIP">ZIP Archive</option>
+              <option value="อื่นๆ">อื่นๆ</option>
+            </select>
+          </div>
+          
+          <div id="template-file-upload-section">
+            <label class="block text-sm font-medium text-warm-700 mb-1">ไฟล์เอกสารแม่แบบ</label>
+            <div class="flex items-center justify-center w-full">
+              <label class="flex flex-col w-full h-32 border-2 border-dashed border-warm-200 hover:bg-warm-50 hover:border-accent rounded-lg cursor-pointer transition-smooth">
+                <div class="flex flex-col items-center justify-center pt-7">
+                  <i data-lucide="upload-cloud" class="w-8 h-8 text-warm-400 mb-1"></i>
+                  <p id="template-file-name" class="text-sm text-warm-500">เลือกไฟล์เอกสาร (สูงสุด 20MB)</p>
+                </div>
+                <input type="file" id="template-file" class="hidden" onchange="handleTemplateFileSelect(event)">
+              </label>
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button type="button" onclick="closeTemplateModal()"
+              class="flex-1 px-4 py-2 border border-warm-200 rounded-lg text-warm-700 hover:bg-warm-50">
+              ยกเลิก
+            </button>
+            <button type="submit"
+              class="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover font-medium">
+              บันทึกแม่แบบ
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
 
     <!-- Footer -->
     <!-- Footer -->
@@ -2346,6 +2501,10 @@
           mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
         }
       }
+      
+      // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับทุกคน
+      menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
+      mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
 
       if (mainMenu) mainMenu.innerHTML = menuHtml;
       if (mobileMainMenu) mobileMainMenu.innerHTML = mobileMenuHtml;
@@ -2452,6 +2611,9 @@
           break;
         case 'document-requests':
           renderDocumentRequests();
+          break;
+        case 'templates-hub':
+          renderTemplatesHub();
           break;
       }
       lucide.createIcons();
@@ -8513,6 +8675,336 @@ function renderUsersTable() {
       });
     }
 
+    // =================================================================
+    // STANDARD TEMPLATES HUB FUNCTIONS
+    // =================================================================
+    appState.templates = [];
+    appState.selectedTemplateFile = null;
+
+    /**
+     * ดึงข้อมูลและเรนเดอร์หน้าคลังแม่แบบเอกสารมาตรฐาน
+     */
+    function renderTemplatesHub() {
+      // 1. จัดการสิทธิ์การแสดงปุ่มการเพิ่ม/แก้ไขแม่แบบ (เฉพาะ admin, subadmin)
+      const adminActions = document.getElementById('template-admin-actions');
+      if (appState.currentUser && ['admin', 'subadmin'].includes(appState.currentUser.Role)) {
+        if (adminActions) adminActions.classList.remove('hidden');
+      } else {
+        if (adminActions) adminActions.classList.add('hidden');
+      }
+
+      const container = document.getElementById('templates-container');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="col-span-full text-center py-16 text-warm-400 bg-white rounded-xl border border-warm-100 shadow-sm">
+          <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent mx-auto mb-4"></div>
+          <span>กำลังโหลดข้อมูลแม่แบบเอกสาร...</span>
+        </div>
+      `;
+
+      // ดึงข้อมูลแม่แบบจากเซิร์ฟเวอร์
+      google.script.run
+        .withSuccessHandler(response => {
+          if (response.success) {
+            appState.templates = response.data || [];
+            displayTemplates(appState.templates);
+          } else {
+            container.innerHTML = `<div class="col-span-full text-center py-12 text-brick">${response.message}</div>`;
+          }
+        })
+        .withFailureHandler(err => {
+          container.innerHTML = `<div class="col-span-full text-center py-12 text-brick">ไม่สามารถเชื่อมต่ออินเทอร์เน็ตหรือบริการหลังบ้านได้: ${err.message}</div>`;
+        })
+        .getTemplates();
+    }
+
+    /**
+     * เรนเดอร์การ์ดรายการแม่แบบเอกสาร
+     */
+    function displayTemplates(templatesList) {
+      const container = document.getElementById('templates-container');
+      if (!container) return;
+
+      if (!templatesList || templatesList.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-16 text-warm-400 bg-white rounded-xl border border-warm-100 shadow-sm">
+            <i data-lucide="folder-open" class="w-12 h-12 mx-auto mb-4 text-warm-300"></i>
+            <p>ไม่พบแม่แบบเอกสารในคลังขณะนี้</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // หมวดหมู่และสี Badge
+      const categoryColors = {
+        '1. จัดตั้งและข้อบังคับสหกรณ์': 'bg-sage text-white',
+        '2. การประชุมคณะกรรมการ/ใหญ่': 'bg-accent text-white',
+        '3. การเงินและการบัญชีสหกรณ์': 'bg-brick text-white',
+        '4. ระเบียบและข้อกำหนดสหกรณ์': 'bg-warm-700 text-white',
+        '5. อื่นๆ': 'bg-warm-200 text-warm-800'
+      };
+
+      container.innerHTML = '';
+      templatesList.forEach(tpl => {
+        const catColor = categoryColors[tpl.Category] || 'bg-warm-100 text-warm-700';
+        const fileBadge = getFileBadgeHTML(`file.${tpl.FileType.toLowerCase()}`);
+        
+        // ตรวจสอบสิทธิ์สำหรับปุ่มจัดการ
+        const isManager = appState.currentUser && ['admin', 'subadmin'].includes(appState.currentUser.Role);
+        const managerButtons = isManager ? `
+          <div class="flex gap-1.5 border-t border-warm-100 pt-3 mt-3">
+            <button onclick="editTemplate('${tpl.TemplateID}')" class="flex-1 py-1.5 px-2 bg-warm-50 hover:bg-warm-100 text-warm-700 text-xs font-semibold rounded border border-warm-200 flex items-center justify-center gap-1 transition-smooth">
+              <i data-lucide="edit" class="w-3.5 h-3.5"></i> แก้ไข
+            </button>
+            <button onclick="confirmDeleteTemplate('${tpl.TemplateID}', '${tpl.Title}')" class="flex-1 py-1.5 px-2 bg-brick/10 hover:bg-brick/20 text-brick text-xs font-semibold rounded flex items-center justify-center gap-1 transition-smooth">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> ลบ
+            </button>
+          </div>
+        ` : '';
+
+        // ลิงก์ดาวน์โหลด
+        const downloadUrl = `https://drive.google.com/uc?export=download&id=${tpl.DriveFileID}`;
+        const previewUrl = `https://drive.google.com/file/d/${tpl.DriveFileID}/view?usp=sharing`;
+
+        const card = `
+          <div class="bg-white rounded-xl border border-warm-200 p-5 shadow-sm hover:shadow-md hover:border-accent/30 transition-all duration-300 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-3 gap-2">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${catColor}">${tpl.Category.split('. ').pop()}</span>
+                ${fileBadge}
+              </div>
+              <h3 class="text-lg font-bold text-warm-800 leading-snug mb-2 font-serif">${tpl.Title}</h3>
+              <p class="text-warm-600 text-sm font-light mb-4 line-clamp-3 leading-relaxed">${tpl.Description}</p>
+            </div>
+            
+            <div>
+              <div class="flex items-center justify-between text-xs text-warm-400 mb-4">
+                <span>อัปเดต: ${tpl.LastUpdated || 'ไม่มีข้อมูล'}</span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <a href="${downloadUrl}" target="_blank" class="py-2 px-1 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 shadow-sm text-center transition-smooth">
+                  <i data-lucide="download" class="w-4 h-4 mx-auto"></i>
+                  <span>ดาวน์โหลด</span>
+                </a>
+                <a href="${previewUrl}" target="_blank" class="py-2 px-1 bg-warm-100 hover:bg-warm-200 text-warm-800 text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
+                  <i data-lucide="eye" class="w-4 h-4 mx-auto"></i>
+                  <span>ดูตัวอย่าง</span>
+                </a>
+                <button onclick="shareQRTemplate('${tpl.DriveFileID}', '${tpl.Title}')" class="py-2 px-1 bg-sage hover:bg-sage/90 text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
+                  <i data-lucide="qr-code" class="w-4 h-4 mx-auto"></i>
+                  <span>แชร์ QR</span>
+                </button>
+              </div>
+              ${managerButtons}
+            </div>
+          </div>
+        `;
+        container.innerHTML += card;
+      });
+      lucide.createIcons();
+    }
+
+    /**
+     * ค้นหาและกรองข้อมูลแม่แบบเอกสารหน้าจอ
+     */
+    function filterTemplates() {
+      const search = (document.getElementById('template-search-input')?.value || '').toLowerCase();
+      const cat = document.getElementById('template-category-filter')?.value || 'all';
+
+      const filtered = appState.templates.filter(t => {
+        const matchesSearch = t.Title.toLowerCase().includes(search) || t.Description.toLowerCase().includes(search);
+        const matchesCategory = cat === 'all' || t.Category === cat;
+        return matchesSearch && matchesCategory;
+      });
+
+      displayTemplates(filtered);
+    }
+
+    /**
+     * เปิดหน้าต่างแชร์ QR Code แม่แบบเอกสาร
+     */
+    function shareQRTemplate(driveFileId, title) {
+      const url = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+      const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+      
+      document.getElementById('qr-title').textContent = title;
+      document.getElementById('qr-url').value = url;
+      
+      // ซ่อนรูปเก่า แสดง Loading
+      const img = document.getElementById('qr-image');
+      img.classList.add('hidden');
+      img.src = qrImageUrl;
+      document.getElementById('qr-loading').style.display = 'flex';
+      
+      document.getElementById('qr-modal').classList.add('flex');
+    }
+
+    function closeQRModal() {
+      document.getElementById('qr-modal').classList.remove('flex');
+    }
+
+    function copyQRUrl() {
+      const copyText = document.getElementById('qr-url');
+      copyText.select();
+      copyText.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(copyText.value);
+      showToast('คัดลอกลิงก์ดาวน์โหลดเรียบร้อยแล้ว!', 'success');
+    }
+
+    /**
+     * ฟังก์ชันฟอร์มอัปโหลด/แก้ไขเอกสารแม่แบบ
+     */
+    function openAddTemplateModal() {
+      document.getElementById('template-modal-title').textContent = 'เพิ่มแม่แบบเอกสารมาตรฐานใหม่';
+      document.getElementById('template-id').value = '';
+      document.getElementById('template-form').reset();
+      document.getElementById('template-file-name').textContent = 'เลือกไฟล์เอกสาร (สูงสุด 20MB)';
+      document.getElementById('template-file-upload-section').style.display = 'block';
+      document.getElementById('template-file').required = true;
+      appState.selectedTemplateFile = null;
+      document.getElementById('template-modal').classList.add('flex');
+    }
+
+    function closeTemplateModal() {
+      document.getElementById('template-modal').classList.remove('flex');
+    }
+
+    function handleTemplateFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 20 * 1024 * 1024) {
+        showToast('ไฟล์มีขนาดเกิน 20MB! กรุณาเลือกไฟล์ที่เล็กลง', 'warning');
+        event.target.value = '';
+        return;
+      }
+
+      document.getElementById('template-file-name').textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Data = e.target.result.split(',')[1];
+        appState.selectedTemplateFile = {
+          name: file.name,
+          mimeType: file.type,
+          data: base64Data
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function editTemplate(templateId) {
+      const tpl = appState.templates.find(t => t.TemplateID === templateId);
+      if (!tpl) return;
+
+      document.getElementById('template-modal-title').textContent = 'แก้ไขแม่แบบเอกสาร';
+      document.getElementById('template-id').value = tpl.TemplateID;
+      document.getElementById('template-category').value = tpl.Category;
+      document.getElementById('template-title').value = tpl.Title;
+      document.getElementById('template-description').value = tpl.Description;
+      document.getElementById('template-filetype').value = tpl.FileType;
+      
+      // โหมดแก้ไข ไม่บังคับอัปโหลดไฟล์ใหม่ (จะใช้ไฟล์เดิมหากไม่อัปโหลด)
+      document.getElementById('template-file-name').textContent = 'เลือกไฟล์ใหม่เพื่อเขียนทับ (ปล่อยว่างเพื่อใช้ไฟล์เดิม)';
+      document.getElementById('template-file').required = false;
+      document.getElementById('template-file').value = '';
+      appState.selectedTemplateFile = null;
+
+      document.getElementById('template-modal').classList.add('flex');
+    }
+
+    function handleTemplateSubmit(event) {
+      event.preventDefault();
+      
+      const templateId = document.getElementById('template-id').value;
+      const category = document.getElementById('template-category').value;
+      const title = document.getElementById('template-title').value;
+      const description = document.getElementById('template-description').value;
+      const fileType = document.getElementById('template-filetype').value;
+
+      const templateData = {
+        TemplateID: templateId,
+        Category: category,
+        Title: title,
+        Description: description,
+        FileType: fileType
+      };
+
+      if (appState.selectedTemplateFile) {
+        templateData.file = appState.selectedTemplateFile;
+      } else if (!templateId) {
+        showToast('กรุณาเลือกไฟล์แม่แบบที่จะอัปโหลด!', 'warning');
+        return;
+      }
+
+      showLoading();
+      
+      google.script.run
+        .withSuccessHandler(response => {
+          hideLoading();
+          if (response.success) {
+            Swal.fire({
+              title: 'สำเร็จ!',
+              text: response.message,
+              icon: 'success',
+              confirmButtonText: 'ตกลง'
+            });
+            closeTemplateModal();
+            renderTemplatesHub();
+          } else {
+            Swal.fire({
+              title: 'ไม่สำเร็จ!',
+              text: response.message,
+              icon: 'error',
+              confirmButtonText: 'ลองใหม่'
+            });
+          }
+        })
+        .withFailureHandler(err => {
+          hideLoading();
+          Swal.fire({
+            title: 'ผิดพลาด!',
+            text: err.message,
+            icon: 'error',
+            confirmButtonText: 'ตกลง'
+          });
+        })
+        .saveTemplate(templateData, appState.currentUser ? appState.currentUser.UserID : '');
+    }
+
+    function confirmDeleteTemplate(templateId, title) {
+      Swal.fire({
+        title: 'ยืนยันการลบแม่แบบ?',
+        text: `คุณแน่ใจว่าต้องการลบแม่แบบเอกสาร "${title}" หรือไม่? การลบนี้จะไม่สามารถยกเลิกได้`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'ยืนยันการลบ',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showLoading();
+          google.script.run
+            .withSuccessHandler(response => {
+              hideLoading();
+              if (response.success) {
+                Swal.fire('ลบแล้ว!', response.message, 'success');
+                renderTemplatesHub();
+              } else {
+                Swal.fire('ไม่สำเร็จ!', response.message, 'error');
+              }
+            })
+            .withFailureHandler(err => {
+              hideLoading();
+              Swal.fire('ผิดพลาด!', err.message, 'error');
+            })
+            .deleteTemplate(templateId, appState.currentUser ? appState.currentUser.UserID : '');
+        }
+      });
+    }
   </script>
 
   <script>
