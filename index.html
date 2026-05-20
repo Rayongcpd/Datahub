@@ -2442,6 +2442,10 @@
           </div>
         </div>`;
 
+        // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับบุคคลทั่วไป (แสดงก่อนสถิติ)
+        menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
+        mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
+
         menuHtml += `<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>`;
         mobileMenuHtml += `<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">สถิติ</a>`;
       }
@@ -2500,11 +2504,11 @@
           mobileMenuHtml += `<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>`;
           mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
         }
+
+        // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับผู้ใช้ที่ล็อกอินแล้ว
+        menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
+        mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
       }
-      
-      // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับทุกคน
-      menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
-      mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
 
       if (mainMenu) mainMenu.innerHTML = menuHtml;
       if (mobileMainMenu) mobileMainMenu.innerHTML = mobileMenuHtml;
