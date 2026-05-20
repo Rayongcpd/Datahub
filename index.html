@@ -76,6 +76,37 @@
   <style>
     /* ===== Claude Design System Overrides ===== */
 
+    /* Custom container styling to maximize screen space while maintaining premium aesthetics */
+    .container {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    @media (min-width: 640px) {
+      .container {
+        max-width: 640px !important;
+      }
+    }
+    @media (min-width: 768px) {
+      .container {
+        max-width: 768px !important;
+      }
+    }
+    @media (min-width: 1024px) {
+      .container {
+        max-width: 96% !important;
+      }
+    }
+    @media (min-width: 1280px) {
+      .container {
+        max-width: 94% !important;
+      }
+    }
+    @media (min-width: 1536px) {
+      .container {
+        max-width: 1760px !important; /* Cap at 1760px to prevent excessive stretching on very wide monitors */
+      }
+    }
 
     .font-heading { font-family: var(--font-heading); }
 
