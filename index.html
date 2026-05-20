@@ -1285,155 +1285,167 @@
 
 
         <!-- ✅ Subadmin Upload Form -->
-        <div id="subadmin-upload-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
-          <h2 class="text-xl font-semibold mb-4 text-sage">เพิ่มไฟล์ใหม่ (Subadmin)</h2>
-          <form id="subadmin-upload-form">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label for="subadmin-upload-title"
-                  class="block text-sm font-medium text-warm-700">ชื่อเรื่อง</label>
-                <input type="text" id="subadmin-upload-title"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent/20 focus:border-accent"
-                  required>
+        <div id="subadmin-upload-form-container" class="form-card mb-8 hidden animate-fade-in">
+          <div class="form-card-header flex items-center gap-3">
+            <span class="bg-sage/10 text-sage p-2 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+            <h2 class="text-xl font-semibold text-sage">เพิ่มไฟล์ใหม่ (Subadmin)</h2>
+          </div>
+          <div class="form-card-body">
+            <form id="subadmin-upload-form">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Left column -->
+                <div class="space-y-4">
+                  <div>
+                    <label for="subadmin-upload-title" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อเรื่อง <span class="text-red-500">*</span></label>
+                    <input type="text" id="subadmin-upload-title" class="form-input-premium" placeholder="ระบุชื่อเรื่องของไฟล์" required>
+                  </div>
+                  <div>
+                    <label for="subadmin-upload-subtitle" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อเพิ่มเติม</label>
+                    <input type="text" id="subadmin-upload-subtitle" class="form-input-premium" placeholder="ระบุชื่อเพิ่มเติม/รายละเอียดสั้น">
+                  </div>
+                </div>
+                
+                <!-- Right column -->
+                <div class="space-y-4">
+                  <div>
+                    <label for="subadmin-upload-type" class="block text-sm font-semibold text-warm-700 mb-1.5">ประเภทเอกสาร <span class="text-red-500">*</span></label>
+                    <select id="subadmin-upload-type" class="form-input-premium" required>
+                    </select>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label for="subadmin-upload-holdtype" class="block text-sm font-semibold text-warm-700 mb-1.5">สถานะเอกสาร</label>
+                      <select id="subadmin-upload-holdtype" class="form-input-premium">
+                        <option value="">-- เลือกสถานะ --</option>
+                        <option value="รับจดทะเบียน">รับจดทะเบียน</option>
+                        <option value="ถือใช้">ถือใช้</option>
+                        <option value="ลงวันที่">ลงวันที่</option>
+                        <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="subadmin-upload-holddate" class="block text-sm font-semibold text-warm-700 mb-1.5">วันที่</label>
+                      <input type="date" id="subadmin-upload-holddate" class="form-input-premium">
+                    </div>
+                  </div>
+                  <div id="subadmin-holdtype-custom-container">
+                    <input type="text" id="subadmin-upload-holdtype-custom" placeholder="ระบุสถานะเอกสารอื่น ๆ" class="form-input-premium mt-1 hidden">
+                  </div>
+                </div>
               </div>
-              <div>
-                <label for="subadmin-upload-subtitle"
-                  class="block text-sm font-medium text-warm-700">ชื่อเพิ่มเติม</label>
-                <input type="text" id="subadmin-upload-subtitle"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent/20 focus:border-accent">
-              </div>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label for="subadmin-upload-type"
-                  class="block text-sm font-medium text-warm-700">ประเภทเอกสาร</label>
-                <select id="subadmin-upload-type"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent/20 focus:border-accent"
-                  required>
-                </select>
+              <!-- Drag and Drop Zone -->
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-warm-700 mb-2">อัปโหลดไฟล์ (ลากและวาง หรือ คลิกเพื่อเลือก)</label>
+                <div class="drop-zone" id="subadmin-drop-zone">
+                  <div class="drop-zone__prompt">
+                    <div class="drop-zone__icon-wrapper">
+                      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                      </svg>
+                    </div>
+                    <span class="text-sm font-semibold text-warm-800">ลากไฟล์มาที่นี่ หรือคลิกเพื่อเลือกไฟล์</span>
+                    <span class="text-xs text-warm-500 font-normal">รองรับไฟล์เอกสาร PDF, Excel, Word, ZIP และรูปภาพ</span>
+                  </div>
+                  <input type="file" id="subadmin-upload-file" name="myFile" class="drop-zone__input" multiple>
+                </div>
+                <!-- Selected Files List Container -->
+                <div id="subadmin-upload-file-list" class="file-list-grid mt-2"></div>
               </div>
-              <div>
-                <label for="subadmin-upload-holdtype"
-                  class="block text-sm font-medium text-warm-700">สถานะเอกสาร</label>
-                <select id="subadmin-upload-holdtype"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
-                  <option value="">-- เลือกสถานะเอกสาร --</option>
-                  <option value="รับจดทะเบียน">รับจดทะเบียน</option>
-                  <option value="ถือใช้">ถือใช้</option>
-                  <option value="ลงวันที่">ลงวันที่</option>
-                  <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
-                  <option value="อื่นๆ">อื่นๆ</option>
-                </select>
-                <input type="text" id="subadmin-upload-holdtype-custom" placeholder="ระบุสถานะอื่น ๆ"
-                  class="mt-2 block w-full px-3 py-2 border border-warm-200 rounded-md hidden">
+
+              <div class="flex items-center gap-3 pt-2 border-t border-warm-100">
+                <button type="submit" class="bg-sage text-white font-semibold py-2.5 px-6 rounded-md hover:bg-sage/90 active:scale-95 transition-all shadow-sm flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                  </svg>
+                  <span>บันทึกข้อมูล</span>
+                </button>
               </div>
-            </div>
-
-            <div class="mb-4">
-              <label for="subadmin-upload-holddate"
-                class="block text-sm font-medium text-warm-700">วันที่</label>
-              <input type="date" id="subadmin-upload-holddate"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
-            </div>
-
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-warm-700">อัปโหลดไฟล์ (ลากและวาง หรือ
-                คลิกเพื่อเลือก)</label>
-              <div class="mt-1 drop-zone" id="subadmin-drop-zone">
-                <span class="drop-zone__prompt">ลากไฟล์มาที่นี่ หรือ คลิกเพื่อเลือกไฟล์</span>
-                <input type="file" id="subadmin-upload-file" name="myFile" class="drop-zone__input"
-                  multiple>
-              </div>
-              <div id="subadmin-upload-file-list" class="mt-2 text-sm text-warm-600"></div>
-            </div>
-
-            <div class="flex items-center gap-4">
-              <button type="submit"
-                class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึกข้อมูล</button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
 
         <!-- Subadmin Edit File Form -->
-        <div id="subadmin-file-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
-          <h2 id="subadmin-file-form-title" class="text-xl font-semibold mb-4 text-purple-700">แก้ไขข้อมูลไฟล์
-          </h2>
-          <form id="subadmin-file-form">
-            <input type="hidden" id="subadmin-file-id">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label for="subadmin-file-title"
-                  class="block text-sm font-medium text-warm-700">ชื่อเรื่อง</label>
-                <input type="text" id="subadmin-file-title"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  required>
+        <div id="subadmin-file-form-container" class="form-card mb-8 hidden">
+          <div class="form-card-header flex items-center gap-3">
+            <span class="bg-purple-100 text-purple-700 p-2 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+              </svg>
+            </span>
+            <h2 id="subadmin-file-form-title" class="text-xl font-semibold text-purple-700">แก้ไขข้อมูลไฟล์</h2>
+          </div>
+          <div class="form-card-body">
+            <form id="subadmin-file-form">
+              <input type="hidden" id="subadmin-file-id">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Left column -->
+                <div class="space-y-4">
+                  <div>
+                    <label for="subadmin-file-title" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อเรื่อง <span class="text-red-500">*</span></label>
+                    <input type="text" id="subadmin-file-title" class="form-input-premium" required>
+                  </div>
+                  <div>
+                    <label for="subadmin-file-subtitle" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อเพิ่มเติม</label>
+                    <input type="text" id="subadmin-file-subtitle" class="form-input-premium">
+                  </div>
+                  <div>
+                    <label for="subadmin-file-coop" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อสหกรณ์ <span class="text-red-500">*</span></label>
+                    <input list="coop-list" id="subadmin-file-coop" class="form-input-premium" placeholder="เลือกชื่อสหกรณ์" required>
+                  </div>
+                </div>
+                
+                <!-- Right column -->
+                <div class="space-y-4">
+                  <div>
+                    <label for="subadmin-file-group" class="block text-sm font-semibold text-warm-700 mb-1.5">กลุ่มงาน <span class="text-red-500">*</span></label>
+                    <select id="subadmin-file-group" class="form-input-premium" required>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="subadmin-file-type" class="block text-sm font-semibold text-warm-700 mb-1.5">ประเภทเอกสาร <span class="text-red-500">*</span></label>
+                    <select id="subadmin-file-type" class="form-input-premium" required>
+                    </select>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label for="subadmin-file-holdtype" class="block text-sm font-semibold text-warm-700 mb-1.5">สถานะเอกสาร</label>
+                      <select id="subadmin-file-holdtype" class="form-input-premium">
+                        <option value="">-- เลือกสถานะ --</option>
+                        <option value="รับจดทะเบียน">รับจดทะเบียน</option>
+                        <option value="ถือใช้">ถือใช้</option>
+                        <option value="ลงวันที่">ลงวันที่</option>
+                        <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="subadmin-file-holddate" class="block text-sm font-semibold text-warm-700 mb-1.5">วันที่</label>
+                      <input type="date" id="subadmin-file-holddate" class="form-input-premium">
+                    </div>
+                  </div>
+                  <div id="subadmin-file-holdtype-custom-container">
+                    <input type="text" id="subadmin-file-holdtype-custom" placeholder="ระบุสถานะอื่นๆ" class="form-input-premium mt-1 hidden">
+                  </div>
+                </div>
               </div>
-              <div>
-                <label for="subadmin-file-subtitle"
-                  class="block text-sm font-medium text-warm-700">ชื่อเพิ่มเติม</label>
-                <input type="text" id="subadmin-file-subtitle"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+              
+              <div class="flex items-center gap-3 pt-2 border-t border-warm-100">
+                <button type="submit" class="bg-accent text-white font-semibold py-2.5 px-6 rounded-md hover:bg-accent-hover active:scale-95 transition-all shadow-sm flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                  </svg>
+                  <span>บันทึกการแก้ไข</span>
+                </button>
+                <button type="button" id="cancel-subadmin-edit-btn" class="bg-warm-200 text-warm-700 font-semibold py-2.5 px-6 rounded-md hover:bg-warm-300 active:scale-95 transition-all">ยกเลิก</button>
               </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label for="subadmin-file-coop"
-                  class="block text-sm font-medium text-warm-700">ชื่อสหกรณ์</label>
-                <input list="coop-list" id="subadmin-file-coop"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="เลือกชื่อสหกรณ์" required>
-              </div>
-              <div>
-                <label for="subadmin-file-group"
-                  class="block text-sm font-medium text-warm-700">กลุ่มงาน</label>
-                <select id="subadmin-file-group"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  required>
-                </select>
-              </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label for="subadmin-file-type"
-                  class="block text-sm font-medium text-warm-700">ประเภทเอกสาร</label>
-                <select id="subadmin-file-type"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  required>
-                </select>
-              </div>
-              <div>
-                <label for="subadmin-file-holdtype"
-                  class="block text-sm font-medium text-warm-700">สถานะเอกสาร</label>
-                <select id="subadmin-file-holdtype"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
-                  <option value="">-- เลือกสถานะเอกสาร --</option>
-                  <option value="รับจดทะเบียน">รับจดทะเบียน</option>
-                  <option value="ถือใช้">ถือใช้</option>
-                  <option value="ลงวันที่">ลงวันที่</option>
-                  <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
-                  <option value="อื่นๆ">อื่นๆ</option>
-                </select>
-                <input type="text" id="subadmin-file-holdtype-custom"
-                  class="mt-2 block w-full px-3 py-2 border border-warm-200 rounded-md hidden"
-                  placeholder="ระบุสถานะอื่นๆ">
-              </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div>
-                <label for="subadmin-file-holddate"
-                  class="block text-sm font-medium text-warm-700">วันที่</label>
-                <input type="date" id="subadmin-file-holddate"
-                  class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
-              </div>
-            </div>
-            <div class="flex items-center gap-4">
-              <button type="submit"
-                class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึกการแก้ไข</button>
-              <button type="button" id="cancel-subadmin-edit-btn"
-                class="bg-warm-200 text-warm-700 py-2 px-4 rounded-md hover:bg-warm-100">ยกเลิก</button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
         <!-- Filter Section -->
         <div
@@ -1535,93 +1547,118 @@
           </button>
         </h1>
         <!-- Add/Edit File Form -->
-        <div id="file-form-container" class="bg-white p-6 rounded-lg border border-warm-200 card-hover mb-8 hidden">
-          <h2 id="file-form-title" class="text-xl font-semibold mb-4">เพิ่มไฟล์ใหม่</h2>
-          <form id="file-form">
-            <input type="hidden" id="file-id">
-            <div class="mb-4">
-              <label for="file-title" class="block text-sm font-medium text-warm-700">ชื่อเรื่อง</label>
-              <input type="text" id="file-title"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent"
-                required>
-            </div>
-            <div class="mb-4">
-              <label for="file-subtitle"
-                class="block text-sm font-medium text-warm-700">ชื่อเพิ่มเติม</label>
-              <input type="text" id="file-subtitle"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent">
-            </div>
-            <div class="mb-4">
-              <label for="file-coop" class="block text-sm font-medium text-warm-700">ชื่อสหกรณ์</label>
-              <input list="coop-list-user" id="file-coop"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:ring-accent focus:border-accent"
-                placeholder="เลือกชื่อสหกรณ์" required>
-              <datalist id="coop-list-user"></datalist>
-            </div>
-            <div class="mb-4">
-              <label for="file-group" class="block text-sm font-medium text-warm-700">กลุ่มงาน</label>
-              <select id="file-group"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent"
-                required>
-                <!-- Group options injected here -->
-              </select>
-            </div>
-            <div class="mb-4">
-              <label for="file-type" class="block text-sm font-medium text-warm-700">ประเภทเอกสาร</label>
-              <select id="file-type"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent"
-                required>
-                <!-- Type options injected here -->
-              </select>
-            </div>
-
-            <!-- ================= Hold info (คำ + วันที่) ================= -->
-            <div class="mb-4">
-              <label for="file-holdtype"
-                class="block text-sm font-medium text-warm-700">สถานะเอกสาร</label>
-              <select id="file-holdtype"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
-                <option value="">-- เลือกสถานะเอกสาร --</option>
-                <option value="รับจดทะเบียน">รับจดทะเบียน</option>
-                <option value="ถือใช้">ถือใช้</option>
-                <option value="ลงวันที่">ลงวันที่</option>
-                <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
-                <option value="อื่นๆ">อื่นๆ</option>
-              </select>
-              <input type="text" id="file-holdtype-custom" placeholder="ระบุสถานะอื่น ๆ"
-                class="mt-2 block w-full px-3 py-2 border border-warm-200 rounded-md hidden">
-            </div>
-
-            <div class="mb-4">
-              <label for="file-holddate" class="block text-sm font-medium text-warm-700">วันที่</label>
-              <input type="date" id="file-holddate"
-                class="mt-1 block w-full px-3 py-2 border border-warm-200 rounded-md">
-              <p class="text-xs text-warm-500 mt-1">เลือกข้อมูล วัน/เดือน/ปี ที่เกี่ยวข้องกับเอกสาร
-                (ถ้ามี)</p>
-            </div>
-
-            <div class="mb-6">
-              <label class="block text-sm font-medium text-warm-700">อัปโหลดไฟล์ (ลากและวาง หรือ
-                คลิกเพื่อเลือก)</label>
-              <div class="mt-1 drop-zone" id="officer-drop-zone">
-                <span class="drop-zone__prompt">ลากไฟล์มาที่นี่ หรือ คลิกเพื่อเลือกไฟล์</span>
-                <input type="file" id="file-upload" name="myFile" class="drop-zone__input" multiple>
+        <div id="file-form-container" class="form-card mb-8 hidden animate-fade-in">
+          <div class="form-card-header flex items-center gap-3">
+            <span class="bg-accent/10 text-accent p-2 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </span>
+            <h2 id="file-form-title" class="text-xl font-semibold text-warm-800">เพิ่มไฟล์ใหม่</h2>
+          </div>
+          <div class="form-card-body">
+            <form id="file-form">
+              <input type="hidden" id="file-id">
+              
+              <!-- Grid Layout for Fields -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Left Column: Primary Information -->
+                <div class="space-y-4">
+                  <div>
+                    <label for="file-title" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อเรื่อง <span class="text-red-500">*</span></label>
+                    <input type="text" id="file-title" class="form-input-premium" placeholder="ระบุชื่อเรื่องของไฟล์" required>
+                  </div>
+                  <div>
+                    <label for="file-subtitle" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อเพิ่มเติม</label>
+                    <input type="text" id="file-subtitle" class="form-input-premium" placeholder="ระบุชื่อเพิ่มเติม/รายละเอียดสั้น">
+                  </div>
+                  <div>
+                    <label for="file-coop" class="block text-sm font-semibold text-warm-700 mb-1.5">ชื่อสหกรณ์ <span class="text-red-500">*</span></label>
+                    <input list="coop-list-user" id="file-coop" class="form-input-premium" placeholder="พิมพ์เพื่อค้นหาหรือเลือกชื่อสหกรณ์" required>
+                    <datalist id="coop-list-user"></datalist>
+                  </div>
+                </div>
+                
+                <!-- Right Column: Document Classifications -->
+                <div class="space-y-4">
+                  <div>
+                    <label for="file-group" class="block text-sm font-semibold text-warm-700 mb-1.5">กลุ่มงาน <span class="text-red-500">*</span></label>
+                    <select id="file-group" class="form-input-premium" required>
+                      <!-- Group options injected here -->
+                    </select>
+                  </div>
+                  <div>
+                    <label for="file-type" class="block text-sm font-semibold text-warm-700 mb-1.5">ประเภทเอกสาร <span class="text-red-500">*</span></label>
+                    <select id="file-type" class="form-input-premium" required>
+                      <!-- Type options injected here -->
+                    </select>
+                  </div>
+                  
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label for="file-holdtype" class="block text-sm font-semibold text-warm-700 mb-1.5">สถานะเอกสาร</label>
+                      <select id="file-holdtype" class="form-input-premium">
+                        <option value="">-- เลือกสถานะ --</option>
+                        <option value="รับจดทะเบียน">รับจดทะเบียน</option>
+                        <option value="ถือใช้">ถือใช้</option>
+                        <option value="ลงวันที่">ลงวันที่</option>
+                        <option value="ประกาศ ณ วันที่">ประกาศ ณ วันที่</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label for="file-holddate" class="block text-sm font-semibold text-warm-700 mb-1.5">วันที่</label>
+                      <input type="date" id="file-holddate" class="form-input-premium">
+                    </div>
+                  </div>
+                  <div id="holdtype-custom-container">
+                    <input type="text" id="file-holdtype-custom" placeholder="ระบุสถานะเอกสารอื่น ๆ" class="form-input-premium mt-1 hidden">
+                  </div>
+                </div>
               </div>
-              <div id="file-list" class="mt-2 text-sm text-warm-600"></div>
-            </div>
-            <div class="mb-4">
-              <label class="inline-flex items-center">
-                <input type="checkbox" id="file-send-line" class="form-checkbox h-5 w-5 text-sage">
-                <span class="ml-2 text-warm-700">ส่งข้อความ LINE แจ้งเตือนเมื่ออัปโหลดไฟล์นี้</span>
-              </label>
-            </div>
-            <div class="flex items-center gap-4">
-              <button type="submit"
-                class="bg-accent text-white py-2 px-4 rounded-md hover:bg-accent-hover">บันทึกข้อมูล</button>
-              <button type="button" id="cancel-edit-file-btn"
-                class="bg-warm-200 text-warm-700 py-2 px-4 rounded-md hover:bg-warm-100 hidden">ยกเลิก</button>
-            </div>
-          </form>
+              
+              <!-- Drop Zone Area (Full Width) -->
+              <div class="mb-6">
+                <label class="block text-sm font-semibold text-warm-700 mb-2">อัปโหลดไฟล์แนบ (ลากและวางไฟล์ หรือ คลิกเพื่อเลือก)</label>
+                <div class="drop-zone" id="officer-drop-zone">
+                  <div class="drop-zone__prompt">
+                    <div class="drop-zone__icon-wrapper">
+                      <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                      </svg>
+                    </div>
+                    <span class="text-sm font-semibold text-warm-800">ลากไฟล์มาที่นี่ หรือคลิกเพื่อเลือกไฟล์</span>
+                    <span class="text-xs text-warm-500 font-normal">รองรับไฟล์เอกสาร PDF, Excel, Word, ZIP และรูปภาพ</span>
+                  </div>
+                  <input type="file" id="file-upload" name="myFile" class="drop-zone__input" multiple>
+                </div>
+                <!-- Selected Files List Container -->
+                <div id="file-list" class="file-list-grid mt-2"></div>
+              </div>
+              
+              <!-- LINE Notification Checkbox (Styled Option Card) -->
+              <div class="mb-6">
+                <label for="file-send-line" class="checkbox-card">
+                  <input type="checkbox" id="file-send-line">
+                  <div class="flex flex-col">
+                    <span class="text-sm font-semibold text-warm-700">ส่งข้อความ LINE แจ้งเตือน</span>
+                    <span class="text-xs text-warm-500 mt-0.5">แจ้งเตือนไปยังกลุ่ม LINE ทันทีเมื่ออัปโหลดไฟล์เสร็จสมบูรณ์</span>
+                  </div>
+                </label>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="flex items-center gap-3 pt-2 border-t border-warm-100">
+                <button type="submit" class="bg-accent text-white font-semibold py-2.5 px-6 rounded-md hover:bg-accent-hover active:scale-95 transition-all shadow-sm flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                  </svg>
+                  <span>บันทึกข้อมูล</span>
+                </button>
+                <button type="button" id="cancel-edit-file-btn" class="bg-warm-200 text-warm-700 font-semibold py-2.5 px-6 rounded-md hover:bg-warm-300 active:scale-95 transition-all hidden">ยกเลิก</button>
+              </div>
+            </form>
+          </div>
         </div>
         <!-- ✅ Filter Section for Officer Files -->
         <div
@@ -3617,15 +3654,53 @@ function renderUsersTable() {
       document.getElementById('subadmin-upload-form-container').classList.add('hidden');
     }
 
+    function getFileIconName(fileName) {
+      const ext = fileName.split('.').pop().toLowerCase();
+      if (['pdf'].includes(ext)) return 'PDF';
+      if (['xlsx', 'xls', 'csv'].includes(ext)) return 'EXCEL';
+      if (['docx', 'doc'].includes(ext)) return 'WORD';
+      if (['zip', 'rar', '7z'].includes(ext)) return 'ZIP';
+      if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) return 'IMG';
+      return ext.toUpperCase().substring(0, 4);
+    }
+
+    function getFileIconClass(fileName) {
+      const ext = fileName.split('.').pop().toLowerCase();
+      if (['pdf'].includes(ext)) return 'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400';
+      if (['xlsx', 'xls', 'csv'].includes(ext)) return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400';
+      if (['docx', 'doc'].includes(ext)) return 'bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400';
+      if (['zip', 'rar', '7z'].includes(ext)) return 'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400';
+      if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) return 'bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400';
+      return 'bg-warm-100 text-warm-700 dark:bg-warm-900/30 dark:text-warm-400';
+    }
+
     function updateSubadminFileList() {
       const listContainer = document.getElementById('subadmin-upload-file-list');
       if (!listContainer) return;
-      listContainer.innerHTML = filesToUploadSubadmin.map((f, i) =>
-        `<div class="flex items-center justify-between bg-warm-50 p-2 rounded mb-1">
-          <span class="text-sm truncate">${f.name}</span>
-          <button type="button" class="text-brick hover:text-brick font-bold" onclick="removeSubadminFile(${i})">x</button>
-        </div>`
-      ).join('');
+      listContainer.innerHTML = '';
+      if (filesToUploadSubadmin.length > 0) {
+        listContainer.innerHTML = filesToUploadSubadmin.map((file, i) => {
+          const sizeKb = (file.size / 1024).toFixed(2);
+          const iconText = getFileIconName(file.name);
+          const iconClass = getFileIconClass(file.name);
+          return `
+            <div class="file-item-card">
+              <div class="file-item-info">
+                <div class="file-item-icon ${iconClass}">${iconText}</div>
+                <div class="min-w-0">
+                  <div class="file-item-name" title="${file.name}">${file.name}</div>
+                  <div class="file-item-size">${sizeKb} KB</div>
+                </div>
+              </div>
+              <button type="button" class="file-item-remove" onclick="removeSubadminFile(${i})" title="ลบไฟล์">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          `;
+        }).join('');
+      }
     }
 
     window.removeSubadminFile = function (index) {
@@ -5508,18 +5583,39 @@ function renderUsersTable() {
 
     function updateThumbnail(selectedFiles) {
       const fileListContainer = document.getElementById("file-list");
+      if (!fileListContainer) return;
       fileListContainer.innerHTML = '';
       filesToUpload = selectedFiles;
 
       if (filesToUpload.length > 0) {
-        let listHtml = '<strong>ไฟล์ที่เลือก:</strong><ul>';
-        filesToUpload.forEach(file => {
-          listHtml += `<li>${file.name} (${(file.size / 1024).toFixed(2)} KB)</li>`;
-        });
-        listHtml += '</ul>';
-        fileListContainer.innerHTML = listHtml;
+        fileListContainer.innerHTML = filesToUpload.map((file, i) => {
+          const sizeKb = (file.size / 1024).toFixed(2);
+          const iconText = getFileIconName(file.name);
+          const iconClass = getFileIconClass(file.name);
+          return `
+            <div class="file-item-card">
+              <div class="file-item-info">
+                <div class="file-item-icon ${iconClass}">${iconText}</div>
+                <div class="min-w-0">
+                  <div class="file-item-name" title="${file.name}">${file.name}</div>
+                  <div class="file-item-size">${sizeKb} KB</div>
+                </div>
+              </div>
+              <button type="button" class="file-item-remove" onclick="removeOfficerFile(${i})" title="ลบไฟล์">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+          `;
+        }).join('');
       }
     }
+
+    window.removeOfficerFile = function(index) {
+      filesToUpload.splice(index, 1);
+      updateThumbnail(filesToUpload);
+    };
 
     function handleSaveFile(e) {
       e.preventDefault();

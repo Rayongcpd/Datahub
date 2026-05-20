@@ -554,3 +554,280 @@ body[data-theme="dark"] .swal2-validation-message {
   }
 }
 
+/* ===== PREMIUM UPLOAD FORM STYLES ===== */
+
+/* Form Cards & Grouping */
+.form-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.form-card-header {
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(to right, var(--bg-muted), transparent);
+  padding: 16px 24px;
+}
+
+.form-card-body {
+  padding: 24px;
+}
+
+/* Form Controls & Inputs */
+.form-input-premium {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: all 0.2s ease-in-out;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.01);
+}
+
+.form-input-premium:hover {
+  border-color: var(--border-focus);
+}
+
+.form-input-premium:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3.5px rgba(194, 123, 83, 0.15);
+  background-color: var(--bg-elevated);
+}
+
+/* Custom Select Dropdown Styling */
+select.form-input-premium {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b6560'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+body[data-theme="dark"] select.form-input-premium {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23bbb4a9'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+}
+
+/* Custom Checkbox Card */
+.checkbox-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.checkbox-card:hover {
+  border-color: var(--border-focus);
+  background-color: var(--bg-muted);
+}
+
+.checkbox-card input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-subtle);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  position: relative;
+  background: var(--bg-elevated);
+}
+
+.checkbox-card input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.checkbox-card input[type="checkbox"]:checked::after {
+  content: '';
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+/* Premium Drag and Drop Zone */
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  min-height: 180px;
+}
+
+.drop-zone:hover {
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
+  box-shadow: 0 4px 12px rgba(194, 123, 83, 0.05);
+}
+
+.drop-zone--over {
+  border-style: solid;
+  border-color: var(--accent);
+  background-color: var(--accent-muted);
+  box-shadow: 0 0 0 4px rgba(194, 123, 83, 0.15);
+  transform: scale(0.995);
+}
+
+.drop-zone__input {
+  display: none !important;
+}
+
+.drop-zone__prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: transform 0.2s ease;
+}
+
+.drop-zone:hover .drop-zone__prompt {
+  transform: translateY(-2px);
+}
+
+.drop-zone__icon-wrapper {
+  background-color: var(--bg-muted);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.drop-zone:hover .drop-zone__icon-wrapper {
+  background-color: var(--accent-muted);
+  color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* File Pills / Cards List */
+.file-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (min-width: 640px) {
+  .file-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.file-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.01);
+  animation: fileEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.2s ease;
+}
+
+.file-item-card:hover {
+  border-color: var(--border-focus);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+}
+
+.file-item-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0; /* allows text truncation */
+}
+
+.file-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background-color: var(--bg-muted);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.file-item-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-item-size {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.file-item-remove {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.file-item-remove:hover {
+  color: var(--danger);
+  background-color: rgba(184, 92, 92, 0.1);
+}
+
+@keyframes fileEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
