@@ -2459,8 +2459,7 @@
       paginatedFiles.forEach((file, index) => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          const fileBadge = getFileBadgeHTML(f.fileName);
-          return `<div class="flex flex-col gap-1.5 mb-2">
+          return `<div class="flex flex-col gap-1 mb-2">
             <div class="action-btn-group">
               <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
                 class="action-btn preview-btn" title="ดูตัวอย่าง">
@@ -2471,7 +2470,7 @@
                 <i data-lucide="download" class="w-4 h-4"></i>
               </button>
             </div>
-            <div>${fileBadge}</div>
+            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
           </div>`;
         }).join('');
 
@@ -2544,8 +2543,7 @@
       paginatedFiles.forEach((file, index) => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          const fileBadge = getFileBadgeHTML(f.fileName);
-          return `<div class="flex flex-col gap-1.5 mb-2">
+          return `<div class="flex flex-col gap-1 mb-2">
             <div class="action-btn-group">
               <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
                 class="action-btn preview-btn" title="ดูตัวอย่าง">
@@ -2556,7 +2554,7 @@
                 <i data-lucide="download" class="w-4 h-4"></i>
               </button>
             </div>
-            <div>${fileBadge}</div>
+            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
           </div>`;
         }).join('');
 
@@ -3077,8 +3075,7 @@ function renderUsersTable() {
       paginatedFiles.forEach(file => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          const fileBadge = getFileBadgeHTML(f.fileName);
-          return `<div class="flex flex-col gap-1.5 mb-2">
+          return `<div class="flex flex-col gap-1 mb-2">
             <div class="action-btn-group">
               <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
                 class="action-btn preview-btn" title="ดูตัวอย่าง">
@@ -3089,8 +3086,7 @@ function renderUsersTable() {
                 <i data-lucide="download" class="w-4 h-4"></i>
               </button>
             </div>
-            <div class="text-xs text-warm-600 truncate max-w-[150px] mb-0.5" title="${f.fileName}">${f.fileName}</div>
-            <div>${fileBadge}</div>
+            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
           </div>`;
         }).join('');
 
@@ -3220,8 +3216,7 @@ function renderUsersTable() {
       paginatedFiles.forEach(file => {
         const fileDetails = JSON.parse(file.FileDetails || '[]');
         let downloadButtons = fileDetails.map(f => {
-          const fileBadge = getFileBadgeHTML(f.fileName);
-          return `<div class="flex flex-col gap-1.5 mb-2">
+          return `<div class="flex flex-col gap-1 mb-2">
             <div class="action-btn-group">
               <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
                 class="action-btn preview-btn" title="ดูตัวอย่าง">
@@ -3232,8 +3227,7 @@ function renderUsersTable() {
                 <i data-lucide="download" class="w-4 h-4"></i>
               </button>
             </div>
-            <div class="text-xs text-warm-600 truncate max-w-[150px] mb-0.5" title="${f.fileName}">${f.fileName}</div>
-            <div>${fileBadge}</div>
+            <div class="text-xs text-warm-600 truncate max-w-[150px]" title="${f.fileName}">${f.fileName}</div>
           </div>`;
         }).join('');
 
@@ -3413,9 +3407,9 @@ function renderUsersTable() {
         const uploader = appState.allUsers.find(u => u.UserID === file.UserID);
         const uploaderName = uploader ? uploader.FullName : 'ไม่ระบุ';
 
-        // Parse file details to show attachment badges
+        // Parse file details to show attachment text
         const fileDetails = JSON.parse(file.FileDetails || '[]');
-        const badgesHTML = fileDetails.map(f => getFileBadgeHTML(f.fileName)).join(' ');
+        const attachmentsText = fileDetails.map(f => f.fileName).join(', ');
 
         // Subadmin can always edit and request delete
         const editButton = `<button data-fileid="${file.FileID}" class="subadmin-edit-file-btn text-accent hover:text-accent-hover mr-2" title="แก้ไข">
@@ -3441,7 +3435,7 @@ function renderUsersTable() {
         ${file.SubTitle ? `<div class="file-subtitle text-warm-500 mb-0.5">${file.SubTitle}</div>` : ''}
         ${file.HoldDate ? `<div class="file-hold text-warm-500 text-xs mb-0.5">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>` : ''}
         ${file.TypeName ? `<div class="file-type text-accent text-xs mb-1">${file.TypeName}</div>` : ''}
-        <div class="mt-1.5 flex flex-wrap gap-1">${badgesHTML}</div>
+        ${attachmentsText ? `<div class="text-xs text-warm-400 mt-1">ไฟล์แนบ: ${attachmentsText}</div>` : ''}
       </td>
       <td class="px-6 py-4 whitespace-nowrap text-sm">${groupBadge}</td>
       <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-500">${uploaderName}</td>
