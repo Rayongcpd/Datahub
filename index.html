@@ -1795,10 +1795,14 @@
             </h1>
             <p class="text-warm-500 text-sm mt-1">แหล่งรวบรวมแบบฟอร์ม ข้อบังคับ และระเบียบมาตรฐานสำหรับการดำเนินงานของสหกรณ์</p>
           </div>
-          <div id="template-admin-actions" class="hidden">
+          <div id="template-admin-actions" class="hidden flex-wrap gap-2">
             <button onclick="openAddTemplateModal()" class="bg-accent text-white px-5 py-2.5 rounded-lg hover:bg-accent-hover flex items-center gap-2 shadow-sm font-medium transition-smooth">
               <i data-lucide="plus" class="w-5 h-5"></i>
               เพิ่มแม่แบบใหม่
+            </button>
+            <button onclick="openCpdImportModal()" class="bg-sage text-white px-5 py-2.5 rounded-lg hover:bg-sage/90 flex items-center gap-2 shadow-sm font-medium transition-smooth">
+              <i data-lucide="download-cloud" class="w-5 h-5"></i>
+              ดึงข้อมูลจากกรมส่งเสริมฯ
             </button>
           </div>
         </div>
@@ -1931,6 +1935,75 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- CPD Import Modal -->
+    <div id="cpd-import-modal" class="modal">
+      <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-sage to-sage/80 px-6 py-4 rounded-t-xl flex justify-between items-center flex-shrink-0">
+          <div class="flex items-center gap-3">
+            <div class="bg-white/20 p-2 rounded-lg">
+              <i data-lucide="building-2" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-serif font-bold text-white">ดึงข้อมูลจากกรมส่งเสริมสหกรณ์</h2>
+              <p class="text-white/70 text-xs">กองทะเบียนและกฎหมาย (rlo.office.cpd.go.th)</p>
+            </div>
+          </div>
+          <button onclick="closeCpdImportModal()" class="text-white/70 hover:text-white transition-smooth">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+        <!-- Search & Filters -->
+        <div class="px-6 py-4 bg-warm-50 border-b border-warm-200 flex flex-col md:flex-row gap-3 flex-shrink-0">
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-warm-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="cpd-search-input" oninput="filterCpdDrafts()" placeholder="ค้นหาชื่อเอกสาร..."
+              class="w-full pl-10 pr-4 py-2 bg-white border border-warm-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-sage">
+          </div>
+          <select id="cpd-category-filter" onchange="filterCpdDrafts()"
+            class="px-3 py-2 bg-white border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-sage focus:border-sage">
+            <option value="all">ทุกหมวดหมู่</option>
+            <option value="ระเบียบสหกรณ์">ระเบียบสหกรณ์</option>
+            <option value="ข้อบังคับสหกรณ์">ข้อบังคับสหกรณ์</option>
+          </select>
+          <select id="cpd-filetype-filter" onchange="filterCpdDrafts()"
+            class="px-3 py-2 bg-white border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-sage focus:border-sage">
+            <option value="all">ทุกประเภทไฟล์</option>
+            <option value="Word">Word (Google Docs)</option>
+            <option value="PDF">PDF (Google Drive)</option>
+          </select>
+        </div>
+
+        <!-- Stats Bar -->
+        <div id="cpd-stats-bar" class="px-6 py-2 bg-warm-50/50 border-b border-warm-100 text-xs text-warm-500 flex items-center gap-4 flex-shrink-0">
+          <span id="cpd-stats-text">กำลังโหลด...</span>
+        </div>
+
+        <!-- Content / List -->
+        <div id="cpd-drafts-container" class="flex-1 overflow-y-auto px-6 py-4">
+          <div class="flex flex-col items-center justify-center py-16 text-warm-400">
+            <div class="animate-spin rounded-full h-10 w-10 border-2 border-sage border-t-transparent mb-4"></div>
+            <span class="font-medium">กำลังเชื่อมต่อกรมส่งเสริมสหกรณ์...</span>
+            <span class="text-xs mt-1">อาจใช้เวลาสักครู่</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-6 py-3 bg-warm-50 border-t border-warm-200 flex justify-between items-center flex-shrink-0 rounded-b-xl">
+          <p class="text-xs text-warm-400">
+            <i data-lucide="info" class="w-3.5 h-3.5 inline-block mr-1"></i>
+            ไฟล์จะถูกคัดลอกเข้า Google Drive ของระบบเพื่อเก็บถาวร
+          </p>
+          <button onclick="closeCpdImportModal()" class="px-4 py-2 bg-warm-200 hover:bg-warm-300 text-warm-700 text-sm font-medium rounded-lg transition-smooth">
+            ปิด
+          </button>
+        </div>
       </div>
     </div>
   </main>
@@ -8999,6 +9072,289 @@ function renderUsersTable() {
             .deleteTemplate(templateId, appState.currentUser ? appState.currentUser.UserID : '');
         }
       });
+    }
+  </script>
+
+  <!-- ===== CPD IMPORT FUNCTIONS ===== -->
+  <script>
+    // State สำหรับ CPD Import
+    appState.cpdDrafts = [];
+
+    /**
+     * เปิด CPD Import Modal และดึงข้อมูลจากกรมส่งเสริมสหกรณ์
+     */
+    function openCpdImportModal() {
+      const modal = document.getElementById('cpd-import-modal');
+      if (!modal) return;
+      modal.classList.add('flex');
+
+      // Reset filters
+      const searchInput = document.getElementById('cpd-search-input');
+      const catFilter = document.getElementById('cpd-category-filter');
+      const typeFilter = document.getElementById('cpd-filetype-filter');
+      if (searchInput) searchInput.value = '';
+      if (catFilter) catFilter.value = 'all';
+      if (typeFilter) typeFilter.value = 'all';
+
+      // Show loading
+      const container = document.getElementById('cpd-drafts-container');
+      container.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-16 text-warm-400">
+          <div class="animate-spin rounded-full h-10 w-10 border-2 border-sage border-t-transparent mb-4"></div>
+          <span class="font-medium">กำลังเชื่อมต่อกรมส่งเสริมสหกรณ์...</span>
+          <span class="text-xs mt-1">กำลังดึงข้อมูลร่างระเบียบและข้อบังคับ อาจใช้เวลา 5-15 วินาที</span>
+        </div>
+      `;
+      document.getElementById('cpd-stats-text').textContent = 'กำลังโหลด...';
+
+      lucide.createIcons();
+
+      // Fetch data from backend
+      google.script.run
+        .withSuccessHandler(response => {
+          if (response.success) {
+            appState.cpdDrafts = response.data || [];
+            renderCpdDrafts(appState.cpdDrafts);
+          } else {
+            container.innerHTML = `
+              <div class="flex flex-col items-center justify-center py-16 text-red-400">
+                <i data-lucide="alert-triangle" class="w-12 h-12 mb-3"></i>
+                <span class="font-medium text-red-600">ไม่สามารถดึงข้อมูลได้</span>
+                <span class="text-sm text-warm-500 mt-1">${response.message || 'โปรดลองอีกครั้งภายหลัง'}</span>
+                <button onclick="openCpdImportModal()" class="mt-4 px-4 py-2 bg-sage text-white rounded-lg text-sm hover:bg-sage/90 transition-smooth">
+                  <i data-lucide="refresh-cw" class="w-4 h-4 inline-block mr-1"></i> ลองอีกครั้ง
+                </button>
+              </div>
+            `;
+            document.getElementById('cpd-stats-text').textContent = 'เกิดข้อผิดพลาด';
+            lucide.createIcons();
+          }
+        })
+        .withFailureHandler(err => {
+          container.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-16 text-red-400">
+              <i data-lucide="wifi-off" class="w-12 h-12 mb-3"></i>
+              <span class="font-medium text-red-600">เชื่อมต่อไม่สำเร็จ</span>
+              <span class="text-sm text-warm-500 mt-1">${err.message || 'ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต'}</span>
+              <button onclick="openCpdImportModal()" class="mt-4 px-4 py-2 bg-sage text-white rounded-lg text-sm hover:bg-sage/90 transition-smooth">
+                <i data-lucide="refresh-cw" class="w-4 h-4 inline-block mr-1"></i> ลองอีกครั้ง
+              </button>
+            </div>
+          `;
+          document.getElementById('cpd-stats-text').textContent = 'เกิดข้อผิดพลาด';
+          lucide.createIcons();
+        })
+        .fetchCpdDrafts();
+    }
+
+    /**
+     * ปิด CPD Import Modal
+     */
+    function closeCpdImportModal() {
+      const modal = document.getElementById('cpd-import-modal');
+      if (modal) modal.classList.remove('flex');
+    }
+
+    /**
+     * กรองรายการแบบร่างตาม search, category และ filetype
+     */
+    function filterCpdDrafts() {
+      const search = (document.getElementById('cpd-search-input')?.value || '').toLowerCase();
+      const cat = document.getElementById('cpd-category-filter')?.value || 'all';
+      const fileType = document.getElementById('cpd-filetype-filter')?.value || 'all';
+
+      const filtered = appState.cpdDrafts.filter(d => {
+        const matchSearch = d.title.toLowerCase().includes(search);
+        const matchCat = cat === 'all' || d.category === cat;
+        const matchType = fileType === 'all' || d.fileType === fileType;
+        return matchSearch && matchCat && matchType;
+      });
+
+      renderCpdDrafts(filtered);
+    }
+
+    /**
+     * เรนเดอร์รายการแบบร่างจากกรมส่งเสริมสหกรณ์
+     * @param {Array} drafts - รายการแบบร่างที่ผ่านการกรองแล้ว
+     */
+    function renderCpdDrafts(drafts) {
+      const container = document.getElementById('cpd-drafts-container');
+      if (!container) return;
+
+      // อัปเดตสถิติ
+      const total = appState.cpdDrafts.length;
+      const imported = appState.cpdDrafts.filter(d => d.alreadyImported).length;
+      const regs = drafts.filter(d => d.category === 'ระเบียบสหกรณ์').length;
+      const rules = drafts.filter(d => d.category === 'ข้อบังคับสหกรณ์').length;
+
+      document.getElementById('cpd-stats-text').innerHTML = `
+        <span class="inline-flex items-center gap-1"><i data-lucide="file-text" class="w-3.5 h-3.5"></i> ทั้งหมด <strong>${total}</strong> รายการ</span>
+        <span class="text-warm-300">|</span>
+        <span>แสดง <strong>${drafts.length}</strong> รายการ</span>
+        <span class="text-warm-300">|</span>
+        <span class="text-green-600">นำเข้าแล้ว <strong>${imported}</strong></span>
+        <span class="text-warm-300">|</span>
+        <span>ระเบียบ <strong>${regs}</strong> • ข้อบังคับ <strong>${rules}</strong></span>
+      `;
+
+      if (drafts.length === 0) {
+        container.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-16 text-warm-400">
+            <i data-lucide="search-x" class="w-12 h-12 mb-3"></i>
+            <span class="font-medium">ไม่พบเอกสารที่ตรงกับเงื่อนไข</span>
+            <span class="text-xs mt-1">ลองปรับเงื่อนไขการค้นหา</span>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      let html = '<div class="space-y-3">';
+      drafts.forEach((draft, idx) => {
+        const isImported = draft.alreadyImported;
+        const fileIcon = draft.fileType === 'PDF' ? 'file-text' : 'file-edit';
+        const fileColor = draft.fileType === 'PDF' ? 'text-red-500 bg-red-50' : 'text-blue-500 bg-blue-50';
+        const catColor = draft.category === 'ข้อบังคับสหกรณ์' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
+
+        html += `
+          <div id="cpd-draft-${idx}" class="border border-warm-200 rounded-xl p-4 hover:shadow-md transition-smooth ${isImported ? 'bg-green-50/50 border-green-200' : 'bg-white'}">
+            <div class="flex flex-col md:flex-row md:items-center gap-3">
+              <!-- Icon & Info -->
+              <div class="flex items-start gap-3 flex-1 min-w-0">
+                <div class="flex-shrink-0 w-10 h-10 rounded-lg ${fileColor} flex items-center justify-center">
+                  <i data-lucide="${fileIcon}" class="w-5 h-5"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-medium text-warm-800 text-sm leading-snug line-clamp-2">${escapeHtml(draft.title)}</h4>
+                  <div class="flex flex-wrap gap-1.5 mt-1.5">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${catColor}">
+                      ${draft.category}
+                    </span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warm-100 text-warm-600">
+                      ${draft.fileType}
+                    </span>
+                    ${isImported ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-100 text-green-700">✓ นำเข้าแล้ว</span>' : ''}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="${draft.url}" target="_blank" rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-warm-100 hover:bg-warm-200 text-warm-700 text-xs font-medium rounded-lg transition-smooth">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  ดูต้นฉบับ
+                </a>
+                ${isImported
+                  ? `<button disabled class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-600 text-xs font-medium rounded-lg cursor-not-allowed">
+                      <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+                      นำเข้าแล้ว
+                    </button>`
+                  : `<button onclick="importSingleCpdDraft(${idx})" id="cpd-import-btn-${idx}"
+                      class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sage hover:bg-sage/90 text-white text-xs font-medium rounded-lg transition-smooth shadow-sm">
+                      <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                      นำเข้าระบบ
+                    </button>`
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      container.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    /**
+     * Escape HTML characters เพื่อป้องกัน XSS
+     */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    /**
+     * นำเข้าแบบร่างรายการเดียวจากกรมส่งเสริมสหกรณ์
+     * @param {number} idx - ดัชนีของ draft ใน appState.cpdDrafts
+     */
+    function importSingleCpdDraft(idx) {
+      const draft = appState.cpdDrafts[idx];
+      if (!draft) return;
+
+      // เปลี่ยนปุ่มเป็นสถานะ Loading
+      const btn = document.getElementById(`cpd-import-btn-${idx}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `
+          <div class="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white border-t-transparent"></div>
+          กำลังนำเข้า...
+        `;
+        btn.classList.remove('bg-sage', 'hover:bg-sage/90');
+        btn.classList.add('bg-warm-400', 'cursor-wait');
+      }
+
+      const cpdData = {
+        fileId: draft.fileId,
+        title: draft.title,
+        category: draft.category,
+        fileType: draft.fileType,
+        url: draft.url,
+        source: draft.source
+      };
+
+      google.script.run
+        .withSuccessHandler(response => {
+          if (response.success) {
+            // อัปเดตสถานะใน state
+            draft.alreadyImported = true;
+
+            // เปลี่ยน UI ของรายการนี้เป็น "นำเข้าแล้ว"
+            const card = document.getElementById(`cpd-draft-${idx}`);
+            if (card) {
+              card.classList.add('bg-green-50/50', 'border-green-200');
+            }
+            if (btn) {
+              btn.disabled = true;
+              btn.innerHTML = `<i data-lucide="check-circle" class="w-3.5 h-3.5"></i> นำเข้าแล้ว`;
+              btn.classList.remove('bg-warm-400', 'cursor-wait');
+              btn.classList.add('bg-green-100', 'text-green-600', 'cursor-not-allowed');
+              btn.classList.remove('text-white');
+              lucide.createIcons();
+            }
+
+            // อัปเดต stats
+            const imported = appState.cpdDrafts.filter(d => d.alreadyImported).length;
+            const statsEl = document.getElementById('cpd-stats-text');
+            if (statsEl) {
+              const total = appState.cpdDrafts.length;
+              statsEl.querySelector('span.text-green-600 strong').textContent = imported;
+            }
+
+            showToast('นำเข้า "' + draft.title + '" สำเร็จ!', 'success');
+          } else {
+            // คืนสถานะปุ่มกลับ
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = `<i data-lucide="download" class="w-3.5 h-3.5"></i> นำเข้าระบบ`;
+              btn.classList.remove('bg-warm-400', 'cursor-wait');
+              btn.classList.add('bg-sage', 'hover:bg-sage/90');
+              lucide.createIcons();
+            }
+            showToast(response.message || 'ไม่สามารถนำเข้าได้', 'error');
+          }
+        })
+        .withFailureHandler(err => {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="download" class="w-3.5 h-3.5"></i> นำเข้าระบบ`;
+            btn.classList.remove('bg-warm-400', 'cursor-wait');
+            btn.classList.add('bg-sage', 'hover:bg-sage/90');
+            lucide.createIcons();
+          }
+          showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
+        })
+        .importCpdTemplate(cpdData, appState.currentUser ? appState.currentUser.UserID : '');
     }
   </script>
 
