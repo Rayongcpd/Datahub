@@ -380,12 +380,18 @@ window.google.script = window.google.script || {};
                             case 'getTitleEditRequests':
                                 params = {};
                                 break;
-                            case 'approveTitleEditRequest':
-                                params = { requestId: args[0], approverId: args[1] };
-                                break;
-                            case 'rejectTitleEditRequest':
-                                params = { requestId: args[0], approverId: args[1] };
-                                break;
+                             case 'approveTitleEditRequest':
+                                 params = { requestId: args[0], approverId: args[1] };
+                                 break;
+                             case 'rejectTitleEditRequest':
+                                 params = { requestId: args[0], approverId: args[1] };
+                                 break;
+                             case 'approveTitleEditRequestsBatch':
+                                 params = { requestIds: args[0], approverId: args[1] };
+                                 break;
+                             case 'rejectTitleEditRequestsBatch':
+                                 params = { requestIds: args[0], approverId: args[1] };
+                                 break;
                             default:
                                 if (args.length > 0) {
                                     params = { args };

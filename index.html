@@ -1207,12 +1207,25 @@
             </h1>
             <p class="text-sm text-warm-500 mt-1">รายการคำขอเสนอแก้ไขชื่อเรื่องที่รออนุมัติจากผู้ดูแลระบบ</p>
           </div>
-          <button onclick="renderTitleRequestsTable()" class="flex items-center gap-2 px-4 py-2 bg-warm-100 hover:bg-warm-200 text-warm-700 rounded-lg text-sm font-medium transition-smooth border border-warm-200">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-            </svg>
-            รีเฟรช
-          </button>
+          <div class="flex items-center gap-2">
+            <!-- Bulk actions container, hidden by default -->
+            <div id="title-requests-bulk-actions" class="hidden items-center gap-2">
+              <button onclick="approveSelectedTitleRequests()" class="flex items-center gap-1.5 px-3 py-2 bg-sage hover:bg-sage/95 text-white rounded-lg text-xs font-semibold transition-smooth shadow-sm active:scale-[0.98]">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                อนุมัติที่เลือก (<span id="title-requests-selected-count">0</span>)
+              </button>
+              <button onclick="rejectSelectedTitleRequests()" class="flex items-center gap-1.5 px-3 py-2 bg-brick hover:bg-brick/95 text-white rounded-lg text-xs font-semibold transition-smooth shadow-sm active:scale-[0.98]">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                ปฏิเสธที่เลือก
+              </button>
+            </div>
+            <button onclick="renderTitleRequestsTable()" class="flex items-center gap-2 px-4 py-2 bg-warm-100 hover:bg-warm-200 text-warm-700 rounded-lg text-sm font-medium transition-smooth border border-warm-200 active:scale-[0.98]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              รีเฟรช
+            </button>
+          </div>
         </div>
 
         <div class="bg-white rounded-xl border border-warm-200 shadow-sm overflow-hidden">
@@ -1225,6 +1238,9 @@
             <table class="min-w-full divide-y divide-warm-200">
               <thead class="bg-warm-50">
                 <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider w-8">
+                    <input type="checkbox" id="title-requests-select-all" onchange="toggleSelectAllTitleRequests(this)" class="rounded border-warm-300 text-accent focus:ring-accent w-4 h-4 cursor-pointer">
+                  </th>
                   <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider w-8">#</th>
                   <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">ชื่อเรื่อง/เพิ่มเติม (เดิม)</th>
                   <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">ชื่อเรื่อง/เพิ่มเติม (ที่เสนอใหม่)</th>
@@ -1237,7 +1253,7 @@
               </thead>
               <tbody id="title-requests-table-body" class="divide-y divide-warm-100">
                 <tr>
-                  <td colspan="8" class="text-center py-12 text-warm-400">
+                  <td colspan="9" class="text-center py-12 text-warm-400">
                     <div class="flex flex-col items-center gap-2">
                       <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
                       <span class="text-sm">กำลังโหลด...</span>
@@ -6987,10 +7003,19 @@ function renderUsersTable() {
      * Admin: โหลดและแสดงตารางคำขอแก้ไขชื่อเรื่อง
      */
     function renderTitleRequestsTable() {
+      // ซ่อนแผง Bulk Actions และเคลียร์ checkbox ทั้งหมดตั้งแต่เริ่มโหลด
+      const bulkActions = document.getElementById('title-requests-bulk-actions');
+      if (bulkActions) {
+        bulkActions.classList.remove('flex');
+        bulkActions.classList.add('hidden');
+      }
+      const selectAllCheckbox = document.getElementById('title-requests-select-all');
+      if (selectAllCheckbox) selectAllCheckbox.checked = false;
+
       const tbody = document.getElementById('title-requests-table-body');
       const countEl = document.getElementById('title-requests-count');
       if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-warm-400">
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-warm-400">
           <div class="flex flex-col items-center gap-2">
             <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
             <span class="text-sm">กำลังโหลด...</span>
@@ -7003,15 +7028,17 @@ function renderUsersTable() {
           tbody.innerHTML = '';
 
           if (!res.success) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500">${escapeHtml(res.message || 'เกิดข้อผิดพลาด')}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-red-500">${escapeHtml(res.message || 'เกิดข้อผิดพลาด')}</td></tr>`;
             return;
           }
 
           const rows = res.data || [];
+          // เก็บข้อมูลแถวคำขอที่โหลดล่าสุดไว้ใน appState
+          appState.activeTitleRequests = rows;
           if (countEl) countEl.textContent = `พบ ${rows.length} รายการที่รออนุมัติ`;
 
           if (rows.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-warm-400">
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-warm-400">
               <div class="flex flex-col items-center gap-3">
                 <div class="text-4xl">✅</div>
                 <p class="font-medium">ไม่มีคำขอแก้ไขชื่อเรื่องที่รออนุมัติ</p>
@@ -7023,6 +7050,9 @@ function renderUsersTable() {
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-warm-50 transition-colors';
             tr.innerHTML = `
+              <td class="px-4 py-3 text-sm">
+                <input type="checkbox" name="title-request-check" value="${req.RequestID}" onchange="onTitleRequestCheckChange()" class="title-request-checkbox rounded border-warm-300 text-accent focus:ring-accent w-4 h-4 cursor-pointer">
+              </td>
               <td class="px-4 py-3 text-sm text-warm-400">${i + 1}</td>
               <td class="px-4 py-3 text-sm text-warm-800 max-w-xs">
                 <div class="font-medium leading-snug">${escapeHtml(req.OldTitle)}</div>
@@ -7041,12 +7071,12 @@ function renderUsersTable() {
               <td class="px-4 py-3 text-center">
                 <div class="flex items-center justify-center gap-2">
                   <button onclick="approveTitleEdit('${req.RequestID}', '${req.FileID}', '${escapeHtml(req.OldTitle).replace(/'/g, "\\'")}', '${escapeHtml(req.NewTitle).replace(/'/g, "\\'")}', '${escapeHtml(req.OldSubTitle || '').replace(/'/g, "\\'")}', '${escapeHtml(req.NewSubTitle || '').replace(/'/g, "\\'")}')"
-                    class="px-3 py-1.5 bg-sage/90 hover:bg-sage text-white text-xs font-semibold rounded-lg transition-smooth flex items-center gap-1.5 shadow-sm">
+                    class="px-3 py-1.5 bg-sage/90 hover:bg-sage text-white text-xs font-semibold rounded-lg transition-smooth flex items-center gap-1.5 shadow-sm active:scale-[0.98]">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                     อนุมัติ
                   </button>
                   <button onclick="rejectTitleEdit('${req.RequestID}')"
-                    class="px-3 py-1.5 bg-brick/80 hover:bg-brick text-white text-xs font-semibold rounded-lg transition-smooth flex items-center gap-1.5 shadow-sm">
+                    class="px-3 py-1.5 bg-brick/80 hover:bg-brick text-white text-xs font-semibold rounded-lg transition-smooth flex items-center gap-1.5 shadow-sm active:scale-[0.98]">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
                     ปฏิเสธ
                   </button>
@@ -7056,7 +7086,7 @@ function renderUsersTable() {
           });
         })
         .withFailureHandler(err => {
-          if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500">เชื่อมต่อไม่ได้: ${escapeHtml(err.message || '')}</td></tr>`;
+          if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-red-500">เชื่อมต่อไม่ได้: ${escapeHtml(err.message || '')}</td></tr>`;
         })
         .getTitleEditRequests();
     }
@@ -7147,7 +7177,12 @@ function renderUsersTable() {
             hideLoading();
             if (res.success) {
               showToast(res.message, 'success');
+              const req = (appState.activeTitleRequests || []).find(r => r.RequestID === requestId);
+              if (req) {
+                delete appState.pendingTitleEditRequests[req.FileID];
+              }
               renderTitleRequestsTable();
+              renderAll();
             } else {
               showToast(res.message, 'error');
             }
@@ -7157,6 +7192,180 @@ function renderUsersTable() {
             showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
           })
           .rejectTitleEditRequest(requestId, appState.currentUser.UserID);
+      });
+    }
+
+    /**
+     * เลือก/ยกเลิกเลือก กล่อง Checkbox ทั้งตาราง
+     */
+    function toggleSelectAllTitleRequests(master) {
+      const checkboxes = document.querySelectorAll('.title-request-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = master.checked;
+      });
+      onTitleRequestCheckChange();
+    }
+
+    /**
+     * ตรวจจับการเปลี่ยนแปลงของการเลือก Checkbox เพื่อเปิด/ปิดปุ่ม Bulk Actions
+     */
+    function onTitleRequestCheckChange() {
+      const checkboxes = document.querySelectorAll('.title-request-checkbox');
+      const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
+      
+      const bulkActions = document.getElementById('title-requests-bulk-actions');
+      const countLabel = document.getElementById('title-requests-selected-count');
+      const selectAllCheckbox = document.getElementById('title-requests-select-all');
+
+      if (checkedBoxes.length > 0) {
+        if (bulkActions) {
+          bulkActions.classList.remove('hidden');
+          bulkActions.classList.add('flex');
+        }
+        if (countLabel) countLabel.textContent = checkedBoxes.length;
+      } else {
+        if (bulkActions) {
+          bulkActions.classList.remove('flex');
+          bulkActions.classList.add('hidden');
+        }
+      }
+
+      // ปรับปรุงปุ่ม Select All ให้สะท้อนความเป็นจริง
+      if (selectAllCheckbox) {
+        selectAllCheckbox.checked = checkedBoxes.length === checkboxes.length && checkboxes.length > 0;
+      }
+    }
+
+    /**
+     * อนุมัติรายการที่เลือกทั้งหมดแบบกลุ่ม
+     */
+    function approveSelectedTitleRequests() {
+      if (!appState.currentUser || appState.currentUser.Role !== 'admin') {
+        showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
+        return;
+      }
+
+      const checkboxes = document.querySelectorAll('.title-request-checkbox');
+      const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
+      const requestIds = checkedBoxes.map(cb => cb.value);
+
+      if (requestIds.length === 0) {
+        showToast('กรุณาเลือกรายการที่ต้องการอนุมัติ', 'warning');
+        return;
+      }
+
+      // ดึงรายละเอียดข้อมูลที่เลือกเพื่อแสดงสรุปให้ผู้ใช้
+      const selectedReqs = (appState.activeTitleRequests || []).filter(r => requestIds.includes(r.RequestID));
+      const summaryHtml = selectedReqs.map(r => {
+        return `<div class="p-2 border-b border-warm-100 text-left text-xs">
+          <div class="font-semibold text-warm-700 leading-tight">${escapeHtml(r.OldTitle)}</div>
+          <div class="text-accent font-semibold mt-1 flex items-center gap-1">
+            <svg class="w-3 h-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+            ${escapeHtml(r.NewTitle)}
+          </div>
+        </div>`;
+      }).join('');
+
+      Swal.fire({
+        title: `อนุมัติคำขอที่เลือก ${requestIds.length} รายการ?`,
+        html: `<div class="max-h-60 overflow-y-auto border border-warm-200 rounded-lg divide-y bg-warm-50/30 mb-2">${summaryHtml}</div>
+               <p class="text-xs text-warm-500 text-left mt-2">ระบบจะนำไปปรับปรุงชื่อไฟล์ในคลังเอกสารทันที</p>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '✅ อนุมัติทั้งหมด',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#5a7c5a',
+        allowOutsideClick: false,
+      }).then(result => {
+        if (!result.isConfirmed) return;
+        showLoading();
+        google.script.run
+          .withSuccessHandler(res => {
+            hideLoading();
+            if (res.success) {
+              showToast(res.message, 'success');
+              
+              // อัปเดตข้อมูลไฟล์และ pending requests ใน state ทันที
+              selectedReqs.forEach(r => {
+                const f = appState.allFiles.find(file => file.FileID === r.FileID);
+                if (f) {
+                  f.Title = r.NewTitle;
+                  if (r.NewSubTitle !== undefined) f.SubTitle = r.NewSubTitle;
+                }
+                delete appState.pendingTitleEditRequests[r.FileID];
+              });
+              
+              renderTitleRequestsTable();
+              renderAll(); // อัปเดตตารางไฟล์และตัวเลขหน้ารวม
+            } else {
+              showToast(res.message, 'error');
+            }
+          })
+          .withFailureHandler(err => {
+            hideLoading();
+            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+          })
+          .approveTitleEditRequestsBatch(requestIds, appState.currentUser.UserID);
+      });
+    }
+
+    /**
+     * ปฏิเสธรายการที่เลือกทั้งหมดแบบกลุ่ม
+     */
+    function rejectSelectedTitleRequests() {
+      if (!appState.currentUser || appState.currentUser.Role !== 'admin') {
+        showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
+        return;
+      }
+
+      const checkboxes = document.querySelectorAll('.title-request-checkbox');
+      const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
+      const requestIds = checkedBoxes.map(cb => cb.value);
+
+      if (requestIds.length === 0) {
+        showToast('กรุณาเลือกรายการที่ต้องการปฏิเสธ', 'warning');
+        return;
+      }
+
+      const selectedReqs = (appState.activeTitleRequests || []).filter(r => requestIds.includes(r.RequestID));
+      const summaryHtml = selectedReqs.map(r => {
+        return `<div class="p-2 border-b border-warm-100 text-left text-xs">
+          <div class="font-medium text-warm-600 leading-tight">${escapeHtml(r.OldTitle)}</div>
+        </div>`;
+      }).join('');
+
+      Swal.fire({
+        title: `ปฏิเสธคำขอที่เลือก ${requestIds.length} รายการ?`,
+        html: `<div class="max-h-60 overflow-y-auto border border-warm-200 rounded-lg divide-y bg-warm-50/30 mb-2">${summaryHtml}</div>
+               <p class="text-xs text-red-500 text-left mt-2">คำขอเสนอแก้ไขที่เลือกทั้งหมดนี้จะถูกปฏิเสธและไม่นำไปแก้ไข</p>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '❌ ปฏิเสธทั้งหมด',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#b85c5c',
+        allowOutsideClick: false,
+      }).then(result => {
+        if (!result.isConfirmed) return;
+        showLoading();
+        google.script.run
+          .withSuccessHandler(res => {
+            hideLoading();
+            if (res.success) {
+              showToast(res.message, 'success');
+              selectedReqs.forEach(r => {
+                delete appState.pendingTitleEditRequests[r.FileID];
+              });
+              renderTitleRequestsTable();
+              renderAll();
+            } else {
+              showToast(res.message, 'error');
+            }
+          })
+          .withFailureHandler(err => {
+            hideLoading();
+            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+          })
+          .rejectTitleEditRequestsBatch(requestIds, appState.currentUser.UserID);
       });
     }
 
