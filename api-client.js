@@ -373,6 +373,19 @@ window.google.script = window.google.script || {};
                             case 'getFileTypesByCooperative':
                                 params = { coopId: args[0] };
                                 break;
+                            // ✅ Title Edit Requests (ระบบเสนอแก้ไขชื่อเรื่อง)
+                            case 'requestTitleEdit':
+                                params = { fileId: args[0], oldTitle: args[1], newTitle: args[2], oldSubTitle: args[3], newSubTitle: args[4], userId: args[5], requesterName: args[6], reason: args[7] };
+                                break;
+                            case 'getTitleEditRequests':
+                                params = {};
+                                break;
+                            case 'approveTitleEditRequest':
+                                params = { requestId: args[0], approverId: args[1] };
+                                break;
+                            case 'rejectTitleEditRequest':
+                                params = { requestId: args[0], approverId: args[1] };
+                                break;
                             default:
                                 if (args.length > 0) {
                                     params = { args };

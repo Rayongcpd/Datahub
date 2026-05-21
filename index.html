@@ -383,7 +383,58 @@
         font-size: inherit !important;
       }
     }
+
+    /* ===== TITLE EDIT REQUEST STYLES ===== */
+    .badge-title-edit {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 9999px;
+      background: rgba(201, 168, 76, 0.12);
+      color: #a07d1a;
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .title-edit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: 0;
+      margin-left: 5px;
+      transition: all 0.18s ease;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    .title-edit-btn:hover {
+      color: var(--accent);
+      background: var(--accent-muted);
+      border-color: rgba(194, 123, 83, 0.2);
+      transform: scale(1.1);
+    }
+
+    .title-edit-btn:active {
+      transform: scale(0.92);
+    }
+
+    .title-edit-btn svg {
+      width: 12px;
+      height: 12px;
+    }
   </style>
+
 <body class="antialiased text-warm-700">
 
 
@@ -1147,8 +1198,61 @@
         </div>
       </div>
 
+      <!-- ✅ PAGE: ADMIN TITLE EDIT REQUESTS -->
+      <div id="page-admin-title-requests" class="page">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-2xl font-bold text-warm-800 flex items-center gap-2">
+              ✏️ คำขอแก้ไขชื่อเรื่อง
+            </h1>
+            <p class="text-sm text-warm-500 mt-1">รายการคำขอเสนอแก้ไขชื่อเรื่องที่รออนุมัติจากผู้ดูแลระบบ</p>
+          </div>
+          <button onclick="renderTitleRequestsTable()" class="flex items-center gap-2 px-4 py-2 bg-warm-100 hover:bg-warm-200 text-warm-700 rounded-lg text-sm font-medium transition-smooth border border-warm-200">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            รีเฟรช
+          </button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-warm-200 shadow-sm overflow-hidden">
+          <!-- Table Header -->
+          <div class="px-6 py-3 bg-warm-50 border-b border-warm-200">
+            <p id="title-requests-count" class="text-xs text-warm-500 font-medium">กำลังโหลด...</p>
+          </div>
+          <!-- Table -->
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-warm-200">
+              <thead class="bg-warm-50">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider w-8">#</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">ชื่อเรื่อง/เพิ่มเติม (เดิม)</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">ชื่อเรื่อง/เพิ่มเติม (ที่เสนอใหม่)</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">สหกรณ์</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">ผู้เสนอ</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">เหตุผล</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">วันที่เสนอ</th>
+                  <th class="px-4 py-3 text-center text-xs font-medium text-warm-500 uppercase tracking-wider">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="title-requests-table-body" class="divide-y divide-warm-100">
+                <tr>
+                  <td colspan="8" class="text-center py-12 text-warm-400">
+                    <div class="flex flex-col items-center gap-2">
+                      <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
+                      <span class="text-sm">กำลังโหลด...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- ✅ PAGE: ADMIN RECYCLE BIN -->
       <div id="page-admin-recycle-bin" class="page">
+
         <h1 class="text-3xl font-bold mb-6">🗑️ ถังขยะ</h1>
 
         <!-- Info Banner -->
@@ -2048,8 +2152,119 @@
     </div>
   </div>
 
+  <!-- ✅ Edit Title Request Modal -->
+  <div id="edit-title-modal" class="modal" style="z-index: 1050;">
+    <div class="modal-content max-w-lg">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-accent-muted flex items-center justify-center">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-lg font-semibold text-warm-800">เสนอแก้ไขชื่อเรื่อง</h2>
+            <p class="text-xs text-warm-400 mt-0.5">คำขอจะถูกส่งให้ผู้ดูแลระบบตรวจสอบก่อนบันทึก</p>
+          </div>
+        </div>
+        <button onclick="closeEditTitleModal()" class="text-warm-400 hover:text-warm-600 transition-colors p-1">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <input type="hidden" id="edit-title-file-id">
+      <div class="space-y-4">
+        <!-- Old Title (read only) -->
+        <div>
+          <label class="block text-sm font-medium text-warm-700 mb-1.5">ชื่อเรื่องเดิม</label>
+          <div id="edit-title-old-display" class="w-full px-3 py-2.5 bg-warm-50 border border-warm-200 rounded-lg text-sm text-warm-600 leading-snug min-h-[40px]"></div>
+        </div>
+
+        <!-- New Title -->
+        <div>
+          <label for="edit-title-new" class="block text-sm font-medium text-warm-700 mb-1.5">
+            ชื่อเรื่องใหม่ที่ต้องการเสนอ <span class="text-warm-400 font-normal">(เว้นว่างถ้าไม่ต้องการเปลี่ยน)</span>
+          </label>
+          <textarea id="edit-title-new" rows="3"
+            class="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-accent focus:border-accent resize-none transition-smooth"
+            placeholder="พิมพ์ชื่อเรื่องใหม่ที่ต้องการเสนอ..."></textarea>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-warm-100 pt-1">
+          <p class="text-xs text-warm-400 font-medium uppercase tracking-wide mb-3">ชื่อเพิ่มเติม (SubTitle)</p>
+
+          <!-- Old SubTitle (read only) -->
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-warm-700 mb-1.5">ชื่อเพิ่มเติมเดิม</label>
+            <div id="edit-title-old-subtitle-display" class="w-full px-3 py-2.5 bg-warm-50 border border-warm-200 rounded-lg text-sm text-warm-500 leading-snug min-h-[38px] italic"></div>
+          </div>
+
+          <!-- New SubTitle (optional) -->
+          <div>
+            <label for="edit-title-new-subtitle" class="block text-sm font-medium text-warm-700 mb-1.5">
+              ชื่อเพิ่มเติมใหม่ที่ต้องการเสนอ <span class="text-warm-400 font-normal">(เว้นว่างถ้าไม่ต้องการเปลี่ยน)</span>
+            </label>
+            <input type="text" id="edit-title-new-subtitle"
+              class="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-accent focus:border-accent transition-smooth"
+              placeholder="พิมพ์ชื่อเพิ่มเติมใหม่...">
+          </div>
+        </div>
+
+        <!-- Requester Name (shown for guests, hidden for logged-in users) -->
+        <div id="edit-title-requester-wrap">
+          <label for="edit-title-requester" class="block text-sm font-medium text-warm-700 mb-1.5">
+            ชื่อผู้เสนอแก้ไข <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="edit-title-requester"
+            class="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-accent focus:border-accent transition-smooth"
+            placeholder="ระบุชื่อ-นามสกุลของท่าน">
+        </div>
+
+        <!-- Reason (optional) -->
+        <div>
+          <label for="edit-title-reason" class="block text-sm font-medium text-warm-700 mb-1.5">
+            เหตุผล / หมายเหตุ <span class="text-warm-400 font-normal">(ไม่บังคับ)</span>
+          </label>
+          <input type="text" id="edit-title-reason"
+            class="w-full px-3 py-2.5 border border-warm-200 rounded-lg text-sm focus:ring-2 focus:ring-accent focus:border-accent transition-smooth"
+            placeholder="เช่น ชื่อที่ถูกต้องตามระเบียบ...">
+        </div>
+
+        <!-- Info Note -->
+        <div class="flex items-start gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <svg class="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-xs text-amber-700 leading-relaxed">ชื่อเรื่องและชื่อเพิ่มเติมจะยังไม่เปลี่ยนทันที — ผู้ดูแลระบบจะตรวจสอบและอนุมัติก่อนบันทึกลงระบบ</p>
+        </div>
+      </div>
+
+
+      <!-- Buttons -->
+      <div class="flex gap-3 mt-6">
+        <button type="button" onclick="closeEditTitleModal()"
+          class="flex-1 px-4 py-2.5 border border-warm-200 rounded-lg text-sm font-medium text-warm-700 hover:bg-warm-50 transition-smooth">
+          ยกเลิก
+        </button>
+        <button type="button" onclick="submitTitleEditRequest()"
+          class="flex-1 px-4 py-2.5 bg-accent text-white rounded-lg text-sm font-medium hover:bg-accent-hover shadow-sm transition-smooth flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+          ส่งคำขอแก้ไข
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- User Modal -->
   <div id="user-modal" class="modal">
+
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
       <h2 id="user-modal-title" class="text-2xl font-bold mb-6"></h2>
       <form id="user-form">
@@ -2343,7 +2558,8 @@
         subadminFiles: { currentPage: 1, rowsPerPage: 10 }, // ✅ Subadmin
       },
       charts: {},
-      pendingDeleteFileIds: [] // ✅ เก็บรายการไฟล์ที่รอลบ
+      pendingDeleteFileIds: [], // ✅ เก็บรายการไฟล์ที่รอลบ
+      pendingTitleEditRequests: {} // ✅ เก็บ FileID → NewTitle ที่รออนุมัติแก้ไขชื่อเรื่อง
     };
 
     // Helper to generate dynamic file type badges with Lucide icons
@@ -2392,6 +2608,7 @@
         appState.allCoops = response.data.coops;
         appState.userTypeMap = response.data.userTypeMap || [];
         appState.pendingDeleteFileIds = response.data.pendingDeleteFileIds || []; // ✅ รับค่าจาก server
+        appState.pendingTitleEditRequests = response.data.pendingTitleEditRequests || {}; // ✅ รับคำขอแก้ไขชื่อเรื่อง
         appState.currentTheme = response.data.currentTheme || 'none'; // ✅ รับค่า Theme
 
         // ✅ Apply Seasonal Theme
@@ -2534,6 +2751,7 @@
                 <a href="#" data-page="admin-groups" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">จัดการกลุ่มงาน</a>
                 <a href="#" data-page="admin-files" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">ไฟล์ทั้งหมด</a>
                 <a href="#" data-page="admin-delete-requests" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">คำขอลบไฟล์</a>
+                <a href="#" data-page="admin-title-requests" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">✏️ คำขอแก้ไขชื่อเรื่อง</a>
                 <a href="#" data-page="admin-recycle-bin" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">ถังขยะ</a>
                 <a href="#" data-page="admin-activity-log" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">Activity Log</a>
               </div>
@@ -2548,6 +2766,7 @@
           mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการกลุ่มงาน</a>`;
           mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ไฟล์ทั้งหมด</a>`;
           mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">คำขอลบไฟล์</a>`;
+          mobileMenuHtml += `<a href="#" data-page="admin-title-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">✏️ คำขอแก้ไขชื่อเรื่อง</a>`;
           mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ถังขยะ</a>`;
           mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Activity Log</a>`;
           mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ขอรับบริการข้อมูล</a>`;
@@ -2645,6 +2864,9 @@
           break;
         case 'admin-delete-requests':
           renderDeleteRequestsTable();
+          break;
+        case 'admin-title-requests':
+          renderTitleRequestsTable();
           break;
         case 'admin-recycle-bin':
           renderRecycleBinTable();
@@ -2795,11 +3017,22 @@
         const pendingClass = isPending ? 'is-pending' : '';
         const pendingBadge = isPending ? '<span class="badge-pending px-2 py-0.5 rounded-full ml-1">รออนุมัติลบ</span>' : '';
 
+        // ✅ Title Edit Request badge & button
+        const hasPendingTitleEdit = !!appState.pendingTitleEditRequests[file.FileID];
+        const titleEditBadge = hasPendingTitleEdit
+          ? `<span class="badge-title-edit ml-1" title="ชื่อใหม่ที่เสนอ: ${escapeHtml(appState.pendingTitleEditRequests[file.FileID])}">⏳ รอแก้ไขชื่อ</span>`
+          : '';
+        const titleEditBtn = (!isPending && !hasPendingTitleEdit)
+          ? `<button class="title-edit-btn" title="เสนอแก้ไขชื่อเรื่อง" onclick="openEditTitleModal('${file.FileID}', \`${(file.Title || '').replace(/`/g, '\\`')}\`, \`${(file.SubTitle || '').replace(/`/g, '\\`')}\`)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>`
+          : '';
+
         const row = `
   <tr>
     <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-400" data-label="#">${start + index + 1}</td>
     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
-     <div class="file-title">${file.Title} ${pendingBadge}</div>
+     <div class="file-title">${file.Title} ${pendingBadge}${titleEditBadge}${titleEditBtn}</div>
      ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
      ${file.HoldDate
             ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
@@ -2871,11 +3104,22 @@
         const pendingClass = isPending ? 'is-pending' : '';
         const pendingBadge = isPending ? '<span class="badge-pending px-2 py-0.5 rounded-full ml-1">รออนุมัติลบ</span>' : '';
 
+        // ✅ Title Edit Request badge & button
+        const hasPendingTitleEdit = !!appState.pendingTitleEditRequests[file.FileID];
+        const titleEditBadge = hasPendingTitleEdit
+          ? `<span class="badge-title-edit ml-1" title="ชื่อใหม่ที่เสนอ: ${escapeHtml(appState.pendingTitleEditRequests[file.FileID])}">⏳ รอแก้ไขชื่อ</span>`
+          : '';
+        const titleEditBtn = (!isPending && !hasPendingTitleEdit)
+          ? `<button class="title-edit-btn" title="เสนอแก้ไขชื่อเรื่อง" onclick="openEditTitleModal('${file.FileID}', \`${(file.Title || '').replace(/`/g, '\\`')}\`, \`${(file.SubTitle || '').replace(/`/g, '\\`')}\`)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>`
+          : '';
+
         const row = `
       <tr>
         <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-400" data-label="#">${start + index + 1}</td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
-         <div class="file-title">${file.Title} ${pendingBadge}</div>
+         <div class="file-title">${file.Title} ${pendingBadge}${titleEditBadge}${titleEditBtn}</div>
          ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
          ${file.HoldDate
             ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
@@ -6514,6 +6758,277 @@ function renderUsersTable() {
     }
 
     // =================================================================
+    // =================================================================
+    // ✅ TITLE EDIT REQUEST FUNCTIONS (ระบบเสนอแก้ไขชื่อเรื่อง)
+    // =================================================================
+
+    /**
+     * เปิด Modal เสนอแก้ไขชื่อเรื่อง
+     * @param {string} fileId - FileID
+     * @param {string} currentTitle - ชื่อเรื่องเดิม
+     */
+    function openEditTitleModal(fileId, currentTitle, currentSubTitle) {
+      document.getElementById('edit-title-file-id').value = fileId;
+      document.getElementById('edit-title-old-display').textContent = currentTitle || '';
+      document.getElementById('edit-title-old-subtitle-display').textContent = currentSubTitle || '';
+      // ใส่ค่าเดิมเพื่อให้ผู้ใช้แก้ไขต่อได้ง่าย
+      document.getElementById('edit-title-new').value = '';
+      document.getElementById('edit-title-new-subtitle').value = '';
+      document.getElementById('edit-title-reason').value = '';
+
+      const requesterWrap = document.getElementById('edit-title-requester-wrap');
+      const requesterInput = document.getElementById('edit-title-requester');
+
+      if (appState.currentUser && appState.currentUser.FullName) {
+        // ผู้ใช้ที่ Login แล้ว — ซ่อนฟิลด์ชื่อผู้เสนอ
+        requesterWrap.style.display = 'none';
+        requesterInput.value = appState.currentUser.FullName;
+      } else {
+        // Guest — แสดงฟิลด์ชื่อผู้เสนอ
+        requesterWrap.style.display = 'block';
+        requesterInput.value = '';
+      }
+
+      document.getElementById('edit-title-modal').classList.add('flex');
+      setTimeout(() => {
+        document.getElementById('edit-title-new').focus();
+      }, 100);
+    }
+
+    function closeEditTitleModal() {
+      document.getElementById('edit-title-modal').classList.remove('flex');
+    }
+
+    /**
+     * Submit คำขอแก้ไขชื่อเรื่อง (รวมถึง SubTitle)
+     */
+    function submitTitleEditRequest() {
+      const fileId        = document.getElementById('edit-title-file-id').value;
+      const oldTitle      = document.getElementById('edit-title-old-display').textContent;
+      const newTitle      = document.getElementById('edit-title-new').value.trim();
+      const oldSubTitle   = document.getElementById('edit-title-old-subtitle-display').textContent;
+      const newSubTitle   = document.getElementById('edit-title-new-subtitle').value.trim();
+      const requesterName = document.getElementById('edit-title-requester').value.trim();
+      const reason        = document.getElementById('edit-title-reason').value.trim();
+      const userId        = appState.currentUser ? appState.currentUser.UserID : '';
+
+      // ต้องมีการเปลี่ยนแปลงอย่างน้อย 1 อย่าง
+      const titleChanged    = newTitle && newTitle !== oldTitle;
+      const subTitleChanged = newSubTitle !== oldSubTitle; // เว้นว่างก็นับว่าแก้ไขได้ (ล้างค่า)
+
+      if (!titleChanged && !subTitleChanged) {
+        showToast('กรุณาแก้ไขชื่อเรื่องหรือชื่อเพิ่มเติมอย่างน้อย 1 รายการ', 'warning');
+        document.getElementById('edit-title-new').focus();
+        return;
+      }
+      if (!requesterName) {
+        showToast('กรุณาระบุชื่อผู้เสนอแก้ไข', 'warning');
+        document.getElementById('edit-title-requester').focus();
+        return;
+      }
+
+      // ถ้าไม่มีการแก้ชื่อเรื่อง ให้ส่งชื่อเดิมไปเพื่อไม่ให้ backend ปฏิเสธ
+      const finalNewTitle    = titleChanged    ? newTitle    : oldTitle;
+      const finalNewSubTitle = subTitleChanged ? newSubTitle : oldSubTitle;
+
+      showLoading();
+      google.script.run
+        .withSuccessHandler(res => {
+          hideLoading();
+          if (res.success) {
+            closeEditTitleModal();
+            showToast(res.message, 'success');
+            // อัปเดต local state เพื่อให้ badge แสดงทันที (ไม่ต้อง reload)
+            appState.pendingTitleEditRequests[fileId] = finalNewTitle;
+            renderAll();
+          } else {
+            showToast(res.message, 'error');
+          }
+        })
+        .withFailureHandler(err => {
+          hideLoading();
+          showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+        })
+        .requestTitleEdit(fileId, oldTitle, finalNewTitle, oldSubTitle, finalNewSubTitle, userId, requesterName, reason);
+    }
+
+    /**
+     * Admin: โหลดและแสดงตารางคำขอแก้ไขชื่อเรื่อง
+     */
+    function renderTitleRequestsTable() {
+      const tbody = document.getElementById('title-requests-table-body');
+      const countEl = document.getElementById('title-requests-count');
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-warm-400">
+          <div class="flex flex-col items-center gap-2">
+            <div class="animate-spin rounded-full h-8 w-8 border-2 border-accent border-t-transparent"></div>
+            <span class="text-sm">กำลังโหลด...</span>
+          </div></td></tr>`;
+      }
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!tbody) return;
+          tbody.innerHTML = '';
+
+          if (!res.success) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500">${escapeHtml(res.message || 'เกิดข้อผิดพลาด')}</td></tr>`;
+            return;
+          }
+
+          const rows = res.data || [];
+          if (countEl) countEl.textContent = `พบ ${rows.length} รายการที่รออนุมัติ`;
+
+          if (rows.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-warm-400">
+              <div class="flex flex-col items-center gap-3">
+                <div class="text-4xl">✅</div>
+                <p class="font-medium">ไม่มีคำขอแก้ไขชื่อเรื่องที่รออนุมัติ</p>
+              </div></td></tr>`;
+            return;
+          }
+
+          rows.forEach((req, i) => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-warm-50 transition-colors';
+            tr.innerHTML = `
+              <td class="px-4 py-3 text-sm text-warm-400">${i + 1}</td>
+              <td class="px-4 py-3 text-sm text-warm-800 max-w-xs">
+                <div class="font-medium leading-snug">${escapeHtml(req.OldTitle)}</div>
+                ${req.OldSubTitle ? `<div class="text-xs text-warm-500 mt-1">${escapeHtml(req.OldSubTitle)}</div>` : ''}
+              </td>
+              <td class="px-4 py-3 text-sm max-w-xs">
+                <div class="font-semibold text-accent leading-snug">${escapeHtml(req.NewTitle)}</div>
+                ${req.NewSubTitle ? `<div class="text-xs text-accent/80 mt-1">${escapeHtml(req.NewSubTitle)}</div>` : ''}
+              </td>
+              <td class="px-4 py-3 text-sm text-warm-600">${escapeHtml(req.CoopName || '-')}</td>
+              <td class="px-4 py-3 text-sm text-warm-700">${escapeHtml(req.RequesterName || '-')}</td>
+              <td class="px-4 py-3 text-sm text-warm-500 max-w-xs">
+                ${req.Reason ? `<span class="italic">${escapeHtml(req.Reason)}</span>` : '<span class="text-warm-300">-</span>'}
+              </td>
+              <td class="px-4 py-3 text-sm text-warm-500">${escapeHtml(req.RequestDate || '-')}</td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button onclick="approveTitleEdit('${req.RequestID}', '${req.FileID}', '${escapeHtml(req.OldTitle).replace(/'/g, "\\'")}', '${escapeHtml(req.NewTitle).replace(/'/g, "\\'")}', '${escapeHtml(req.OldSubTitle || '').replace(/'/g, "\\'")}', '${escapeHtml(req.NewSubTitle || '').replace(/'/g, "\\'")}')"
+                    class="px-3 py-1.5 bg-sage/90 hover:bg-sage text-white text-xs font-semibold rounded-lg transition-smooth flex items-center gap-1.5 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    อนุมัติ
+                  </button>
+                  <button onclick="rejectTitleEdit('${req.RequestID}')"
+                    class="px-3 py-1.5 bg-brick/80 hover:bg-brick text-white text-xs font-semibold rounded-lg transition-smooth flex items-center gap-1.5 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    ปฏิเสธ
+                  </button>
+                </div>
+              </td>`;
+            tbody.appendChild(tr);
+          });
+        })
+        .withFailureHandler(err => {
+          if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-red-500">เชื่อมต่อไม่ได้: ${escapeHtml(err.message || '')}</td></tr>`;
+        })
+        .getTitleEditRequests();
+    }
+
+    /**
+     * Admin: อนุมัติคำขอแก้ไขชื่อเรื่อง
+     */
+    function approveTitleEdit(requestId, fileId, oldTitle, newTitle, oldSubTitle, newSubTitle) {
+      if (!appState.currentUser || appState.currentUser.Role !== 'admin') {
+        showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
+        return;
+      }
+
+      Swal.fire({
+        title: 'อนุมัติการแก้ไข?',
+        html: `<div class="text-left text-sm space-y-3 mt-2">
+          <div><span class="text-warm-400 block mb-1">ข้อมูลเดิม:</span>
+               <div class="font-medium text-warm-700 leading-snug">${escapeHtml(oldTitle)}</div>
+               ${oldSubTitle ? `<div class="text-xs text-warm-500 mt-0.5">${escapeHtml(oldSubTitle)}</div>` : ''}
+          </div>
+          <div class="flex items-center justify-center text-xl text-warm-400">↓</div>
+          <div><span class="text-warm-400 block mb-1">ข้อมูลใหม่ที่เสนอ:</span>
+               <div class="font-bold text-accent leading-snug">${escapeHtml(newTitle)}</div>
+               ${newSubTitle ? `<div class="text-xs text-accent/80 mt-0.5">${escapeHtml(newSubTitle)}</div>` : ''}
+          </div>
+        </div>`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '✅ อนุมัติ',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#5a7c5a',
+        allowOutsideClick: false,
+      }).then(result => {
+        if (!result.isConfirmed) return;
+        showLoading();
+        google.script.run
+          .withSuccessHandler(res => {
+            hideLoading();
+            if (res.success) {
+              showToast(res.message, 'success');
+              // อัปเดต allFiles local
+              if (fileId) {
+                const f = appState.allFiles.find(f => f.FileID === fileId);
+                if (f) {
+                  f.Title = newTitle;
+                  if (newSubTitle !== undefined) f.SubTitle = newSubTitle;
+                }
+                delete appState.pendingTitleEditRequests[fileId];
+              }
+              renderTitleRequestsTable();
+              // Update display in other tables if they are visible
+              renderAll();
+            } else {
+              showToast(res.message, 'error');
+            }
+          })
+          .withFailureHandler(err => {
+            hideLoading();
+            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+          })
+          .approveTitleEditRequest(requestId, appState.currentUser.UserID);
+      });
+    }
+
+    /**
+     * Admin: ปฏิเสธคำขอแก้ไขชื่อเรื่อง
+     */
+    function rejectTitleEdit(requestId) {
+      if (!appState.currentUser || appState.currentUser.Role !== 'admin') {
+        showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
+        return;
+      }
+
+      Swal.fire({
+        title: 'ปฏิเสธคำขอแก้ไขชื่อเรื่อง?',
+        text: 'คำขอนี้จะถูกปฏิเสธและไม่สามารถเรียกคืนได้',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '❌ ปฏิเสธ',
+        cancelButtonText: 'ยกเลิก',
+        confirmButtonColor: '#b85c5c',
+        allowOutsideClick: false,
+      }).then(result => {
+        if (!result.isConfirmed) return;
+        showLoading();
+        google.script.run
+          .withSuccessHandler(res => {
+            hideLoading();
+            if (res.success) {
+              showToast(res.message, 'success');
+              renderTitleRequestsTable();
+            } else {
+              showToast(res.message, 'error');
+            }
+          })
+          .withFailureHandler(err => {
+            hideLoading();
+            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+          })
+          .rejectTitleEditRequest(requestId, appState.currentUser.UserID);
+      });
+    }
+
     // ✅ ADMIN: Render Delete Requests Table (อัปเดต auto-refresh หลังอนุมัติ)
     // =================================================================
     function renderDeleteRequestsTable() {
