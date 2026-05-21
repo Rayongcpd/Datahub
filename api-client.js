@@ -364,6 +364,15 @@ window.google.script = window.google.script || {};
                             case 'deleteTemplate':
                                 params = { templateId: args[0], callerId: args[1] };
                                 break;
+                            case 'importCpdTemplate':
+                                params = { cpdData: args[0], callerId: args[1] };
+                                break;
+                            case 'getPendingDeleteRequestsByFileIds':
+                                params = { fileIds: args[0] };
+                                break;
+                            case 'getFileTypesByCooperative':
+                                params = { coopId: args[0] };
+                                break;
                             default:
                                 if (args.length > 0) {
                                     params = { args };
