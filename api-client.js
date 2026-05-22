@@ -375,7 +375,20 @@ window.google.script = window.google.script || {};
                                 break;
                             // ✅ Title Edit Requests (ระบบเสนอแก้ไขชื่อเรื่อง)
                             case 'requestTitleEdit':
-                                params = { fileId: args[0], oldTitle: args[1], newTitle: args[2], oldSubTitle: args[3], newSubTitle: args[4], userId: args[5], requesterName: args[6], reason: args[7] };
+                                params = {
+                                    fileId: args[0],
+                                    oldTitle: args[1],
+                                    newTitle: args[2],
+                                    oldSubTitle: args[3],
+                                    newSubTitle: args[4],
+                                    userId: args[5],
+                                    requesterName: args[6],
+                                    reason: args[7],
+                                    oldHoldType: args[8],
+                                    newHoldType: args[9],
+                                    oldHoldDate: args[10],
+                                    newHoldDate: args[11]
+                                };
                                 break;
                             case 'getTitleEditRequests':
                                 params = {};
