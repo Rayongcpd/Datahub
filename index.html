@@ -260,6 +260,16 @@
       margin-top: 3px;
     }
 
+    .file-coop {
+      font-size: 0.8125rem !important;
+      color: var(--accent) !important;
+      margin-top: 3px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* ===== Group/type: tiny & gray on all screens ===== */
     tbody td[data-label="กลุ่มงาน"],
     tbody td[data-label="ประเภทเอกสาร"],
@@ -3128,6 +3138,9 @@
      ${file.HoldDate
             ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
             : ''}
+     ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
+            ? `<div class="file-coop"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
+            : ''}
      ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''} 
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
@@ -3214,6 +3227,9 @@
          ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
          ${file.HoldDate
             ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
+            : ''}
+         ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
+            ? `<div class="file-coop"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
             : ''}
          ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
         </td>
@@ -3751,6 +3767,9 @@ function renderUsersTable() {
      ${file.HoldDate
             ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
             : ''}
+     ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
+            ? `<div class="file-coop"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
+            : ''}
      ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
     </td>
     <td class="px-6 py-4 whitespace-nowrap text-sm" data-label="กลุ่มงาน">${groupBadge}</td>
@@ -3893,6 +3912,9 @@ function renderUsersTable() {
      ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
      ${file.HoldDate
             ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
+            : ''}
+     ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
+            ? `<div class="file-coop"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
             : ''}
      ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
      
@@ -4071,6 +4093,9 @@ function renderUsersTable() {
         <div class="file-title mb-1">${file.Title} ${pendingBadge}</div>
         ${file.SubTitle ? `<div class="file-subtitle text-warm-500 mb-0.5">${file.SubTitle}</div>` : ''}
         ${file.HoldDate ? `<div class="file-hold text-warm-500 text-xs mb-0.5">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>` : ''}
+        ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
+               ? `<div class="file-coop mb-1"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
+               : ''}
         ${file.TypeName ? `<div class="file-type text-accent text-xs mb-1">${file.TypeName}</div>` : ''}
         ${attachmentsText ? `<div class="text-xs text-warm-400 mt-1">ไฟล์แนบ: ${attachmentsText}</div>` : ''}
       </td>
