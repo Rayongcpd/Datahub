@@ -4760,16 +4760,17 @@ function renderUsersTable() {
           typeBadge = '<span class="file-badge file-badge-zip mr-2">กลุ่มเกษตรกร</span>';
         }
 
+        const displayName = coop.coopName === 'SHARED_CENTER' ? 'ส่วนกลาง' : coop.coopName;
         tbody.innerHTML += `
           <tr class="hover:bg-warm-50 transition-colors duration-150">
             <td class="px-4 py-3 text-warm-600" data-label="ลำดับ">${index + 1}</td>
             <td class="px-4 py-3 font-medium text-warm-800" data-label="ชื่อ">
-              <div class="flex items-center">${typeBadge}${coop.coopName}</div>
+              <div class="flex items-center">${typeBadge}${displayName}</div>
             </td>
             <td class="px-4 py-3 text-center" data-label="จำนวนไฟล์">
               <div class="inline-flex items-center justify-center">
                 <span class="bg-accent-muted text-accent px-2 py-1 rounded-md text-xs font-semibold">${coop.count.toLocaleString()}</span>
-                <button onclick="showFileTypeBreakdown('${coop.coopId || coop.coopName}', '${coop.coopName.replace(/'/g, "\\'")}')" 
+                <button onclick="showFileTypeBreakdown('${coop.coopId || coop.coopName}', '${displayName.replace(/'/g, "\\'")}')" 
                   class="ml-2 text-amber-500 hover:text-accent hover:bg-accent-muted p-1 rounded-full transition-all" 
                   title="ดูรายละเอียดประเภทไฟล์">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
