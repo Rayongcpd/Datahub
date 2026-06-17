@@ -290,7 +290,7 @@
       padding: 3px 8px !important;
     }
 
-    /* ===== Responsive Table (Mobile Card Layout) ===== */
+    /* ===== Responsive Table — Compact Content Card (Mobile) ===== */
     @media (max-width: 768px) {
       .responsive-table {
         display: block;
@@ -298,7 +298,7 @@
         min-width: unset !important;
       }
 
-      /* allow cards to fill container without horizontal scroll */
+      /* Allow cards to fill container without horizontal scroll */
       .overflow-x-auto:has(> .responsive-table) {
         overflow-x: visible;
         padding-left: 0;
@@ -310,49 +310,48 @@
       }
 
       .responsive-table tbody {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
         width: 100%;
       }
 
+      /* ── Card (each <tr>) ── */
       .responsive-table tbody tr {
-        display: block;
-        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        position: relative;
         border: 1px solid var(--border-subtle);
-        border-left: 4px solid var(--accent);
-        border-radius: 10px;
+        border-radius: 12px;
         background: var(--bg-elevated);
-        padding: 16px 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        padding: 14px 16px 12px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
         transition: transform 0.15s ease, box-shadow 0.15s ease;
+        overflow: hidden;
+      }
+
+      .responsive-table tbody tr::before {
+        /* Thin accent stripe at top */
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--accent);
+        border-radius: 12px 12px 0 0;
       }
 
       .responsive-table tbody tr:active {
-        transform: scale(0.995);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        transform: scale(0.98);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
       }
 
-      /* Sequence number: small, muted, top-right feel */
-      .responsive-table tbody td[data-label="ลำดับ"],
-      .responsive-table tbody td[data-label="#"] {
-        font-size: 0.75rem;
-        color: var(--text-tertiary);
-        text-align: right !important;
-        padding-top: 0;
-        padding-bottom: 6px;
-        border-bottom: none;
-      }
-
-      .responsive-table tbody td[data-label="ลำดับ"]::before,
-      .responsive-table tbody td[data-label="#"]::before {
-        display: inline;
-        margin-bottom: 0;
-        margin-right: 4px;
-      }
-
+      /* ── All <td> — reset ── */
       .responsive-table tbody td {
         display: block;
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-subtle);
+        padding: 0;
+        border-bottom: none;
         text-align: left !important;
         font-size: 0.875rem;
         white-space: normal !important;
@@ -360,41 +359,139 @@
         overflow-wrap: anywhere;
       }
 
-      .responsive-table tbody td:last-child {
-        border-bottom: none;
-      }
-
+      /* Remove ALL label pseudo-elements (no more "ชื่อเรื่อง", "กลุ่มงาน" labels) */
       .responsive-table tbody td::before {
-        content: attr(data-label);
-        display: block;
+        display: none !important;
+      }
+
+      /* ── Row 1: Sequence # — small muted, top-left ── */
+      .responsive-table tbody td[data-label="ลำดับ"],
+      .responsive-table tbody td[data-label="#"] {
+        order: -2;
+        font-size: 0.7rem;
         font-weight: 600;
-        color: var(--text-secondary);
-        margin-bottom: 4px;
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        color: var(--text-tertiary);
+        letter-spacing: 0.04em;
+        padding-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
-      /* Title field: larger & bolder */
+      .responsive-table tbody td[data-label="ลำดับ"]::before,
+      .responsive-table tbody td[data-label="#"]::before {
+        display: inline !important;
+        content: '#';
+        margin-right: 1px;
+        font-weight: 700;
+      }
+
+      /* ── Row 2: Title — hero content, prominent ── */
       .responsive-table tbody td[data-label="ชื่อเรื่อง"] {
-        font-size: 1rem;
-        font-weight: 500;
+        order: -1;
+        font-size: 0.925rem;
+        font-weight: 600;
         line-height: 1.5;
+        color: var(--text-primary);
+        padding-bottom: 8px;
       }
 
-      /* Group / type field: clean and readable on mobile */
+      .responsive-table tbody td[data-label="ชื่อเรื่อง"] .file-title {
+        font-size: 0.925rem !important;
+        font-weight: 600;
+        line-height: 1.45;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .responsive-table tbody td[data-label="ชื่อเรื่อง"] .file-subtitle {
+        font-size: 0.8rem !important;
+        color: var(--text-secondary) !important;
+        margin-top: 2px;
+      }
+
+      .responsive-table tbody td[data-label="ชื่อเรื่อง"] .file-hold {
+        font-size: 0.75rem !important;
+        color: var(--text-tertiary) !important;
+        margin-top: 2px;
+      }
+
+      .responsive-table tbody td[data-label="ชื่อเรื่อง"] .file-type {
+        font-size: 0.68rem !important;
+        padding: 1px 7px;
+        margin-top: 4px;
+      }
+
+      .responsive-table tbody td[data-label="ชื่อเรื่อง"] .file-coop {
+        font-size: 0.75rem !important;
+        margin-top: 4px;
+        color: var(--text-secondary) !important;
+      }
+
+      /* ── Row 3: Group badge — inline, compact ── */
       .responsive-table tbody td[data-label="กลุ่มงาน"],
       .responsive-table tbody td[data-label="ประเภทเอกสาร"],
       .responsive-table tbody td[data-label="ประเภท"] {
-        font-size: 0.8125rem !important;
-        padding-top: 4px;
-        padding-bottom: 4px;
+        order: 1;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        border-top: 1px solid var(--border-subtle);
       }
 
-      .responsive-table tbody td[data-label="กลุ่มงาน"] *,
-      .responsive-table tbody td[data-label="ประเภทเอกสาร"] *,
-      .responsive-table tbody td[data-label="ประเภท"] * {
-        font-size: inherit !important;
+      .responsive-table tbody td[data-label="กลุ่มงาน"] span,
+      .responsive-table tbody td[data-label="ประเภทเอกสาร"] span,
+      .responsive-table tbody td[data-label="ประเภท"] span {
+        font-size: 0.7rem !important;
+        padding: 2px 8px !important;
+      }
+
+      /* ── Row 4: Attachments / Action buttons — bottom, full-width ── */
+      .responsive-table tbody td[data-label="ไฟล์แนบ"] {
+        order: 2;
+        padding-top: 8px;
+        border-top: 1px solid var(--border-subtle);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .responsive-table tbody td[data-label="ไฟล์แนบ"] .action-btn-group {
+        margin-bottom: 0 !important;
+      }
+
+      /* ── Admin columns: uploader, manage ── */
+      .responsive-table tbody td[data-label="ผู้บันทึก"] {
+        order: 3;
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+        padding-top: 6px;
+      }
+
+      .responsive-table tbody td[data-label="จัดการ"] {
+        order: 4;
+        padding-top: 8px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      /* ── Entrance animation ── */
+      .responsive-table tbody tr {
+        animation: mobileCardIn 0.3s ease both;
+      }
+
+      @keyframes mobileCardIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
     }
 
