@@ -6328,7 +6328,7 @@ function renderUsersTable() {
               }
             })
             .withFailureHandler(onFailure)
-            .deleteUser(userId);
+            .deleteUser(userId, appState.currentUser.UserID);
         }
       });
     }
@@ -6395,7 +6395,7 @@ function renderUsersTable() {
               }
             })
             .withFailureHandler(onFailure)
-            .deleteGroup(groupId);
+            .deleteGroup(groupId, appState.currentUser.UserID);
         }
       });
     }

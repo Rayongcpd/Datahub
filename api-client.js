@@ -89,8 +89,8 @@ async function apiGetRecycleBinFiles() {
     return await callAPI('getRecycleBinFiles');
 }
 
-async function apiRestoreFile(recycleId) {
-    return await callAPI('restoreFile', { recycleId });
+async function apiRestoreFile(recycleId, callerId) {
+    return await callAPI('restoreFile', { recycleId, callerId });
 }
 
 async function apiPermanentDeleteFile(recycleId, callerId) {
@@ -161,16 +161,16 @@ async function apiGetCooperativeStats() {
     return await callAPI('getCooperativeStats');
 }
 
-async function apiGetActivityLogs() {
-    return await callAPI('getActivityLogs');
+async function apiGetActivityLogs(filters) {
+    return await callAPI('getActivityLogs', { filters });
 }
 
 async function apiGetStatistics() {
     return await callAPI('getStatistics');
 }
 
-async function apiGetActivitySummary() {
-    return await callAPI('getActivitySummary');
+async function apiGetActivitySummary(dateFrom, dateTo) {
+    return await callAPI('getActivitySummary', { dateFrom, dateTo });
 }
 
 async function apiSubmitSatisfaction(formData) {
@@ -405,6 +405,12 @@ window.google.script = window.google.script || {};
                              case 'rejectTitleEditRequestsBatch':
                                  params = { requestIds: args[0], approverId: args[1] };
                                  break;
+                            case 'getActivitySummary':
+                                params = { dateFrom: args[0], dateTo: args[1] };
+                                break;
+                            case 'getActivityLogs':
+                                params = { filters: args[0] };
+                                break;
                             default:
                                 if (args.length > 0) {
                                     params = { args };
