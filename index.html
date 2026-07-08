@@ -4264,13 +4264,22 @@ function renderUsersTable() {
       // Handle hold date
       if (file.HoldDate) {
         try {
-          const parts = (file.HoldDate || '').split(' ')[0].split('/');
-          if (parts.length === 3) {
+          if (file.HoldDate.includes('/')) {
+            const parts = file.HoldDate.split(' ')[0].split('/');
             const day = parts[0].padStart(2, '0');
             const month = parts[1].padStart(2, '0');
-            let year = parseInt(parts[2]);
+            let year = parseInt(parts[2], 10);
             if (year > 2400) year -= 543;
             document.getElementById('subadmin-file-holddate').value = `${year}-${month}-${day}`;
+          } else {
+            const parts = file.HoldDate.split('-');
+            if (parts.length === 3) {
+              let year = parseInt(parts[0], 10);
+              if (year > 2400) year -= 543;
+              document.getElementById('subadmin-file-holddate').value = `${year}-${parts[1]}-${parts[2]}`;
+            } else {
+              document.getElementById('subadmin-file-holddate').value = file.HoldDate;
+            }
           }
         } catch (err) {
           document.getElementById('subadmin-file-holddate').value = '';
@@ -6663,20 +6672,23 @@ function renderUsersTable() {
         // file.HoldDate น่าจะเป็น formatted string เพราะ getSheetData() format ไว้
         // แต่ถ้าเป็น formatted 'dd/MM/yyyy HH:mm' เราต้องแปลงกลับเป็น ISO yyyy-MM-dd เพื่อเติม <input type="date">
         if (file.HoldDate) {
-          // ถ้า HoldDate มาเป็น dd/MM/yyyy HH:mm ให้แยกวันและแปลงเป็น yyyy-MM-dd
-          // ตัวอย่างการแปลงเบื้องต้น (รับกรณี dd/MM/yyyy)
           try {
-            const parts = (file.HoldDate || '').split(' ')[0].split('/');
-            if (parts.length === 3) {
+            if (file.HoldDate.includes('/')) {
+              const parts = file.HoldDate.split(' ')[0].split('/');
               const day = parts[0].padStart(2, '0');
               const month = parts[1].padStart(2, '0');
-              let year = parseInt(parts[2]);
-              // ✅ Convert BE to AD if needed
+              let year = parseInt(parts[2], 10);
               if (year > 2400) year -= 543;
               document.getElementById('file-holddate').value = `${year}-${month}-${day}`; // yyyy-mm-dd
             } else {
-              // ถ้าเป็น ISO แล้วก็ใส่ตรง ๆ
-              document.getElementById('file-holddate').value = file.HoldDate;
+              const parts = file.HoldDate.split('-');
+              if (parts.length === 3) {
+                let year = parseInt(parts[0], 10);
+                if (year > 2400) year -= 543;
+                document.getElementById('file-holddate').value = `${year}-${parts[1]}-${parts[2]}`;
+              } else {
+                document.getElementById('file-holddate').value = file.HoldDate;
+              }
             }
           } catch (err) {
             document.getElementById('file-holddate').value = '';
@@ -7181,12 +7193,20 @@ function renderUsersTable() {
         let isoDate = '';
         if (file.HoldDate.includes('/')) {
           const parts = file.HoldDate.split('/');
-          const dYear = parseInt(parts[2], 10) - 543;
+          let dYear = parseInt(parts[2], 10);
+          if (dYear > 2400) dYear -= 543;
           const dMonth = parts[1].padStart(2, '0');
           const dDay = parts[0].padStart(2, '0');
           isoDate = `${dYear}-${dMonth}-${dDay}`;
         } else {
-          isoDate = file.HoldDate;
+          const parts = file.HoldDate.split('-');
+          if (parts.length === 3) {
+            let dYear = parseInt(parts[0], 10);
+            if (dYear > 2400) dYear -= 543;
+            isoDate = `${dYear}-${parts[1]}-${parts[2]}`;
+          } else {
+            isoDate = file.HoldDate;
+          }
         }
         dateInput.value = isoDate;
       } else if (dateInput) {
@@ -7281,12 +7301,20 @@ function renderUsersTable() {
       if (file.HoldDate) {
         if (file.HoldDate.includes('/')) {
           const parts = file.HoldDate.split('/');
-          const dYear = parseInt(parts[2], 10) - 543;
+          let dYear = parseInt(parts[2], 10);
+          if (dYear > 2400) dYear -= 543;
           const dMonth = parts[1].padStart(2, '0');
           const dDay = parts[0].padStart(2, '0');
           oldHoldDate = `${dYear}-${dMonth}-${dDay}`;
         } else {
-          oldHoldDate = file.HoldDate;
+          const parts = file.HoldDate.split('-');
+          if (parts.length === 3) {
+            let dYear = parseInt(parts[0], 10);
+            if (dYear > 2400) dYear -= 543;
+            oldHoldDate = `${dYear}-${parts[1]}-${parts[2]}`;
+          } else {
+            oldHoldDate = file.HoldDate;
+          }
         }
       }
       
@@ -9300,7 +9328,9 @@ function renderUsersTable() {
       if (dateString.includes('/')) {
         // dd/mm/yyyy → แปลงใหม่เป็น yyyy-mm-dd
         const parts = dateString.split('/');
-        d = new Date(parts[2] - 543, parts[1] - 1, parts[0]);
+        let y = parseInt(parts[2], 10);
+        if (y > 2400) y -= 543;
+        d = new Date(y, parts[1] - 1, parts[0]);
       } else {
         // yyyy-mm-dd
         d = new Date(dateString);
@@ -9313,7 +9343,10 @@ function renderUsersTable() {
 
       let day = d.getDate();
       let month = months[d.getMonth()];
-      let year = d.getFullYear() + 543;
+      let year = d.getFullYear();
+      if (year <= 2400) {
+        year += 543;
+      }
 
       return `${day} ${month} ${year}`;
     }
@@ -9336,7 +9369,10 @@ function renderUsersTable() {
 
       let day = d.getDate();
       let month = months[d.getMonth()];
-      let year = d.getFullYear() + 543;
+      let year = d.getFullYear();
+      if (year <= 2400) {
+        year += 543;
+      }
       let hours = d.getHours().toString().padStart(2, '0');
       let minutes = d.getMinutes().toString().padStart(2, '0');
 
