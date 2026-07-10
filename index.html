@@ -782,6 +782,98 @@
       color: #ffffff;
       border-color: var(--accent);
     }
+
+    /* ===== Mobile Responsive Optimizations for Google Search Style ===== */
+    @media (max-width: 640px) {
+      .google-search-centered {
+        min-height: 35vh;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+      
+      .google-search-logo {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+      }
+      
+      .google-search-logo .logo-icon {
+        font-size: 1.8rem;
+      }
+      
+      .google-search-logo-compact {
+        font-size: 1.5rem;
+        justify-content: center;
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+      
+      .google-search-logo-compact .logo-icon {
+        font-size: 1.35rem;
+      }
+      
+      .google-search-box-wrapper {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      
+      .google-search-box {
+        padding: 4px 10px 4px 16px;
+      }
+      
+      .google-search-input {
+        font-size: 14px;
+        height: 34px;
+      }
+      
+      .google-search-tag-link {
+        padding: 4px 10px;
+        font-size: 11px;
+      }
+      
+      .google-result-card {
+        padding: 1rem;
+      }
+      
+      .google-result-title {
+        font-size: 15px;
+      }
+      
+      .google-result-snippet {
+        font-size: 13px;
+        margin-bottom: 0.5rem;
+      }
+      
+      .google-result-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+        padding-top: 0.6rem;
+      }
+      
+      .google-result-meta {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        font-size: 11px;
+      }
+      
+      .google-result-actions {
+        display: flex;
+        width: 100%;
+        gap: 0.5rem;
+      }
+      
+      .google-action-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+    }
   </style>
 
 <body class="antialiased text-warm-700">
