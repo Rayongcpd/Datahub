@@ -3493,23 +3493,23 @@
           populateProfileForm();
           break;
         case 'officer-files':
-          renderofficerFilesTable();
           populateGroupDropdown(document.getElementById('file-group'));
           populateTypeDropdown(document.getElementById('file-type')); // ✅
-          populateGroupDropdown(document.getElementById('officer-group-filter'));
-          populateTypeDropdown(document.getElementById('officer-type-filter'));
+          populateGroupFilters(); // ✅ เติม dropdown กรอง
+          populateTypeFilters(); // ✅ เติม dropdown กรอง
+          renderofficerFilesTable();
           break;
         case 'subadmin-dashboard':
           renderSubadminDashboard();
           break;
         case 'subadmin-files':
-          renderSubadminFilesTable();
           // Populate filter dropdowns
-          populateGroupDropdown(document.getElementById('subadmin-group-filter'), true);
-          populateTypeDropdown(document.getElementById('subadmin-type-filter'), true);
+          populateGroupFilters(); // ✅ เติม dropdown กรอง
+          populateTypeFilters(); // ✅ เติม dropdown กรอง
           // Populate form dropdowns
           populateGroupDropdown(document.getElementById('subadmin-file-group'));
           populateTypeDropdown(document.getElementById('subadmin-file-type'));
+          renderSubadminFilesTable();
           break;
         case 'document-requests':
           renderDocumentRequests();
@@ -5961,7 +5961,12 @@ function renderUsersTable() {
     }
 
     function populateGroupFilters() {
-      const selects = [document.getElementById('home-group-filter'), document.getElementById('admin-group-filter')];
+      const selects = [
+        document.getElementById('home-group-filter'), 
+        document.getElementById('admin-group-filter'),
+        document.getElementById('officer-group-filter'), // ✅ เพิ่มตัวกรองกลุ่มงานของ Officer
+        document.getElementById('subadmin-group-filter') // ✅ เพิ่มตัวกรองกลุ่มงานของ Subadmin
+      ];
       selects.forEach(select => {
         if (!select) return;
         select.innerHTML = '<option value="all">ทุกกลุ่มงาน</option>';
@@ -5976,7 +5981,9 @@ function renderUsersTable() {
         document.getElementById('home-type-filter'),
         document.getElementById('group-type-filter'),
         document.getElementById('group-google-type-filter'), // ✅ เพิ่มประเภทคนทั่วไปหน้ากลุ่มงาน
-        document.getElementById('admin-type-filter') // ✅ เพิ่ม admin filter
+        document.getElementById('admin-type-filter'), // ✅ เพิ่ม admin filter
+        document.getElementById('officer-type-filter'), // ✅ เพิ่มตัวกรองประเภทของ Officer
+        document.getElementById('subadmin-type-filter') // ✅ เพิ่มตัวกรองประเภทของ Subadmin
       ];
       selects.forEach(select => {
         if (!select) return;
