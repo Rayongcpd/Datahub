@@ -149,10 +149,6 @@ async function apiSaveTableAppearance(settings, callerId) {
     return await callAPI('saveTableAppearance', { settings, callerId });
 }
 
-async function apiSavePublicViewMode(mode, callerId) {
-    return await callAPI('savePublicViewMode', { mode, callerId });
-}
-
 async function apiGetKPIData() {
     return await callAPI('getKPIData');
 }
@@ -290,9 +286,6 @@ window.google.script = window.google.script || {};
                                 break;
                             case 'saveTableAppearance':
                                 params = { settings: args[0], callerId: args[1] };
-                                break;
-                            case 'savePublicViewMode':
-                                params = { mode: args[0], callerId: args[1] };
                                 break;
                             case 'recordDownloadAndGetFileUrl':
                                 params = { fileId: args[0], driveFileId: args[1], score: args[2] };
