@@ -3469,6 +3469,7 @@
           break;
         case 'admin-files':
           populateGroupFilters();
+          populateTypeFilters(); // ✅ เพิ่มเติมข้อมูลประเภทไฟล์สำหรับตัวกรอง
           renderAdminFilesTable();
           break;
         case 'admin-delete-requests':
