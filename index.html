@@ -1064,10 +1064,6 @@
                 </button>
               </div>
             </div>
-            
-            <!-- Quick tags -->
-            <div id="google-quick-tags" class="google-search-tags">
-              <!-- Will be populated dynamically with group names -->
             </div>
           </div>
 
@@ -3308,32 +3304,36 @@
         menuHtml += `<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>`;
         mobileMenuHtml += `<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>`;
 
-        // --- Desktop Dropdown ---
-        menuHtml += `
-        <div class="relative group z-50">
-          <button class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center">
-            <span>กลุ่มงาน</span>
-            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-          </button>
-          <!-- Dropdown Panel -->
-          <div class="absolute left-0 mt-0 w-64 rounded-md border border-warm-200 card-hover bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block transition-all duration-200 z-50">
-            <div class="py-2 max-h-[80vh] overflow-y-auto" role="menu">`;
+        const hideGroupMenu = (appState.publicViewMode || 'google_search') === 'google_search';
 
-        // Add separator for mobile
-        mobileMenuHtml += `<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">กลุ่มงาน</div>`;
+        if (!hideGroupMenu) {
+          // --- Desktop Dropdown ---
+          menuHtml += `
+          <div class="relative group z-50">
+            <button class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 inline-flex items-center">
+              <span>กลุ่มงาน</span>
+              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <!-- Dropdown Panel -->
+            <div class="absolute left-0 mt-0 w-64 rounded-md border border-warm-200 card-hover bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden group-hover:block transition-all duration-200 z-50">
+              <div class="py-2 max-h-[80vh] overflow-y-auto" role="menu">`;
 
-        appState.allGroups.forEach(group => {
-          // Desktop Item
-          menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">${group.GroupName}</a>`;
+          // Add separator for mobile
+          mobileMenuHtml += `<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">กลุ่มงาน</div>`;
 
-          // Mobile Item
-          mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
-        });
+          appState.allGroups.forEach(group => {
+            // Desktop Item
+            menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">${group.GroupName}</a>`;
 
-        menuHtml += `
+            // Mobile Item
+            mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
+          });
+
+          menuHtml += `
+              </div>
             </div>
-          </div>
-        </div>`;
+          </div>`;
+        }
 
         // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับบุคคลทั่วไป (แสดงก่อนสถิติ)
         menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
@@ -3695,17 +3695,6 @@
       const clearBtn = document.getElementById('google-search-clear-btn');
       const resultsList = document.getElementById('home-google-results-list');
       const pagination = document.getElementById('home-google-pagination');
-      const quickTags = document.getElementById('google-quick-tags');
-
-      // Populate Quick Tags if empty
-      if (quickTags && quickTags.children.length === 0 && appState.allGroups) {
-        let tagsHtml = '';
-        appState.allGroups.slice(0, 5).forEach(group => {
-          tagsHtml += `<div class="google-search-tag-link" onclick="triggerGoogleQuickSearch('${escapeHtml(group.GroupName)}')">${escapeHtml(group.GroupName)}</div>`;
-        });
-        quickTags.innerHTML = tagsHtml;
-      }
-
       if (searchText.length === 0) {
         // Initial State: Centered Search
         if (clearBtn) clearBtn.classList.add('hidden');
@@ -3725,7 +3714,6 @@
         if (logo) {
           logo.classList.remove('google-search-logo-compact');
         }
-        if (quickTags) quickTags.classList.remove('hidden');
       } else {
         // Result State: Top Search
         if (clearBtn) clearBtn.classList.remove('hidden');
@@ -3739,7 +3727,6 @@
         if (logo) {
           logo.classList.add('google-search-logo-compact');
         }
-        if (quickTags) quickTags.classList.add('hidden');
 
         // Filter files based on search text (with space-separated multi-word support)
         const searchWords = searchText.split(/\s+/).filter(Boolean);
