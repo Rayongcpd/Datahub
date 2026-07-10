@@ -1085,40 +1085,74 @@
 
       <!-- Page: Group View -->
       <div id="page-group" class="page">
-        <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
-          <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-            <h2 id="group-page-title" class="text-xl font-semibold"></h2>
-            <div class="flex items-center gap-4 w-full md:w-auto">
-              <input id="group-search-input" type="text" placeholder="ค้นหาด้วยชื่อเรื่อง..."
-                class="form-input w-full md:w-64 px-4 py-2 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 bg-warm-50 text-warm-700 placeholder-warm-400">
-              <select id="group-type-filter"
-                class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 bg-warm-50 text-warm-700"></select>
-              <!-- ✅ เพิ่ม -->
+        <!-- 1. ส่วนตารางแบบดั้งเดิม (Classic Table View) -->
+        <div id="group-classic-view" class="block">
+          <div class="bg-white p-6 rounded-lg border border-warm-200 card-hover">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
+              <h2 id="group-page-title" class="text-xl font-semibold"></h2>
+              <div class="flex items-center gap-4 w-full md:w-auto">
+                <input id="group-search-input" type="text" placeholder="ค้นหาด้วยชื่อเรื่อง..."
+                  class="form-input w-full md:w-64 px-4 py-2 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 bg-warm-50 text-warm-700 placeholder-warm-400">
+                <select id="group-type-filter"
+                  class="form-select w-full md:w-64 px-4 py-2 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 bg-warm-50 text-warm-700"></select>
+                <!-- ✅ เพิ่ม -->
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-warm-200">
+                <thead class="bg-warm-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">
+                      ลำดับ</th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">
+                      ชื่อเรื่อง</th>
+
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">
+                      ไฟล์แนบ</th>
+                  </tr>
+                </thead>
+                <tbody id="group-table-body" class="bg-white divide-y divide-warm-200">
+                  <!-- Table rows will be injected here -->
+                </tbody>
+              </table>
+            </div>
+            <div id="group-pagination" class="mt-4 flex justify-between items-center">
+              <!-- Pagination controls will be injected here -->
             </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-warm-200">
-              <thead class="bg-warm-50">
-                <tr>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">
-                    ลำดับ</th>
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">
-                    ชื่อเรื่อง</th>
+        </div>
 
-                  <th
-                    class="px-6 py-3 text-left text-xs font-medium text-warm-500 uppercase tracking-wider">
-                    ไฟล์แนบ</th>
-                </tr>
-              </thead>
-              <tbody id="group-table-body" class="bg-white divide-y divide-warm-200">
-                <!-- Table rows will be injected here -->
-              </tbody>
-            </table>
-          </div>
-          <div id="group-pagination" class="mt-4 flex justify-between items-center">
-            <!-- Pagination controls will be injected here -->
+        <!-- 2. ส่วนแสดงผลลัพธ์แบบการ์ด/ลิสต์ (สำหรับบุคคลทั่วไป) -->
+        <div id="group-google-view" class="hidden">
+          <div class="google-results-container">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b border-warm-100 pb-4">
+              <h2 id="group-google-page-title" class="text-2xl font-bold text-warm-800 flex items-center gap-2">
+                <span class="logo-icon">📂</span>
+                <span id="group-google-title-text"></span>
+              </h2>
+              <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                <div class="relative w-full sm:w-64">
+                  <input id="group-google-search-input" type="text" placeholder="ค้นหาในกลุ่มงานนี้..."
+                    class="form-input w-full pl-9 pr-4 py-2 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-warm-700 placeholder-warm-400 text-sm">
+                  <i data-lucide="search" class="w-4 h-4 text-warm-400 absolute left-3 top-3"></i>
+                </div>
+                <select id="group-google-type-filter"
+                  class="form-select w-full sm:w-64 px-4 py-2 border border-warm-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent/30 bg-white text-warm-700 text-sm"></select>
+              </div>
+            </div>
+            
+            <!-- Result Cards list -->
+            <div id="group-google-results-list" class="space-y-4">
+              <!-- Result cards will be injected here -->
+            </div>
+            
+            <!-- Pagination -->
+            <div id="group-google-pagination" class="mt-6 mb-8 flex justify-center items-center gap-2">
+              <!-- Will be populated dynamically -->
+            </div>
           </div>
         </div>
       </div>
@@ -3537,9 +3571,10 @@
           const title = (file.Title || '').toLowerCase();
           const subtitle = (file.SubTitle || '').toLowerCase();
           const coopName = (file.CoopName || '').toLowerCase();
+          const groupName = (file.GroupName || '').toLowerCase();
           
           const titleMatch = searchWords.length === 0 || searchWords.every(word =>
-            title.includes(word) || subtitle.includes(word) || coopName.includes(word)
+            title.includes(word) || subtitle.includes(word) || coopName.includes(word) || groupName.includes(word)
           );
 
           // --- Shared File Logic ---
@@ -3716,9 +3751,10 @@
           const title = (file.Title || '').toLowerCase();
           const subtitle = (file.SubTitle || '').toLowerCase();
           const coopName = (file.CoopName || '').toLowerCase();
+          const groupName = (file.GroupName || '').toLowerCase();
           
           const titleMatch = searchWords.length === 0 || searchWords.every(word =>
-            title.includes(word) || subtitle.includes(word) || coopName.includes(word)
+            title.includes(word) || subtitle.includes(word) || coopName.includes(word) || groupName.includes(word)
           );
 
           const isSharedFile = file.CoopID === 'SHARED_CENTER';
@@ -3849,92 +3885,208 @@
         return;
       }
 
-      document.getElementById('group-page-title').textContent = `ไฟล์ในกลุ่มงาน: ${group.GroupName}`;
-      const searchText = (document.getElementById('group-search-input')?.value || '').toLowerCase();
-      const type = document.getElementById('group-type-filter')?.value || 'all';
+      const isBackofficeUser = !!appState.currentUser && ['admin', 'officer', 'subadmin'].includes(appState.currentUser.Role);
+      const currentMode = isBackofficeUser ? 'classic_table' : (appState.publicViewMode || 'google_search');
 
-      const searchWords = searchText.split(/\s+/).filter(Boolean);
+      const classicWrapper = document.getElementById('group-classic-view');
+      const googleWrapper = document.getElementById('group-google-view');
 
-      let filteredFiles = appState.allFiles.filter(file => {
-        const title = (file.Title || '').toLowerCase();
-        const subtitle = (file.SubTitle || '').toLowerCase();
-        const coopName = (file.CoopName || '').toLowerCase();
-        
-        const titleMatch = searchWords.length === 0 || searchWords.every(word =>
-          title.includes(word) || subtitle.includes(word) || coopName.includes(word)
-        );
+      if (currentMode === 'classic_table') {
+        if (classicWrapper) classicWrapper.classList.remove('hidden');
+        if (googleWrapper) googleWrapper.classList.add('hidden');
 
-        const typeMatch = type === 'all' || file.TypeID == type;
-        return file.GroupID === groupId && titleMatch && typeMatch;
-      });
+        document.getElementById('group-page-title').textContent = `ไฟล์ในกลุ่มงาน: ${group.GroupName}`;
+        const searchText = (document.getElementById('group-search-input')?.value || '').toLowerCase();
+        const type = document.getElementById('group-type-filter')?.value || 'all';
 
-      const { currentPage, rowsPerPage } = appState.tablePagination.group;
-      const totalPages = Math.ceil(filteredFiles.length / rowsPerPage);
-      const start = (currentPage - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      const paginatedFiles = filteredFiles.slice(start, end);
+        const searchWords = searchText.split(/\s+/).filter(Boolean);
 
-      const tbody = document.getElementById('group-table-body');
-      tbody.innerHTML = '';
-      if (paginatedFiles.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-warm-400">ไม่พบข้อมูล</td></tr>`;
-        return;
+        let filteredFiles = appState.allFiles.filter(file => {
+          const title = (file.Title || '').toLowerCase();
+          const subtitle = (file.SubTitle || '').toLowerCase();
+          const coopName = (file.CoopName || '').toLowerCase();
+          const groupName = (file.GroupName || '').toLowerCase();
+          
+          const titleMatch = searchWords.length === 0 || searchWords.every(word =>
+            title.includes(word) || subtitle.includes(word) || coopName.includes(word) || groupName.includes(word)
+          );
+
+          const typeMatch = type === 'all' || file.TypeID == type;
+          return file.GroupID === groupId && titleMatch && typeMatch;
+        });
+
+        const { currentPage, rowsPerPage } = appState.tablePagination.group;
+        const totalPages = Math.ceil(filteredFiles.length / rowsPerPage);
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedFiles = filteredFiles.slice(start, end);
+
+        const tbody = document.getElementById('group-table-body');
+        if (tbody) {
+          tbody.innerHTML = '';
+          if (paginatedFiles.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-8 text-warm-400">ไม่พบข้อมูล</td></tr>`;
+            return;
+          }
+
+          paginatedFiles.forEach((file, index) => {
+            const fileDetails = JSON.parse(file.FileDetails || '[]');
+            let downloadButtons = fileDetails.map(f => {
+              return `<div class="action-btn-group mb-2">
+                <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+                  class="action-btn preview-btn" title="ดูตัวอย่าง">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+                <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+                  class="action-btn download-btn" title="ดาวน์โหลด">
+                  <i data-lucide="download" class="w-4 h-4"></i>
+                </button>
+              </div>`;
+            }).join('');
+
+            const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
+            const pendingClass = isPending ? 'is-pending' : '';
+            const pendingBadge = isPending ? '<span class="badge-pending px-2 py-0.5 rounded-full ml-1">รออนุมัติลบ</span>' : '';
+
+            const hasPendingTitleEdit = !!appState.pendingTitleEditRequests[file.FileID];
+            const titleEditBadge = hasPendingTitleEdit
+              ? `<span class="badge-title-edit ml-1" title="ชื่อใหม่ที่เสนอ: ${escapeHtml(appState.pendingTitleEditRequests[file.FileID])}">⏳ รอแก้ไขชื่อ</span>`
+              : '';
+            const titleEditBtn = (!isPending && !hasPendingTitleEdit)
+              ? `<button class="title-edit-btn" title="เสนอแก้ไขชื่อเรื่อง" onclick="openEditTitleModal('${file.FileID}')">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                </button>`
+              : '';
+
+            const row = `
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-400" data-label="#">${start + index + 1}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
+                 <div class="file-title">${file.Title} ${pendingBadge}${titleEditBadge}${titleEditBtn}</div>
+                 ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
+                 ${file.HoldDate
+                    ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
+                    : ''}
+                 ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
+                 ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
+                    ? `<div class="file-coop"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
+                    : ''}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
+              </tr>
+            `;
+            tbody.innerHTML += row;
+          });
+          renderPagination('group-pagination', currentPage, totalPages, 'group');
+          lucide.createIcons();
+        }
+      } else {
+        // --- ส่วนแสดงผลลัพธ์แบบการ์ด/ลิสต์ (สำหรับบุคคลทั่วไป) ---
+        if (classicWrapper) classicWrapper.classList.add('hidden');
+        if (googleWrapper) googleWrapper.classList.remove('hidden');
+
+        const titleText = document.getElementById('group-google-title-text');
+        if (titleText) titleText.textContent = `กลุ่มงาน: ${group.GroupName}`;
+
+        const searchText = (document.getElementById('group-google-search-input')?.value || '').toLowerCase();
+        const type = document.getElementById('group-google-type-filter')?.value || 'all';
+
+        const searchWords = searchText.split(/\s+/).filter(Boolean);
+
+        let filteredFiles = appState.allFiles.filter(file => {
+          const title = (file.Title || '').toLowerCase();
+          const subtitle = (file.SubTitle || '').toLowerCase();
+          const coopName = (file.CoopName || '').toLowerCase();
+          const groupName = (file.GroupName || '').toLowerCase();
+          
+          const titleMatch = searchWords.length === 0 || searchWords.every(word =>
+            title.includes(word) || subtitle.includes(word) || coopName.includes(word) || groupName.includes(word)
+          );
+
+          const typeMatch = type === 'all' || file.TypeID == type;
+          return file.GroupID === groupId && titleMatch && typeMatch;
+        });
+
+        const { currentPage, rowsPerPage } = appState.tablePagination.group;
+        const totalPages = Math.ceil(filteredFiles.length / rowsPerPage);
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const paginatedFiles = filteredFiles.slice(start, end);
+
+        const resultsList = document.getElementById('group-google-results-list');
+        if (resultsList) {
+          resultsList.innerHTML = '';
+          if (paginatedFiles.length === 0) {
+            resultsList.innerHTML = `
+              <div class="text-center py-12 bg-white rounded-lg border border-warm-200 shadow-sm mt-6">
+                <i data-lucide="file-question" class="w-12 h-12 text-warm-300 mx-auto mb-3"></i>
+                <p class="text-warm-500 font-medium text-lg">ไม่พบเอกสารในกลุ่มงานนี้ที่สอดคล้องกับคีย์เวิร์ด</p>
+                <p class="text-warm-400 text-sm mt-1">ลองเปลี่ยนคำค้นหา หรือเปลี่ยนประเภทเอกสาร</p>
+              </div>`;
+            const pagination = document.getElementById('group-google-pagination');
+            if (pagination) pagination.classList.add('hidden');
+            lucide.createIcons();
+            return;
+          }
+
+          paginatedFiles.forEach((file, index) => {
+            const fileDetails = JSON.parse(file.FileDetails || '[]');
+            
+            let buttonsHtml = '';
+            fileDetails.forEach(f => {
+              buttonsHtml += `
+                <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
+                  class="google-action-btn google-btn-preview preview-btn">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i> ดูตัวอย่าง
+                </button>
+                <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
+                  class="google-action-btn google-btn-download download-btn">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> ดาวน์โหลด
+                </button>
+              `;
+            });
+
+            const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
+            const pendingBadge = isPending ? '<span class="bg-red-100 text-red-700 px-2.5 py-0.5 rounded text-xs ml-2 font-medium">รออนุมัติลบ</span>' : '';
+
+            const groupName = file.GroupName || 'เอกสารทั่วไป';
+            const coopPath = file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ' 
+              ? ` &rsaquo; ${file.CoopName}` 
+              : '';
+            const breadcrumb = `คลังไฟล์เอกสาร &rsaquo; ${groupName}${coopPath}`;
+
+            const resultHtml = `
+              <div class="google-result-card">
+                <div class="google-result-breadcrumb">
+                  <i data-lucide="folder" class="w-3.5 h-3.5 text-warm-400"></i>
+                  <span>${breadcrumb}</span>
+                  ${pendingBadge}
+                </div>
+                <div>
+                  <a href="#" onclick="triggerPreviewFirstFile('${file.FileID}'); return false;" class="google-result-title">
+                    ${escapeHtml(file.Title)}
+                  </a>
+                </div>
+                ${file.SubTitle ? `<div class="google-result-snippet">${escapeHtml(file.SubTitle)}</div>` : ''}
+                
+                <div class="google-result-footer">
+                  <div class="google-result-meta">
+                    ${file.HoldDate ? `<span><i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1"></i>${file.HoldType || 'ลงวันที่'}: ${formatDateThaiJS(file.HoldDate)}</span>` : ''}
+                    ${file.TypeName ? `<span><i data-lucide="tag" class="w-3.5 h-3.5 inline mr-1"></i>${file.TypeName}</span>` : ''}
+                  </div>
+                  <div class="google-result-actions">
+                    ${buttonsHtml}
+                  </div>
+                </div>
+              </div>
+            `;
+            resultsList.innerHTML += resultHtml;
+          });
+
+          renderPagination('group-google-pagination', currentPage, totalPages, 'group');
+          lucide.createIcons();
+        }
       }
-
-      paginatedFiles.forEach((file, index) => {
-        const fileDetails = JSON.parse(file.FileDetails || '[]');
-        let downloadButtons = fileDetails.map(f => {
-          return `<div class="action-btn-group mb-2">
-            <button data-drivefileid="${f.driveFileId}" data-filename="${f.fileName || ''}" data-fileid="${file.FileID}"
-              class="action-btn preview-btn" title="ดูตัวอย่าง">
-              <i data-lucide="eye" class="w-4 h-4"></i>
-            </button>
-            <button data-fileid="${file.FileID}" data-drivefileid="${f.driveFileId}"
-              class="action-btn download-btn" title="ดาวน์โหลด">
-              <i data-lucide="download" class="w-4 h-4"></i>
-            </button>
-          </div>`;
-        }).join('');
-
-
-        // Check pending status
-        const isPending = appState.pendingDeleteFileIds.includes(file.FileID);
-        const pendingClass = isPending ? 'is-pending' : '';
-        const pendingBadge = isPending ? '<span class="badge-pending px-2 py-0.5 rounded-full ml-1">รออนุมัติลบ</span>' : '';
-
-        // ✅ Title Edit Request badge & button
-        const hasPendingTitleEdit = !!appState.pendingTitleEditRequests[file.FileID];
-        const titleEditBadge = hasPendingTitleEdit
-          ? `<span class="badge-title-edit ml-1" title="ชื่อใหม่ที่เสนอ: ${escapeHtml(appState.pendingTitleEditRequests[file.FileID])}">⏳ รอแก้ไขชื่อ</span>`
-          : '';
-        const titleEditBtn = (!isPending && !hasPendingTitleEdit)
-          ? `<button class="title-edit-btn" title="เสนอแก้ไขชื่อเรื่อง" onclick="openEditTitleModal('${file.FileID}')">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-            </button>`
-          : '';
-
-        const row = `
-      <tr>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-warm-400" data-label="#">${start + index + 1}</td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium leading-tight ${pendingClass}" data-label="ชื่อเรื่อง">
-         <div class="file-title">${file.Title} ${pendingBadge}${titleEditBadge}${titleEditBtn}</div>
-         ${file.SubTitle ? `<div class="file-subtitle">${file.SubTitle}</div>` : ''}
-         ${file.HoldDate
-            ? `<div class="file-hold">(${file.HoldType ? file.HoldType + ' ' : ''}${formatDateThaiJS(file.HoldDate)})</div>`
-            : ''}
-         ${file.TypeName ? `<div class="file-type">${file.TypeName}</div>` : ''}
-         ${file.CoopName && file.CoopName !== 'ส่วนกลาง' && file.CoopName !== 'ไม่ระบุ'
-            ? `<div class="file-coop"><i data-lucide="building" class="w-3.5 h-3.5"></i>${file.CoopName}</div>`
-            : ''}
-        </td>
-
-        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-label="ไฟล์แนบ">${downloadButtons}</td>
-      </tr>
-    `;
-        tbody.innerHTML += row;
-      });
-      renderPagination('group-pagination', currentPage, totalPages, 'group');
-      lucide.createIcons();
     }
 
     function renderStatsPage() {
@@ -5836,6 +5988,7 @@ function renderUsersTable() {
       const selects = [
         document.getElementById('home-type-filter'),
         document.getElementById('group-type-filter'),
+        document.getElementById('group-google-type-filter'), // ✅ เพิ่มประเภทคนทั่วไปหน้ากลุ่มงาน
         document.getElementById('admin-type-filter') // ✅ เพิ่ม admin filter
       ];
       selects.forEach(select => {
@@ -6031,6 +6184,29 @@ function renderUsersTable() {
         appState.tablePagination.group.currentPage = 1;
         renderGroupPage(appState.currentOptions.groupId);
       });
+
+      // ✅ Group Page Google Search Filters
+      const googleGroupSearch = document.getElementById('group-google-search-input');
+      if (googleGroupSearch) {
+        googleGroupSearch.addEventListener('input', () => {
+          const classicGroupSearch = document.getElementById('group-search-input');
+          if (classicGroupSearch) classicGroupSearch.value = googleGroupSearch.value;
+          
+          appState.tablePagination.group.currentPage = 1;
+          renderGroupPage(appState.currentOptions.groupId);
+        });
+      }
+
+      const googleGroupType = document.getElementById('group-google-type-filter');
+      if (googleGroupType) {
+        googleGroupType.addEventListener('change', () => {
+          const classicGroupType = document.getElementById('group-type-filter');
+          if (classicGroupType) classicGroupType.value = googleGroupType.value;
+          
+          appState.tablePagination.group.currentPage = 1;
+          renderGroupPage(appState.currentOptions.groupId);
+        });
+      }
 
       // ✅ Admin Files
       document.getElementById('admin-search-input').addEventListener('input', () => {
