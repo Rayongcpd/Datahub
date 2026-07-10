@@ -3528,13 +3528,19 @@
         const group = document.getElementById('home-group-filter')?.value || 'all';
         const type = document.getElementById('home-type-filter')?.value || 'all';
 
-        const isCoopSearch = searchText.length > 2 && appState.allCoops.some(c => (c.CoopName || '').toLowerCase().includes(searchText));
+        const searchWords = searchText.split(/\s+/).filter(Boolean);
+        const isCoopSearch = searchWords.length > 0 && searchWords.every(word =>
+          appState.allCoops.some(c => (c.CoopName || '').toLowerCase().includes(word))
+        );
 
         let filteredFiles = appState.allFiles.filter(file => {
           const title = (file.Title || '').toLowerCase();
           const subtitle = (file.SubTitle || '').toLowerCase();
           const coopName = (file.CoopName || '').toLowerCase();
-          const titleMatch = title.includes(searchText) || subtitle.includes(searchText) || coopName.includes(searchText);
+          
+          const titleMatch = searchWords.length === 0 || searchWords.every(word =>
+            title.includes(word) || subtitle.includes(word) || coopName.includes(word)
+          );
 
           // --- Shared File Logic ---
           const isSharedFile = file.CoopID === 'SHARED_CENTER';
@@ -3700,14 +3706,20 @@
         }
         if (quickTags) quickTags.classList.add('hidden');
 
-        // Filter files based on search text
-        const isCoopSearch = searchText.length > 2 && appState.allCoops.some(c => (c.CoopName || '').toLowerCase().includes(searchText));
+        // Filter files based on search text (with space-separated multi-word support)
+        const searchWords = searchText.split(/\s+/).filter(Boolean);
+        const isCoopSearch = searchWords.length > 0 && searchWords.every(word =>
+          appState.allCoops.some(c => (c.CoopName || '').toLowerCase().includes(word))
+        );
 
         let filteredFiles = appState.allFiles.filter(file => {
           const title = (file.Title || '').toLowerCase();
           const subtitle = (file.SubTitle || '').toLowerCase();
           const coopName = (file.CoopName || '').toLowerCase();
-          const titleMatch = title.includes(searchText) || subtitle.includes(searchText) || coopName.includes(searchText);
+          
+          const titleMatch = searchWords.length === 0 || searchWords.every(word =>
+            title.includes(word) || subtitle.includes(word) || coopName.includes(word)
+          );
 
           const isSharedFile = file.CoopID === 'SHARED_CENTER';
           const typeName = file.TypeName || "";
@@ -3841,11 +3853,17 @@
       const searchText = (document.getElementById('group-search-input')?.value || '').toLowerCase();
       const type = document.getElementById('group-type-filter')?.value || 'all';
 
+      const searchWords = searchText.split(/\s+/).filter(Boolean);
+
       let filteredFiles = appState.allFiles.filter(file => {
         const title = (file.Title || '').toLowerCase();
         const subtitle = (file.SubTitle || '').toLowerCase();
         const coopName = (file.CoopName || '').toLowerCase();
-        const titleMatch = title.includes(searchText) || subtitle.includes(searchText) || coopName.includes(searchText);
+        
+        const titleMatch = searchWords.length === 0 || searchWords.every(word =>
+          title.includes(word) || subtitle.includes(word) || coopName.includes(word)
+        );
+
         const typeMatch = type === 'all' || file.TypeID == type;
         return file.GroupID === groupId && titleMatch && typeMatch;
       });
