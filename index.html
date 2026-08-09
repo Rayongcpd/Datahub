@@ -2592,14 +2592,22 @@
           alt="Preview" />
       </div>
       <!-- Footer -->
-      <div class="flex gap-3 px-6 py-4 border-t border-warm-200 bg-white">
-        <button id="preview-download-btn"
-          class="flex items-center gap-2 bg-sage/100 text-white px-4 py-2 rounded-lg hover:bg-sage transition-colors font-medium">
-          <i data-lucide="download" class="w-4 h-4"></i>
-          ดาวน์โหลด
-        </button>
+      <div class="flex flex-wrap gap-2 px-6 py-4 border-t border-warm-200 bg-white items-center justify-between">
+        <div class="flex flex-wrap gap-2">
+          <button id="preview-download-btn"
+            class="flex items-center gap-2 bg-sage text-white px-4 py-2 rounded-lg hover:bg-sage/90 transition-colors font-medium text-sm">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            ดาวน์โหลด
+          </button>
+          <button onclick="openPreviewInNewTab()" id="preview-open-tab-btn"
+            class="flex items-center gap-2 bg-warm-100 text-warm-700 px-4 py-2 rounded-lg hover:bg-warm-200 transition-colors font-medium text-sm"
+            title="เปิดดูเต็มหน้าจอทุกหน้าบนแท็บใหม่ เหมาะสำหรับมือถือ">
+            <i data-lucide="external-link" class="w-4 h-4"></i>
+            เปิดแท็บใหม่
+          </button>
+        </div>
         <button onclick="closePreviewModal()"
-          class="flex items-center gap-2 bg-warm-200 text-warm-700 px-4 py-2 rounded-lg hover:bg-warm-100 transition-colors font-medium">
+          class="flex items-center gap-2 bg-warm-200 text-warm-700 px-4 py-2 rounded-lg hover:bg-warm-100 transition-colors font-medium text-sm">
           <i data-lucide="x" class="w-4 h-4"></i>
           ปิด
         </button>
@@ -6141,6 +6149,16 @@ function renderUsersTable() {
       // Reset progress bar color
       const pb = document.getElementById('preview-progress-bar');
       if (pb) { pb.classList.remove('bg-warning'); pb.classList.add('bg-accent'); pb.style.width = '0%'; }
+    }
+
+    function openPreviewInNewTab() {
+      if (currentPreviewDriveFileId) {
+        window.open(`https://drive.google.com/file/d/${currentPreviewDriveFileId}/view?usp=sharing`, '_blank');
+      } else if (currentPreviewDownloadUrl) {
+        window.open(currentPreviewDownloadUrl, '_blank');
+      } else {
+        showToast('ไม่พบที่อยู่ไฟล์สำหรับเปิดแท็บใหม่', 'warning');
+      }
     }
 
     function printPreview() {
