@@ -10404,6 +10404,13 @@ function renderUsersTable() {
         FileType: fileType
       };
 
+      if (templateId) {
+        const existingTpl = appState.templates.find(t => t.TemplateID === templateId);
+        if (existingTpl && existingTpl.DriveFileID) {
+          templateData.DriveFileID = existingTpl.DriveFileID;
+        }
+      }
+
       if (appState.selectedTemplateFile) {
         templateData.file = appState.selectedTemplateFile;
       } else if (!templateId) {
