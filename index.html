@@ -10185,18 +10185,14 @@ function renderUsersTable() {
               <div class="flex items-center justify-between text-xs text-warm-400 mb-4">
                 <span>อัปเดต: ${tpl.LastUpdated || 'ไม่มีข้อมูล'}</span>
               </div>
-              <div class="grid grid-cols-3 gap-2">
-                <button onclick="downloadTemplateFile('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}', '${tpl.FileType}')" class="py-2 px-1 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 shadow-sm text-center transition-smooth">
-                  <i data-lucide="download" class="w-4 h-4 mx-auto"></i>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="downloadTemplateFile('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}', '${tpl.FileType}')" class="py-2.5 px-2 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 shadow-sm text-center transition-smooth">
+                  <i data-lucide="download" class="w-4 h-4"></i>
                   <span>ดาวน์โหลด</span>
                 </button>
-                <button onclick="previewTemplateFile('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}', '${tpl.TemplateID}')" class="py-2 px-1 bg-warm-100 hover:bg-warm-200 text-warm-800 text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
-                  <i data-lucide="eye" class="w-4 h-4 mx-auto"></i>
+                <button onclick="previewTemplateFile('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}', '${tpl.TemplateID}')" class="py-2.5 px-2 bg-warm-100 hover:bg-warm-200 text-warm-800 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 text-center transition-smooth">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
                   <span>ดูตัวอย่าง</span>
-                </button>
-                <button onclick="shareQRTemplate('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}')" class="py-2 px-1 bg-sage hover:bg-sage/90 text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
-                  <i data-lucide="qr-code" class="w-4 h-4 mx-auto"></i>
-                  <span>แชร์ QR</span>
                 </button>
               </div>
               ${managerButtons}
