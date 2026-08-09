@@ -364,6 +364,9 @@ window.google.script = window.google.script || {};
                             case 'deleteTemplate':
                                 params = { templateId: args[0], callerId: args[1] };
                                 break;
+                            case 'downloadTemplate':
+                                params = { driveFileId: args[0] };
+                                break;
                             case 'importCpdTemplate':
                                 params = { cpdData: args[0], callerId: args[1] };
                                 break;

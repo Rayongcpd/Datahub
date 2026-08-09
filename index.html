@@ -6113,6 +6113,10 @@ function renderUsersTable() {
       // ตั้งค่าปุ่ม Download
       downloadBtn.onclick = function () {
         closePreviewModal();
+        if (fileId && String(fileId).startsWith('T-')) {
+          downloadTemplateFile(driveFileId, fileName);
+          return;
+        }
         appState.fileToDownload = {
           fileId: fileId,
           driveFileId: driveFileId
@@ -10166,10 +10170,6 @@ function renderUsersTable() {
           </div>
         ` : '';
 
-        // ลิงก์ดาวน์โหลด
-        const downloadUrl = `https://drive.google.com/uc?export=download&id=${tpl.DriveFileID}`;
-        const previewUrl = `https://drive.google.com/file/d/${tpl.DriveFileID}/view?usp=sharing`;
-
         const card = `
           <div class="bg-white rounded-xl border border-warm-200 p-5 shadow-sm hover:shadow-md hover:border-accent/30 transition-all duration-300 flex flex-col justify-between">
             <div>
@@ -10177,8 +10177,8 @@ function renderUsersTable() {
                 <span class="px-2.5 py-0.5 rounded-full text-xs font-medium ${catColor}">${tpl.Category.split('. ').pop()}</span>
                 ${fileBadge}
               </div>
-              <h3 class="text-lg font-bold text-warm-800 leading-snug mb-2 font-serif">${tpl.Title}</h3>
-              <p class="text-warm-600 text-sm font-light mb-4 line-clamp-3 leading-relaxed">${tpl.Description}</p>
+              <h3 class="text-lg font-bold text-warm-800 leading-snug mb-2 font-serif">${escapeHtml(tpl.Title)}</h3>
+              <p class="text-warm-600 text-sm font-light mb-4 line-clamp-3 leading-relaxed">${escapeHtml(tpl.Description)}</p>
             </div>
             
             <div>
@@ -10186,15 +10186,15 @@ function renderUsersTable() {
                 <span>อัปเดต: ${tpl.LastUpdated || 'ไม่มีข้อมูล'}</span>
               </div>
               <div class="grid grid-cols-3 gap-2">
-                <a href="${downloadUrl}" target="_blank" class="py-2 px-1 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 shadow-sm text-center transition-smooth">
+                <button onclick="downloadTemplateFile('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}', '${tpl.FileType}')" class="py-2 px-1 bg-accent hover:bg-accent-hover text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 shadow-sm text-center transition-smooth">
                   <i data-lucide="download" class="w-4 h-4 mx-auto"></i>
                   <span>ดาวน์โหลด</span>
-                </a>
-                <a href="${previewUrl}" target="_blank" class="py-2 px-1 bg-warm-100 hover:bg-warm-200 text-warm-800 text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
+                </button>
+                <button onclick="previewTemplateFile('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}', '${tpl.TemplateID}')" class="py-2 px-1 bg-warm-100 hover:bg-warm-200 text-warm-800 text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
                   <i data-lucide="eye" class="w-4 h-4 mx-auto"></i>
                   <span>ดูตัวอย่าง</span>
-                </a>
-                <button onclick="shareQRTemplate('${tpl.DriveFileID}', '${tpl.Title}')" class="py-2 px-1 bg-sage hover:bg-sage/90 text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
+                </button>
+                <button onclick="shareQRTemplate('${tpl.DriveFileID}', '${escapeHtml(tpl.Title)}')" class="py-2 px-1 bg-sage hover:bg-sage/90 text-white text-xs font-bold rounded-lg flex flex-col items-center justify-center gap-1 text-center transition-smooth">
                   <i data-lucide="qr-code" class="w-4 h-4 mx-auto"></i>
                   <span>แชร์ QR</span>
                 </button>
@@ -10225,10 +10225,80 @@ function renderUsersTable() {
     }
 
     /**
+     * ดูตัวอย่างแม่แบบเอกสารผ่าน Modal
+     */
+    function previewTemplateFile(driveFileId, title, templateId) {
+      if (!driveFileId) {
+        showToast('ไม่พบรหัสไฟล์ในระบบ Google Drive', 'warning');
+        return;
+      }
+      openPreviewModal(driveFileId, title, templateId);
+    }
+
+    /**
+     * ดาวน์โหลดไฟล์แม่แบบเอกสารโดยตรง
+     */
+    function downloadTemplateFile(driveFileId, title, fileType) {
+      if (!driveFileId) {
+        showToast('ไม่พบรหัสไฟล์สำหรับดาวน์โหลด', 'warning');
+        return;
+      }
+
+      showToast('กำลังเตรียมไฟล์ดาวน์โหลด...', 'info');
+
+      google.script.run
+        .withSuccessHandler(response => {
+          if (response && response.success && response.data) {
+            try {
+              let fileName = response.fileName || title || 'template';
+              const extMap = {
+                'Word': '.docx',
+                'PDF': '.pdf',
+                'Excel': '.xlsx',
+                'PowerPoint': '.pptx'
+              };
+              if (fileType && extMap[fileType] && !fileName.toLowerCase().endsWith(extMap[fileType].toLowerCase()) && !fileName.includes('.')) {
+                fileName += extMap[fileType];
+              }
+
+              const byteCharacters = atob(response.data);
+              const byteNumbers = new Array(byteCharacters.length);
+              for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+              }
+              const byteArray = new Uint8Array(byteNumbers);
+              const blob = new Blob([byteArray], { type: response.mimeType || 'application/octet-stream' });
+              const blobUrl = URL.createObjectURL(blob);
+              
+              const link = document.createElement('a');
+              link.href = blobUrl;
+              link.download = fileName;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+
+              showToast('ดาวน์โหลดไฟล์สำเร็จ!', 'success');
+            } catch (err) {
+              console.error('Download blob error:', err);
+              window.open(`https://drive.google.com/file/d/${driveFileId}/view?usp=sharing`, '_blank');
+            }
+          } else {
+            window.open(`https://drive.google.com/file/d/${driveFileId}/view?usp=sharing`, '_blank');
+          }
+        })
+        .withFailureHandler(err => {
+          console.warn('Backend download template failed, opening fallback link:', err);
+          window.open(`https://drive.google.com/file/d/${driveFileId}/view?usp=sharing`, '_blank');
+        })
+        .downloadTemplate(driveFileId);
+    }
+
+    /**
      * เปิดหน้าต่างแชร์ QR Code แม่แบบเอกสาร
      */
     function shareQRTemplate(driveFileId, title) {
-      const url = `https://drive.google.com/uc?export=download&id=${driveFileId}`;
+      const url = `https://drive.google.com/file/d/${driveFileId}/view?usp=sharing`;
       const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
       
       document.getElementById('qr-title').textContent = title;
@@ -10252,7 +10322,7 @@ function renderUsersTable() {
       copyText.select();
       copyText.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(copyText.value);
-      showToast('คัดลอกลิงก์ดาวน์โหลดเรียบร้อยแล้ว!', 'success');
+      showToast('คัดลอกลิงก์เรียบร้อยแล้ว!', 'success');
     }
 
     /**
