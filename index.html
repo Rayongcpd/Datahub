@@ -2272,6 +2272,23 @@
               </details>
             </div>
           </div>
+
+          <!-- Officer/Admin Callout for Public Viewers -->
+          <div id="guide-login-prompt" class="bg-gradient-to-r from-warm-100 to-accent/10 border border-warm-200 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3 text-center sm:text-left">
+              <div class="w-10 h-10 rounded-xl bg-white text-accent flex items-center justify-center flex-shrink-0 shadow-sm border border-warm-200">
+                <i data-lucide="lock" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-warm-800 text-sm">สำหรับเจ้าหน้าที่หรือผู้ดูแลระบบ</h4>
+                <p class="text-xs text-warm-500 mt-0.5">เข้าสู่ระบบเพื่อปลดล็อกคู่มือการจัดการไฟล์ การซิงค์ Google Drive และการจัดการระบบ</p>
+              </div>
+            </div>
+            <button onclick="openLoginModal()" class="bg-accent hover:bg-accent-hover text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-smooth flex items-center gap-2 flex-shrink-0">
+              <i data-lucide="log-in" class="w-4 h-4"></i>
+              <span>เข้าสู่ระบบ</span>
+            </button>
+          </div>
         </div>
 
         <!-- =================================================================== -->
@@ -2291,7 +2308,7 @@
                 </p>
               </div>
             </div>
-            <button onclick="navigate('officer-files')" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
+            <button id="guide-btn-officer-action" onclick="navigate('officer-files')" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
               <span>ไปที่หน้าจัดการไฟล์</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
@@ -2451,7 +2468,7 @@
                 </p>
               </div>
             </div>
-            <button onclick="navigate('admin-dashboard')" class="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
+            <button id="guide-btn-admin-action" onclick="navigate('admin-dashboard')" class="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
               <span>ไปที่ Dashboard แอดมิน</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
@@ -3614,11 +3631,50 @@
       if (mobileAuthContainer) mobileAuthContainer.innerHTML = `<div class="px-5">${authHtml.replace('id="logout-btn"', 'id="mobile-logout-btn"').replace('id="login-btn"', 'id="mobile-login-btn"')}</div>`;
     }
 
+    function openLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.classList.add('flex');
+    }
+
+    function closeLoginModal() {
+      const modal = document.getElementById('login-modal');
+      if (modal) modal.classList.remove('flex');
+    }
+
     function navigate(pageId, options = {}) {
       renderPageContent(pageId, options);
     }
 
     function renderPageContent(pageId = appState.currentPage, options = {}) {
+      // 🔒 Route Guard: ตรวจสอบสิทธิ์การเข้าถึงหน้าที่มีการจำกัดสิทธิ์
+      const isOfficerPage = pageId.startsWith('officer-');
+      const isSubadminPage = pageId.startsWith('subadmin-');
+      const isAdminPage = pageId.startsWith('admin-');
+
+      if (isOfficerPage || isSubadminPage || isAdminPage) {
+        if (!appState.currentUser) {
+          showToast('⚠️ กรุณาเข้าสู่ระบบก่อนเข้าใช้งานหน้านี้', 'warning');
+          openLoginModal();
+          pageId = 'home';
+        } else {
+          const role = appState.currentUser.Role;
+          if (isAdminPage && role !== 'admin') {
+            if (pageId === 'admin-activity-log' && role === 'subadmin') {
+              // Subadmin can view activity log
+            } else {
+              showToast('⛔ คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (เฉพาะผู้ดูแลระบบ)', 'error');
+              pageId = role === 'subadmin' ? 'subadmin-dashboard' : 'officer-dashboard';
+            }
+          } else if (isSubadminPage && !['admin', 'subadmin'].includes(role)) {
+            showToast('⛔ คุณไม่มีสิทธิ์เข้าถึงหน้านี้ (เฉพาะ Subadmin)', 'error');
+            pageId = 'officer-dashboard';
+          } else if (isOfficerPage && !['admin', 'subadmin', 'officer'].includes(role)) {
+            showToast('⛔ คุณไม่มีสิทธิ์เข้าถึงหน้านี้', 'error');
+            pageId = 'home';
+          }
+        }
+      }
+
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       const pageElement = document.getElementById(`page-${pageId}`);
       if (pageElement) {
@@ -11539,22 +11595,63 @@ function renderUsersTable() {
      * เรนเดอร์หน้าคู่มือและคำแนะนำการใช้งาน
      */
     function renderUserGuidePage(options = {}) {
-      // กำหนด Tab เริ่มต้นตาม role หรือ options
-      if (options.role) {
-        currentGuideTab = options.role;
-      } else if (appState.currentUser) {
-        if (['admin', 'subadmin'].includes(appState.currentUser.Role)) {
-          currentGuideTab = 'admin';
-        } else if (appState.currentUser.Role === 'officer') {
-          currentGuideTab = 'officer';
-        } else {
-          currentGuideTab = 'public';
-        }
-      } else {
+      const publicTabBtn = document.getElementById('guide-tab-public');
+      const officerTabBtn = document.getElementById('guide-tab-officer');
+      const adminTabBtn = document.getElementById('guide-tab-admin');
+      const loginPrompt = document.getElementById('guide-login-prompt');
+
+      // ซ่อนหรือแสดงปุ่มแท็บตามสิทธิ์การเข้าสู่ระบบ
+      if (!appState.currentUser) {
+        // บุคคลทั่วไป: แสดงเฉพาะแท็บ Public
+        if (publicTabBtn) publicTabBtn.classList.remove('hidden');
+        if (officerTabBtn) officerTabBtn.classList.add('hidden');
+        if (adminTabBtn) adminTabBtn.classList.add('hidden');
+        if (loginPrompt) loginPrompt.classList.remove('hidden');
         currentGuideTab = 'public';
+      } else if (appState.currentUser.Role === 'officer') {
+        // เจ้าหน้าที่: แสดงแท็บ Public และ Officer
+        if (publicTabBtn) publicTabBtn.classList.remove('hidden');
+        if (officerTabBtn) officerTabBtn.classList.remove('hidden');
+        if (adminTabBtn) adminTabBtn.classList.add('hidden');
+        if (loginPrompt) loginPrompt.classList.add('hidden');
+        if (options.role && ['public', 'officer'].includes(options.role)) {
+          currentGuideTab = options.role;
+        } else {
+          currentGuideTab = 'officer';
+        }
+      } else if (['admin', 'subadmin'].includes(appState.currentUser.Role)) {
+        // ผู้ดูแลระบบ: แสดงทุกแท็บ
+        if (publicTabBtn) publicTabBtn.classList.remove('hidden');
+        if (officerTabBtn) officerTabBtn.classList.remove('hidden');
+        if (adminTabBtn) adminTabBtn.classList.remove('hidden');
+        if (loginPrompt) loginPrompt.classList.add('hidden');
+        if (options.role && ['public', 'officer', 'admin'].includes(options.role)) {
+          currentGuideTab = options.role;
+        } else {
+          currentGuideTab = 'admin';
+        }
       }
 
       switchGuideTab(currentGuideTab);
+
+      // อัปเดตปุ่ม Action ใน Banner ของแต่ละ Role ตามสถานะการเข้าสู่ระบบ
+      const officerBtn = document.getElementById('guide-btn-officer-action');
+      const adminBtn = document.getElementById('guide-btn-admin-action');
+
+      if (officerBtn) {
+        officerBtn.setAttribute('onclick', "navigate('officer-files')");
+        officerBtn.innerHTML = `<span>ไปที่หน้าจัดการไฟล์</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+      }
+
+      if (adminBtn) {
+        if (appState.currentUser && appState.currentUser.Role === 'admin') {
+          adminBtn.setAttribute('onclick', "navigate('admin-dashboard')");
+          adminBtn.innerHTML = `<span>ไปที่ Dashboard แอดมิน</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        } else if (appState.currentUser && appState.currentUser.Role === 'subadmin') {
+          adminBtn.setAttribute('onclick', "navigate('subadmin-dashboard')");
+          adminBtn.innerHTML = `<span>ไปที่ Dashboard Subadmin</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+        }
+      }
 
       // รีเซ็ตช่องค้นหา
       const searchInput = document.getElementById('guide-search-input');
@@ -11570,6 +11667,24 @@ function renderUsersTable() {
      * สลับแท็บบทบาทในคู่มือ
      */
     function switchGuideTab(role) {
+      // 🔒 ตรวจสอบสิทธิ์ก่อนสลับแท็บ
+      if (role === 'officer') {
+        if (!appState.currentUser) {
+          showToast('⚠️ กรุณาเข้าสู่ระบบก่อนเพื่อดูคู่มือสำหรับเจ้าหน้าที่', 'warning');
+          openLoginModal();
+          return;
+        }
+      } else if (role === 'admin') {
+        if (!appState.currentUser) {
+          showToast('⚠️ กรุณาเข้าสู่ระบบก่อนเพื่อดูคู่มือสำหรับผู้ดูแลระบบ', 'warning');
+          openLoginModal();
+          return;
+        } else if (!['admin', 'subadmin'].includes(appState.currentUser.Role)) {
+          showToast('⛔ เฉพาะผู้ดูแลระบบเท่านั้นที่สามารถดูคู่มือส่วนนี้ได้', 'error');
+          return;
+        }
+      }
+
       currentGuideTab = role;
 
       // จัดการปุ่มแท็บ
