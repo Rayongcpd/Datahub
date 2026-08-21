@@ -2070,6 +2070,578 @@
             <span>กำลังโหลดข้อมูลคลังแม่แบบ...</span>
           </div>
         </div>
+      <!-- ✅ Page: User Guide & Manual (คำแนะนำและคู่มือการใช้งานระบบ) -->
+      <div id="page-user-guide" class="page">
+        <!-- Hero Header -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-warm-100 via-white to-accent/10 border border-warm-200 p-6 md:p-8 mb-8 shadow-sm">
+          <div class="max-w-3xl">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-accent/15 text-accent mb-3">
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+              ศูนย์ความรู้และคู่มือการใช้งานระบบ
+            </span>
+            <h1 class="text-2xl md:text-3xl font-serif font-bold text-warm-800 leading-tight">
+              คำแนะนำและขั้นตอนการใช้งานระบบคลังไฟล์เอกสาร
+            </h1>
+            <p class="text-warm-600 text-sm md:text-base mt-2">
+              รวบรวมคู่มือ ขั้นตอนการปฏิบัติงาน และคำแนะนำการใช้งานอย่างละเอียด โดยแบ่งตามบทบาทของผู้ใช้งาน
+            </p>
+          </div>
+
+          <!-- Quick Search in Guide -->
+          <div class="mt-6 max-w-lg relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-warm-400">
+              <i data-lucide="search" class="w-4 h-4"></i>
+            </span>
+            <input type="text" id="guide-search-input" onkeyup="filterGuideTopics(this.value)" placeholder="ค้นหาหัวข้อคำแนะนำ เช่น ค้นหาเอกสาร, อัปโหลดไฟล์, Google Drive, ถังขยะ..."
+              class="w-full pl-9 pr-4 py-2.5 bg-white border border-warm-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent shadow-sm">
+          </div>
+        </div>
+
+        <!-- Role Switcher Navigation (Segmented Tabs) -->
+        <div class="flex border-b border-warm-200 mb-8 overflow-x-auto gap-2 sm:gap-4 pb-2">
+          <button onclick="switchGuideTab('public')" id="guide-tab-public"
+            class="guide-tab-btn flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-sage text-white shadow-sm border border-sage">
+            <i data-lucide="users" class="w-4 h-4"></i>
+            <span>ผู้ใช้งานทั่วไป (Public)</span>
+          </button>
+          <button onclick="switchGuideTab('officer')" id="guide-tab-officer"
+            class="guide-tab-btn flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-white text-warm-600 hover:text-warm-800 hover:bg-warm-100 border border-warm-200">
+            <i data-lucide="briefcase" class="w-4 h-4"></i>
+            <span>เจ้าหน้าที่ (Officer)</span>
+          </button>
+          <button onclick="switchGuideTab('admin')" id="guide-tab-admin"
+            class="guide-tab-btn flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 bg-white text-warm-600 hover:text-warm-800 hover:bg-warm-100 border border-warm-200">
+            <i data-lucide="shield-check" class="w-4 h-4"></i>
+            <span>ผู้ดูแลระบบ (Admin / Subadmin)</span>
+          </button>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- SECTION 1: ผู้ใช้งานทั่วไป (PUBLIC GUIDE) -->
+        <!-- =================================================================== -->
+        <div id="guide-section-public" class="guide-section space-y-6">
+          <!-- Role Intro Card -->
+          <div class="bg-sage/10 border border-sage/20 rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div class="bg-sage text-white p-3 rounded-xl flex-shrink-0 shadow-sm">
+                <i data-lucide="users" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-warm-800">คู่มือสำหรับผู้ใช้งานทั่วไป (บุคคลภายนอก / สมาชิกสหกรณ์)</h3>
+                <p class="text-warm-600 text-sm mt-1">
+                  เข้าถึงเอกสารสาธารณะ ค้นหาดูตัวอย่างเอกสาร ดาวน์โหลดแบบฟอร์ม และยื่นคำขอรับบริการข้อมูลได้สะดวกรวดเร็วโดยไม่ต้องเข้าสู่ระบบ
+                </p>
+              </div>
+            </div>
+            <button onclick="navigate('home')" class="bg-sage text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-sage/90 transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
+              <span>ไปที่หน้าค้นหาเอกสาร</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Card 1: Search -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">1</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การค้นหาและสืบค้นเอกสาร</h4>
+                  <span class="text-xs text-warm-500">Search & Filter</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ค้นหาด้วยคำสำคัญ:</strong> พิมพ์คำค้นหาในช่องค้นหา ระบบรองรับการค้นหาแบบแยกคำด้วยเว้นวรรค เช่น <code>ระเบียบ เกษตร</code></span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>กรองตามกลุ่มงาน:</strong> เลือกกลุ่มงานจากแถบเมนูด้านบน หรือ Dropdown เพื่อเจาะจงเฉพาะกลุ่มงานที่ต้องการ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>กรองตามประเภทเอกสาร:</strong> เลือกประเภทเอกสาร เช่น ข้อบังคับ, ระเบียบ, รายงานการประชุม, งบการเงิน</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 2: Preview & Download -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">2</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การเปิดดูตัวอย่างและดาวน์โหลด</h4>
+                  <span class="text-xs text-warm-500">Preview & Download</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ดูตัวอย่างทันที (Preview):</strong> กดปุ่มไอคอนรูปดวงตา 👁️ เพื่อเปิดดูเอกสาร PDF, Word, Excel หรือรูปภาพ โดยไม่ต้องโหลดลงเครื่อง</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ดาวน์โหลดไฟล์ (Download):</strong> กดปุ่มไอคอนดาวน์โหลด 📥 เพื่อบันทึกไฟล์ต้นฉบับลงในคอมพิวเตอร์หรือมือถือ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>แชร์ผ่าน QR Code:</strong> กดปุ่ม QR Code 📱 เพื่อแสดง QR Code สำหรับสแกนเปิดอ่านบนสมาร์ตโฟนได้สะดวกรวดเร็ว</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 3: Templates Hub -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">3</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">คลังแม่แบบเอกสารมาตรฐาน</h4>
+                  <span class="text-xs text-warm-500">Templates Hub</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เข้าสู่คลังแม่แบบ:</strong> คลิกที่เมนู <code>📂 แม่แบบเอกสาร</code> จากแถบนำทางด้านบน</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ค้นหาแบบฟอร์มมาตรฐาน:</strong> รวบรวมข้อบังคับมาตรฐาน ระเบียบสหกรณ์ และแบบคำขอต่างๆ ที่รับรองโดยกรมส่งเสริมสหกรณ์</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ดาวน์โหลดไปใช้งาน:</strong> สามารถดาวน์โหลดไฟล์ Word / PDF เพื่อนำไปปรับใช้ในสหกรณ์ของตนเองได้ทันที</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 4: Request Service -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">4</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การขอรับบริการข้อมูลเอกสาร</h4>
+                  <span class="text-xs text-warm-500">Document Request</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เมื่อหาเอกสารไม่พบ:</strong> หากค้นหาแล้วไม่พบเอกสารที่ต้องการ สามารถกดเมนู <code>ขอรับบริการข้อมูล</code></span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>กรอกแบบฟอร์มคำขอ:</strong> ระบุชื่อเอกสาร วัตถุประสงค์การใช้งาน และข้อมูลติดต่อ (อีเมล/เบอร์โทรศัพท์)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-sage mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เจ้าหน้าที่จัดส่งให้:</strong> เมื่อเจ้าหน้าที่ตรวจสอบคำขอและอนุมัติ จะจัดส่งลิงก์ไฟล์ให้ตามช่องทางที่ระบุ</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- FAQ Accordion for Public -->
+          <div class="bg-white rounded-2xl border border-warm-200 p-6 shadow-sm">
+            <h4 class="font-bold text-warm-800 text-base mb-4 flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-5 h-5 text-accent"></i>
+              <span>คำถามที่พบบ่อยสำหรับผู้ใช้งานทั่วไป (FAQ)</span>
+            </h4>
+            <div class="space-y-3">
+              <details class="group bg-warm-50 rounded-xl p-4 cursor-pointer border border-warm-200/60">
+                <summary class="font-medium text-warm-800 text-sm flex items-center justify-between list-none">
+                  <span>Q: ต้องสมัครสมาชิกหรือเข้าสู่ระบบก่อนค้นหาเอกสารหรือไม่?</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-warm-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-sm text-warm-600 mt-2.5 pt-2 border-t border-warm-200">
+                  ไม่ต้องเข้าสู่ระบบครับ ผู้ใช้งานทั่วไปสามารถค้นหา เปิดดูตัวอย่าง และดาวน์โหลดเอกสารสาธารณะของสหกรณ์ได้ทันที
+                </p>
+              </details>
+
+              <details class="group bg-warm-50 rounded-xl p-4 cursor-pointer border border-warm-200/60">
+                <summary class="font-medium text-warm-800 text-sm flex items-center justify-between list-none">
+                  <span>Q: หากเปิดดูตัวอย่างไฟล์ไม่ได้ ควรทำอย่างไร?</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-warm-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-sm text-warm-600 mt-2.5 pt-2 border-t border-warm-200">
+                  สามารถกดปุ่ม "ดาวน์โหลด" 📥 เพื่อนำไฟล์ไปเปิดอ่านด้วยโปรแกรมในเครื่องของท่านได้โดยตรง หรือกดปุ่ม "เปิดลิงก์เดิม" หากเป็นไฟล์บน Google Drive
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- SECTION 2: เจ้าหน้าที่ (OFFICER GUIDE) -->
+        <!-- =================================================================== -->
+        <div id="guide-section-officer" class="guide-section space-y-6 hidden">
+          <!-- Role Intro Card -->
+          <div class="bg-accent/10 border border-accent/20 rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div class="bg-accent text-white p-3 rounded-xl flex-shrink-0 shadow-sm">
+                <i data-lucide="briefcase" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-warm-800">คู่มือสำหรับเจ้าหน้าที่ (Officer Manual)</h3>
+                <p class="text-warm-600 text-sm mt-1">
+                  จัดการเอกสารประจำกลุ่มงาน อัปโหลดไฟล์ นำเข้าข้อมูลจาก Google Drive อัตโนมัติ และยื่นคำขอแก้ไข/ลบไฟล์
+                </p>
+              </div>
+            </div>
+            <button onclick="navigate('officer-files')" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
+              <span>ไปที่หน้าจัดการไฟล์</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Card 1: Login & Profile -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">1</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การเข้าสู่ระบบและจัดการโปรไฟล์</h4>
+                  <span class="text-xs text-warm-500">Authentication & Profile</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เข้าสู่ระบบ:</strong> กดปุ่ม "เข้าสู่ระบบ" มุมขวาบน และกรอก Username/Password ที่ได้รับมอบหมาย</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ข้อมูลส่วนตัว:</strong> ไปที่เมนู <code>ข้อมูลส่วนตัว</code> เพื่อตรวจสอบข้อมูล หรือเปลี่ยนรหัสผ่านใหม่เพื่อความปลอดภัย</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ระบบจำผู้บันทึกอัตโนมัติ:</strong> เมื่อล็อกอินแล้ว ระบบจะเลือกชื่อของท่านในช่อง "ผู้บันทึก" ให้โดยอัตโนมัติทุกครั้ง</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 2: Upload File -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">2</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การเพิ่มและอัปโหลดไฟล์เอกสาร</h4>
+                  <span class="text-xs text-warm-500">Add & Upload Files</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เปิดหน้าจัดการไฟล์:</strong> ไปที่เมนู <code>จัดการไฟล์</code> แล้วคลิกปุ่ม <code>➕ เพิ่มไฟล์ใหม่</code></span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>กรอกข้อมูลเอกสาร:</strong> ระบุชื่อเรื่อง, คำอธิบายเพิ่มเติม, เลือกสหกรณ์, กลุ่มงาน และประเภทเอกสาร</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>แนบไฟล์หรือใส่ลิงก์ Drive:</strong> สามารถแนบไฟล์โดยตรง หรือระบุลิงก์ Google Drive ของเอกสาร</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 3: Drive Import -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">3</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การนำเข้าไฟล์จาก Google Drive สหกรณ์</h4>
+                  <span class="text-xs text-warm-500">Google Drive Bulk Sync</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เปิดฟอร์มนำเข้า:</strong> ในหน้าจัดการไฟล์ กดปุ่ม <code>📂 เปิดฟอร์มนำเข้าไฟล์</code></span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เลือกชื่อสหกรณ์:</strong> ระบบจะดึงกลุ่มงาน, ลิงก์โฟลเดอร์ Drive และเลือกชื่อผู้บันทึกให้อัตโนมัติ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ตรวจสอบก่อนนำเข้า:</strong> กดปุ่ม <code>🔍 ตรวจสอบไฟล์</code> เพื่อเช็คว่ามีไฟล์ใหม่หรือไฟล์ที่มีการอัปเดตเวอร์ชันกี่ไฟล์</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>นำเข้าเข้าสู่ระบบ:</strong> กดปุ่ม <code>🚀 นำเข้าไฟล์ทั้งหมด</code> ระบบจะนำไฟล์เข้าสู่คลังเอกสารอัตโนมัติ</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 4: Edit & Delete Requests -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-warm-100 flex items-center justify-center text-accent font-bold text-lg">4</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การขอแก้ไขชื่อเรื่อง หรือขอลบไฟล์</h4>
+                  <span class="text-xs text-warm-500">Edit & Delete Workflow</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ขอแก้ไขชื่อเรื่อง:</strong> กดปุ่มดินสอ ✏️ ในตารางไฟล์ ระบุชื่อเรื่องใหม่และเหตุผล ➔ คำขอจะถูกส่งให้ Admin อนุมัติ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ขอลบไฟล์:</strong> กดปุ่มถังขยะ 🗑️ ในตารางไฟล์ ระบุเหตุผลการขอลบ ➔ คำขอจะส่งไปยัง Admin เพื่อตรวจสอบและอนุมัติ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-accent mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ความปลอดภัย:</strong> ระบบมีระบบป้องกันการลบผิดพลาด โดยไฟล์ที่ลบจะไปพักไว้ในถังขยะก่อนเสมอ</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- FAQ Accordion for Officer -->
+          <div class="bg-white rounded-2xl border border-warm-200 p-6 shadow-sm">
+            <h4 class="font-bold text-warm-800 text-base mb-4 flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-5 h-5 text-accent"></i>
+              <span>คำถามที่พบบ่อยสำหรับเจ้าหน้าที่ (Officer FAQ)</span>
+            </h4>
+            <div class="space-y-3">
+              <details class="group bg-warm-50 rounded-xl p-4 cursor-pointer border border-warm-200/60">
+                <summary class="font-medium text-warm-800 text-sm flex items-center justify-between list-none">
+                  <span>Q: ถ้าสหกรณ์มีการเพิ่มไฟล์ใหม่ใน Google Drive ต้องทำอย่างไรให้เข้าระบบ?</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-warm-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-sm text-warm-600 mt-2.5 pt-2 border-t border-warm-200">
+                  เพียงไปที่หน้า "จัดการไฟล์" ➔ เปิดฟอร์มนำเข้า ➔ เลือกชื่อสหกรณ์ ➔ กดปุ่ม "🔍 ตรวจสอบไฟล์" แล้วกดนำเข้าไฟล์ใหม่ ระบบจะซิงค์เฉพาะไฟล์ที่ยังไม่มีหรือไฟล์เวอร์ชันใหม่อัตโนมัติ
+                </p>
+              </details>
+
+              <details class="group bg-warm-50 rounded-xl p-4 cursor-pointer border border-warm-200/60">
+                <summary class="font-medium text-warm-800 text-sm flex items-center justify-between list-none">
+                  <span>Q: เมื่อส่งคำขอลบไฟล์แล้ว ทำไมไฟล์ยังแสดงอยู่?</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-warm-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-sm text-warm-600 mt-2.5 pt-2 border-t border-warm-200">
+                  เมื่อยื่นคำขอลบ ระบบจะส่งรายการไปยังผู้ดูแลระบบ (Admin) เพื่อทำการอนุมัติ เมื่อ Admin อนุมัติแล้วไฟล์จึงจะถูกย้ายไปยังถังขยะครับ
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <!-- =================================================================== -->
+        <!-- SECTION 3: ผู้ดูแลระบบ (ADMIN & SUBADMIN GUIDE) -->
+        <!-- =================================================================== -->
+        <div id="guide-section-admin" class="guide-section space-y-6 hidden">
+          <!-- Role Intro Card -->
+          <div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div class="bg-amber-600 text-white p-3 rounded-xl flex-shrink-0 shadow-sm">
+                <i data-lucide="shield-check" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-warm-800">คู่มือสำหรับผู้ดูแลระบบ (Admin & Subadmin Manual)</h3>
+                <p class="text-warm-600 text-sm mt-1">
+                  บริหารจัดการบัญชีผู้ใช้ จัดการกลุ่มงาน ตรวจสอบนำเข้าข้อมูลรวมทุกสหกรณ์ อนุมัติคำขอ จัดการถังขยะ และตรวจสอบ Activity Log
+                </p>
+              </div>
+            </div>
+            <button onclick="navigate('admin-dashboard')" class="bg-amber-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors flex items-center gap-2 flex-shrink-0 shadow-sm">
+              <span>ไปที่ Dashboard แอดมิน</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Feature Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1: User Management -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg">1</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การจัดการผู้ใช้งาน</h4>
+                  <span class="text-xs text-warm-500">Users Management</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เพิ่มผู้ใช้ใหม่:</strong> ไปที่เมนู <code>จัดการผู้ใช้</code> ➔ กำหนด Username, Password, ชื่อ-สกุล และ Role</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>บทบาทในระบบ:</strong>
+                    <br>• <strong>Admin:</strong> สิทธิ์เต็มทุกส่วน
+                    <br>• <strong>Subadmin:</strong> ดูแลไฟล์รวมและ Activity Log
+                    <br>• <strong>Officer:</strong> เจ้าหน้าที่จัดการไฟล์
+                  </span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>รีเซ็ตรหัสผ่าน/ระงับการใช้งาน:</strong> สามารถแก้ไขข้อมูลหรือระงับสิทธิ์การใช้งานได้ทันที</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 2: Bulk Import -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg">2</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">ตรวจสอบและนำเข้าข้อมูลรวม</h4>
+                  <span class="text-xs text-warm-500">Bulk Inspection & Sync</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ตรวจสอบข้อมูลรวม:</strong> กดปุ่ม <code>📊 ตรวจสอบข้อมูลรวม</code> เพื่อให้ระบบวิ่งตรวจสอบโฟลเดอร์ Google Drive ของทุกสหกรณ์พร้อมกัน</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>สรุปรายงานไฟล์:</strong> แสดงจำนวนไฟล์ใหม่และไฟล์ที่มีการอัปเดตแยกตามสหกรณ์อย่างชัดเจน</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>นำเข้าในคลิกเดียว:</strong> กด <code>🚀 นำเข้าทั้งหมดเดี๋ยวนี้</code> หรือกด <code>🌟 นำเข้าข้อมูลรวม</code> เพื่อนำเข้าทุกไฟล์เข้าสู่ระบบทันที</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 3: Groups & Types -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg">3</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การจัดการกลุ่มงานและโครงสร้าง</h4>
+                  <span class="text-xs text-warm-500">Groups & Categories</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>จัดการกลุ่มงาน:</strong> ไปที่เมนู <code>จัดการกลุ่มงาน</code> เพื่อเพิ่ม/แก้ไขชื่อกลุ่มงาน รหัสกลุ่มงาน</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>การจัดลำดับการแสดงผล:</strong> กำหนดลำดับการแสดงผลของกลุ่มงานบน Navbar และหน้าแรก</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>กำหนดประเภทเอกสาร:</strong> จัดหมวดหมู่เอกสารให้สอดคล้องกับการทำงานจริงขององค์กร</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 4: Approvals & Recycle Bin -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg">4</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การอนุมัติคำขอและถังขยะ</h4>
+                  <span class="text-xs text-warm-500">Approvals & Recycle Bin</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>คำขอแก้ไขชื่อเรื่อง:</strong> เข้าเมนู <code>คำขอแก้ไขชื่อเรื่อง</code> เพื่ออนุมัติหรือปฏิเสธคำขอจากเจ้าหน้าที่</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>คำขอลบไฟล์:</strong> เข้าเมนู <code>คำขอลบไฟล์</code> เพื่อตรวจสอบเหตุผลและอนุมัติการลบ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ถังขยะ (Recycle Bin):</strong> สามารถกู้คืนไฟล์ (Restore) กลับคืนระบบได้ตลอดเวลา หรือเลือกลบถาวร</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 5: Templates Admin -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg">5</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">การจัดการคลังแม่แบบเอกสาร</h4>
+                  <span class="text-xs text-warm-500">Standard Templates Hub</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>เพิ่มแม่แบบใหม่:</strong> ไปที่หน้า <code>📂 แม่แบบเอกสาร</code> ➔ กดปุ่ม "เพิ่มแม่แบบใหม่"</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ดึงข้อมูลจากกรมส่งเสริมฯ:</strong> กดปุ่ม "ดึงข้อมูลจากกรมส่งเสริมฯ" เพื่อดึงข้อบังคับ/ระเบียบมาตรฐานจาก CPD เข้าสู่คลังอัตโนมัติ</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>แก้ไข/ลบแม่แบบ:</strong> สามารถอัปเดตไฟล์หรือปรับปรุงข้อมูลแม่แบบได้ตลอดเวลา</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Card 6: Activity Log & Audit -->
+            <div class="guide-card bg-white rounded-2xl border border-warm-200 p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-lg">6</div>
+                <div>
+                  <h4 class="font-bold text-warm-800 text-base">ตรวจสอบประวัติระบบ (Audit Log)</h4>
+                  <span class="text-xs text-warm-500">Activity & Security Logs</span>
+                </div>
+              </div>
+              <ul class="space-y-2.5 text-sm text-warm-600">
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ติดตามทุกกิจกรรม:</strong> ไปที่เมนู <code>Activity Log</code> เพื่อตรวจสอบประวัติการเข้าสู่ระบบ, การเพิ่ม, แก้ไข, ลบ หรือนำเข้าไฟล์</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>กรองและค้นหา Log:</strong> กรองตามชื่อผู้ใช้งาน, ประเภทการกระทำ (Action), หรือช่วงวันที่</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"></i>
+                  <span><strong>ความโปร่งใสและปลอดภัย:</strong> รองรับการตรวจสอบย้อนหลัง (Audit Trail) ตามมาตรฐานความปลอดภัยสารสนเทศ</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- FAQ Accordion for Admin -->
+          <div class="bg-white rounded-2xl border border-warm-200 p-6 shadow-sm">
+            <h4 class="font-bold text-warm-800 text-base mb-4 flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-5 h-5 text-accent"></i>
+              <span>คำแนะนำและข้อควรรู้สำหรับผู้ดูแลระบบ (Admin FAQ)</span>
+            </h4>
+            <div class="space-y-3">
+              <details class="group bg-warm-50 rounded-xl p-4 cursor-pointer border border-warm-200/60">
+                <summary class="font-medium text-warm-800 text-sm flex items-center justify-between list-none">
+                  <span>Q: ข้อแตกต่างระหว่างบทบาท Admin และ Subadmin คืออะไร?</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-warm-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-sm text-warm-600 mt-2.5 pt-2 border-t border-warm-200">
+                  <strong>Admin:</strong> มีสิทธิ์สูงสุดในการจัดการระบบ สามารถเพิ่ม/ลบผู้ใช้ จัดการกลุ่มงาน อนุมัติคำขอลบไฟล์ ลบถาวรในถังขยะ และดู Activity Log ได้ทั้งหมด<br>
+                  <strong>Subadmin:</strong> สามารถดูและจัดการไฟล์ทั้งหมดในระบบ ดูภาพรวม Dashboard และดู Activity Log ได้ แต่ไม่สามารถจัดการผู้ใช้งานหรือลบไฟล์ถาวรได้
+                </p>
+              </details>
+
+              <details class="group bg-warm-50 rounded-xl p-4 cursor-pointer border border-warm-200/60">
+                <summary class="font-medium text-warm-800 text-sm flex items-center justify-between list-none">
+                  <span>Q: หากเจ้าหน้าที่ลืมรหัสผ่าน Admin สามารถดำเนินการอย่างไรได้บ้าง?</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-warm-500 group-open:rotate-180 transition-transform"></i>
+                </summary>
+                <p class="text-sm text-warm-600 mt-2.5 pt-2 border-t border-warm-200">
+                  Admin สามารถเข้าเมนู "จัดการผู้ใช้" ➔ ค้นหาชื่อเจ้าหน้าที่ ➔ กดปุ่มแก้ไข ➔ กรอกรหัสผ่านใหม่และกดยืนยันบันทึกข้อมูล เจ้าหน้าที่จะสามารถเข้าใช้งานด้วยรหัสผ่านใหม่ได้ทันที
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -2946,6 +3518,9 @@
         menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
         mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
 
+        menuHtml += `<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📖 แนะนำการใช้งาน</a>`;
+        mobileMenuHtml += `<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📖 แนะนำการใช้งาน</a>`;
+
         menuHtml += `<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>`;
         mobileMenuHtml += `<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">สถิติ</a>`;
       }
@@ -3010,6 +3585,9 @@
         // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับผู้ใช้ที่ล็อกอินแล้ว
         menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
         mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
+
+        menuHtml += `<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📖 แนะนำการใช้งาน</a>`;
+        mobileMenuHtml += `<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📖 แนะนำการใช้งาน</a>`;
       }
 
       if (mainMenu) mainMenu.innerHTML = menuHtml;
@@ -3123,6 +3701,9 @@
           break;
         case 'templates-hub':
           renderTemplatesHub();
+          break;
+        case 'user-guide':
+          renderUserGuidePage(options);
           break;
       }
       lucide.createIcons();
@@ -10946,6 +11527,117 @@ function renderUsersTable() {
           showToast('เกิดข้อผิดพลาด: ' + err.message, 'error');
         })
         .importCpdTemplate(cpdData, appState.currentUser ? appState.currentUser.UserID : '');
+    }
+
+    // =================================================================
+    // USER GUIDE & MANUAL FUNCTIONS (คู่มือและคำแนะนำการใช้งานระบบ)
+    // =================================================================
+    let currentGuideTab = 'public';
+
+    /**
+     * เรนเดอร์หน้าคู่มือและคำแนะนำการใช้งาน
+     */
+    function renderUserGuidePage(options = {}) {
+      // กำหนด Tab เริ่มต้นตาม role หรือ options
+      if (options.role) {
+        currentGuideTab = options.role;
+      } else if (appState.currentUser) {
+        if (['admin', 'subadmin'].includes(appState.currentUser.Role)) {
+          currentGuideTab = 'admin';
+        } else if (appState.currentUser.Role === 'officer') {
+          currentGuideTab = 'officer';
+        } else {
+          currentGuideTab = 'public';
+        }
+      } else {
+        currentGuideTab = 'public';
+      }
+
+      switchGuideTab(currentGuideTab);
+
+      // รีเซ็ตช่องค้นหา
+      const searchInput = document.getElementById('guide-search-input');
+      if (searchInput) {
+        searchInput.value = '';
+        filterGuideTopics('');
+      }
+
+      lucide.createIcons();
+    }
+
+    /**
+     * สลับแท็บบทบาทในคู่มือ
+     */
+    function switchGuideTab(role) {
+      currentGuideTab = role;
+
+      // จัดการปุ่มแท็บ
+      const tabs = {
+        public: { btn: document.getElementById('guide-tab-public'), section: document.getElementById('guide-section-public'), activeClass: 'bg-sage text-white shadow-sm border border-sage' },
+        officer: { btn: document.getElementById('guide-tab-officer'), section: document.getElementById('guide-section-officer'), activeClass: 'bg-accent text-white shadow-sm border border-accent' },
+        admin: { btn: document.getElementById('guide-tab-admin'), section: document.getElementById('guide-section-admin'), activeClass: 'bg-amber-600 text-white shadow-sm border border-amber-600' }
+      };
+
+      const inactiveClass = 'bg-white text-warm-600 hover:text-warm-800 hover:bg-warm-100 border border-warm-200';
+
+      Object.keys(tabs).forEach(key => {
+        const item = tabs[key];
+        if (!item.btn || !item.section) return;
+
+        if (key === role) {
+          item.btn.className = `guide-tab-btn flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${item.activeClass}`;
+          item.section.classList.remove('hidden');
+        } else {
+          item.btn.className = `guide-tab-btn flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${inactiveClass}`;
+          item.section.classList.add('hidden');
+        }
+      });
+
+      // กรองตามคำค้นหาที่อาจค้างอยู่
+      const query = (document.getElementById('guide-search-input')?.value || '').trim();
+      if (query) {
+        filterGuideTopics(query);
+      }
+
+      lucide.createIcons();
+    }
+
+    /**
+     * ค้นหาหัวข้อคำแนะนำในหน้าคู่มือแบบ Real-time
+     */
+    function filterGuideTopics(query) {
+      const q = (query || '').toLowerCase().trim();
+      const activeSection = document.getElementById(`guide-section-${currentGuideTab}`);
+      if (!activeSection) return;
+
+      const cards = activeSection.querySelectorAll('.guide-card');
+      const faqs = activeSection.querySelectorAll('details');
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      faqs.forEach(faq => {
+        const text = faq.textContent.toLowerCase();
+        if (!q || text.includes(q)) {
+          faq.classList.remove('hidden');
+          if (q) faq.open = true;
+        } else {
+          faq.classList.add('hidden');
+        }
+      });
+    }
+
+    /**
+     * ฟังก์ชันทางลัดสำหรับเปิดคู่มือบทบาทที่ต้องการโดยตรง
+     */
+    function openUserGuide(role = 'public') {
+      navigate('user-guide', { role });
     }
   </script>
 
