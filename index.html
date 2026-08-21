@@ -2901,6 +2901,7 @@
       renderMenus();
       renderAuthButtons();
       renderPageContent(appState.currentPage, appState.currentOptions);
+      populateImportUsers();
     }
 
     function renderMenus() {
@@ -7010,18 +7011,42 @@ function renderUsersTable() {
     function populateImportUsers() {
       const select = document.getElementById('import-user');
       if (!select) return;
+      const currentVal = select.value;
       select.innerHTML = '<option value="">-- เลือกผู้บันทึก --</option>';
-      appState.allUsers.forEach(user => {
+      (appState.allUsers || []).forEach(user => {
         select.innerHTML += `<option value="${user.UserID}">${user.FullName} (${user.Role})</option>`;
       });
+
+      // Auto-select user: current value > logged-in user > last selected in localStorage
+      if (currentVal && (appState.allUsers || []).some(u => u.UserID === currentVal)) {
+        select.value = currentVal;
+      } else if (appState.currentUser && (appState.allUsers || []).some(u => u.UserID === appState.currentUser.UserID)) {
+        select.value = appState.currentUser.UserID;
+      } else {
+        const lastUser = localStorage.getItem('datahub_last_import_user');
+        if (lastUser && (appState.allUsers || []).some(u => u.UserID === lastUser)) {
+          select.value = lastUser;
+        }
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       populateImportGroups();
+
+      const importUserSelect = document.getElementById('import-user');
+      if (importUserSelect) {
+        importUserSelect.addEventListener('change', (e) => {
+          if (e.target.value) {
+            localStorage.setItem('datahub_last_import_user', e.target.value);
+          }
+        });
+      }
+
       google.script.run
         .withSuccessHandler(response => {
           if (response.success) {
             appState.allUsers = response.data;
+            populateImportUsers();
             // init theme here too if needed, but mostly from getInitialData
           }
         })
@@ -9061,11 +9086,19 @@ function renderUsersTable() {
     function getImportFormValues() {
       const selectedCoopName = document.getElementById('import-coop-name').value.trim();
       const groupId = document.getElementById('import-group').value.trim();
-      const userId = document.getElementById('import-user').value.trim();
+      let userId = document.getElementById('import-user').value.trim();
+      
+      // Auto fallback to currentUser if empty
+      if (!userId && appState.currentUser) {
+        userId = appState.currentUser.UserID;
+        const userSelect = document.getElementById('import-user');
+        if (userSelect) userSelect.value = userId;
+      }
+
       const folderUrl = document.getElementById('import-folder-url').value.trim();
 
       if (!selectedCoopName || !groupId || !userId || !folderUrl) {
-        showToast('กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
+        showToast('กรุณากรอกข้อมูลให้ครบทุกช่อง (รวมถึงผู้บันทึก)', 'warning');
         return null;
       }
 
@@ -9924,6 +9957,28 @@ function renderUsersTable() {
     let allCoopsDupCheckResults = [];
 
     async function handleCheckAllCoops() {
+      // 1. ตรวจสอบผู้บันทึกก่อนเริ่มการตรวจสอบ เพื่อไม่ให้เสียเวลารอการตรวจสอบฟรีหากลืมเลือก
+      const userSelect = document.getElementById('import-user');
+      let userId = userSelect ? userSelect.value.trim() : '';
+
+      if (!userId && appState.currentUser) {
+        userId = appState.currentUser.UserID;
+        if (userSelect) userSelect.value = userId;
+      }
+
+      if (!userId) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'กรุณาเลือกผู้บันทึก',
+          text: 'โปรดเลือกผู้บันทึกข้อมูลก่อนเริ่มการตรวจสอบข้อมูลรวม เพื่อป้องกันการต้องตรวจสอบใหม่อีกครั้ง',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#3085d6'
+        }).then(() => {
+          userSelect?.focus();
+        });
+        return;
+      }
+
       const coopsWithLink = appState.allCoops.filter(c => c.FolderURL && c.FolderURL.trim() !== '');
       if (coopsWithLink.length === 0) {
         showToast('ไม่พบสหกรณ์ที่มีการบันทึกลิงก์ Google Drive', 'warning');
@@ -9999,6 +10054,10 @@ function renderUsersTable() {
       lucide.createIcons();
 
       if (allCoopsDupCheckResults.length > 0) {
+        // แสดงปุ่มนำเข้าข้อมูลรวมเพื่อให้สามารถกดนำเข้าได้ตลอดเวลาโดยไม่ต้องรันตรวจใหม่
+        const importAllBtn = document.getElementById('import-all-coops-btn');
+        if (importAllBtn) importAllBtn.style.display = 'flex';
+
         // Generate file list HTML
         let fileListHtml = '';
         if (totalNew > 0 || totalUpdated > 0) {
@@ -10046,7 +10105,8 @@ function renderUsersTable() {
               startBulkImportAllCoops();
             }, 300);
           } else {
-            document.getElementById('import-all-coops-btn').style.display = 'flex';
+            const importAllBtn = document.getElementById('import-all-coops-btn');
+            if (importAllBtn) importAllBtn.style.display = 'flex';
           }
         });
       } else {
@@ -10058,10 +10118,54 @@ function renderUsersTable() {
     async function startBulkImportAllCoops() {
       if (!allCoopsDupCheckResults || allCoopsDupCheckResults.length === 0) return;
       
-      const userId = document.getElementById('import-user').value;
+      let userId = document.getElementById('import-user')?.value?.trim();
+      if (!userId && appState.currentUser) {
+        userId = appState.currentUser.UserID;
+        if (document.getElementById('import-user')) {
+          document.getElementById('import-user').value = userId;
+        }
+      }
+
+      // ถ้ายังไม่มีผู้บันทึก ให้เด้งกล่องเลือกผู้บันทึกทันที เพื่อไม่ต้องรันตรวจใหม่
       if (!userId) {
-        showToast('กรุณาเลือกผู้บันทึกในฟอร์มก่อนดำเนินการ', 'warning');
-        return;
+        const userOptions = (appState.allUsers || []).map(u => 
+          `<option value="${u.UserID}">${u.FullName} (${u.Role})</option>`
+        ).join('');
+
+        const { value: selectedUserId } = await Swal.fire({
+          title: 'เลือกผู้บันทึก',
+          html: `
+            <p class="text-sm text-warm-600 mb-3 text-left">กรุณาระบุผู้บันทึกเพื่อนำเข้าไฟล์เข้าสู่ระบบ:</p>
+            <select id="swal-bulk-import-user" class="border border-warm-200 rounded-md w-full px-3 py-2 text-sm focus:ring-accent focus:border-accent">
+              <option value="">-- เลือกผู้บันทึก --</option>
+              ${userOptions}
+            </select>
+          `,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'ดำเนินการนำเข้าต่อ',
+          cancelButtonText: 'ยกเลิก',
+          preConfirm: () => {
+            const val = document.getElementById('swal-bulk-import-user').value;
+            if (!val) {
+              Swal.showValidationMessage('กรุณาเลือกผู้บันทึกก่อนดำเนินการ');
+              return false;
+            }
+            return val;
+          }
+        });
+
+        if (!selectedUserId) {
+          const importAllBtn = document.getElementById('import-all-coops-btn');
+          if (importAllBtn) importAllBtn.style.display = 'flex';
+          return;
+        }
+
+        userId = selectedUserId;
+        if (document.getElementById('import-user')) {
+          document.getElementById('import-user').value = userId;
+        }
+        localStorage.setItem('datahub_last_import_user', userId);
       }
 
       document.getElementById('import-all-coops-btn').style.display = 'none';
