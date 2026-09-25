@@ -3502,8 +3502,8 @@
 
       // If no user is logged in, show public menus
       if (!appState.currentUser) {
-        menuHtml += `<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>`;
-        mobileMenuHtml += `<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>`;
+        menuHtml += '<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">หน้าแรก</a>';
+        mobileMenuHtml += '<a href="#" data-page="home" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">หน้าแรก</a>';
 
         // --- Desktop Dropdown ---
         menuHtml += '<div class="relative group z-50">' +
@@ -3517,22 +3517,22 @@
         // Add separator for mobile
         mobileMenuHtml += '<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">กลุ่มงาน</div>';
 
-        appState.allGroups.forEach(group => {
+        appState.allGroups.forEach(function (group) {
           // Desktop Item
-          menuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">${group.GroupName}</a>`;
+          menuHtml += '<a href="#" data-page="group" data-groupid="' + group.GroupID + '" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">' + group.GroupName + '</a>';
 
           // Mobile Item
-          mobileMenuHtml += `<a href="#" data-page="group" data-groupid="${group.GroupID}" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">${group.GroupName}</a>`;
+          mobileMenuHtml += '<a href="#" data-page="group" data-groupid="' + group.GroupID + '" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">' + group.GroupName + '</a>';
         });
 
         menuHtml += '</div></div></div>';
 
-        // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับบุคคลทั่วไป (แสดงก่อนสถิติ)
-        menuHtml += '<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>';
-        mobileMenuHtml += '<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>';
+        // เมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับบุคคลทั่วไป (แสดงก่อนสถิติ)
+        menuHtml += '<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">&#128194; แม่แบบเอกสาร</a>';
+        mobileMenuHtml += '<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">&#128194; แม่แบบเอกสาร</a>';
 
-        menuHtml += '<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📖 แนะนำการใช้งาน</a>';
-        mobileMenuHtml += '<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📖 แนะนำการใช้งาน</a>';
+        menuHtml += '<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">&#128214; แนะนำการใช้งาน</a>';
+        mobileMenuHtml += '<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">&#128214; แนะนำการใช้งาน</a>';
 
         menuHtml += '<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">สถิติ</a>';
         mobileMenuHtml += '<a href="#" data-page="stats" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">สถิติ</a>';
@@ -3554,7 +3554,7 @@
                 '<a href="#" data-page="admin-groups" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">จัดการกลุ่มงาน</a>' +
                 '<a href="#" data-page="admin-files" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">ไฟล์ทั้งหมด</a>' +
                 '<a href="#" data-page="admin-delete-requests" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">คำขอลบไฟล์</a>' +
-                '<a href="#" data-page="admin-title-requests" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">✏️ คำขอแก้ไขชื่อเรื่อง</a>' +
+                '<a href="#" data-page="admin-title-requests" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">&#9999;&#65039; คำขอแก้ไขชื่อเรื่อง</a>' +
                 '<a href="#" data-page="admin-recycle-bin" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">ถังขยะ</a>' +
                 '<a href="#" data-page="admin-activity-log" class="nav-link block px-4 py-2 text-sm text-warm-700 hover:bg-warm-50 hover:text-accent" role="menuitem">Activity Log</a>' +
               '</div>' +
@@ -3563,43 +3563,43 @@
           menuHtml += '<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ขอรับบริการข้อมูล</a>';
 
           // --- Mobile: grouped admin menus ---
-          mobileMenuHtml += `<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">จัดการระบบ</div>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Dashboard</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการผู้ใช้</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการกลุ่มงาน</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ไฟล์ทั้งหมด</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">คำขอลบไฟล์</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-title-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">✏️ คำขอแก้ไขชื่อเรื่อง</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ถังขยะ</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Activity Log</a>`;
-          mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ขอรับบริการข้อมูล</a>`;
+          mobileMenuHtml += '<div class="px-3 py-2 text-warm-400 text-xs font-semibold uppercase tracking-wider mt-2">จัดการระบบ</div>';
+          mobileMenuHtml += '<a href="#" data-page="admin-dashboard" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Dashboard</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-users" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการผู้ใช้</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-groups" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">จัดการกลุ่มงาน</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ไฟล์ทั้งหมด</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-delete-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">คำขอลบไฟล์</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-title-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">&#9999;&#65039; คำขอแก้ไขชื่อเรื่อง</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-recycle-bin" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">ถังขยะ</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent hover:border-green-300">Activity Log</a>';
+          mobileMenuHtml += '<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ขอรับบริการข้อมูล</a>';
         } else if (appState.currentUser.Role === 'subadmin') {
           // Subadmin: Dashboard, ไฟล์ทั้งหมด, Activity Log (ไม่มีสิทธิ์เข้าหน้าคำขอลบ, ถังขยะ, จัดการผู้ใช้/กลุ่ม)
-          menuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
-          menuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-          menuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-          menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
-          mobileMenuHtml += `<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>`;
-          mobileMenuHtml += `<a href="#" data-page="subadmin-files" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>`;
-          mobileMenuHtml += `<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>`;
-          mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+          menuHtml += '<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (Subadmin)</a>';
+          menuHtml += '<a href="#" data-page="subadmin-files" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>';
+          menuHtml += '<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>';
+          menuHtml += '<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">&#128221; ขอรับบริการข้อมูล</a>';
+          mobileMenuHtml += '<a href="#" data-page="subadmin-dashboard" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (Subadmin)</a>';
+          mobileMenuHtml += '<a href="#" data-page="subadmin-files" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ไฟล์ทั้งหมด</a>';
+          mobileMenuHtml += '<a href="#" data-page="admin-activity-log" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-sm font-medium">Activity Log</a>';
+          mobileMenuHtml += '<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">&#128221; ขอรับบริการข้อมูล</a>';
         } else if (appState.currentUser.Role === 'officer') {
-          menuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>`;
-          menuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
-          menuHtml += `<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการไฟล์</a>`;
-          menuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
-          mobileMenuHtml += `<a href="#" data-page="officer-dashboard" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (officer)</a>`;
-          mobileMenuHtml += `<a href="#" data-page="officer-profile" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>`;
-          mobileMenuHtml += `<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>`;
-          mobileMenuHtml += `<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">📝 ขอรับบริการข้อมูล</a>`;
+          menuHtml += '<a href="#" data-page="officer-dashboard" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">Dashboard (officer)</a>';
+          menuHtml += '<a href="#" data-page="officer-profile" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>';
+          menuHtml += '<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">จัดการไฟล์</a>';
+          menuHtml += '<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold px-3 py-2 rounded-md text-sm font-medium">&#128221; ขอรับบริการข้อมูล</a>';
+          mobileMenuHtml += '<a href="#" data-page="officer-dashboard" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">Dashboard (officer)</a>';
+          mobileMenuHtml += '<a href="#" data-page="officer-profile" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">ข้อมูลส่วนตัว</a>';
+          mobileMenuHtml += '<a href="#" data-page="officer-files" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">จัดการไฟล์</a>';
+          mobileMenuHtml += '<a href="#" data-page="document-requests" class="nav-link text-warm-700 hover:text-warm-700 font-bold block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200">&#128221; ขอรับบริการข้อมูล</a>';
         }
 
         // ✅ เพิ่มเมนูเข้าสู่หน้าคลังแม่แบบเอกสารสำหรับผู้ใช้ที่ล็อกอินแล้ว
-        menuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📂 แม่แบบเอกสาร</a>`;
-        mobileMenuHtml += `<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📂 แม่แบบเอกสาร</a>`;
+        menuHtml += '<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">&#128194; แม่แบบเอกสาร</a>';
+        mobileMenuHtml += '<a href="#" data-page="templates-hub" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">&#128194; แม่แบบเอกสาร</a>';
 
-        menuHtml += `<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">📖 แนะนำการใช้งาน</a>`;
-        mobileMenuHtml += `<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">📖 แนะนำการใช้งาน</a>`;
+        menuHtml += '<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">&#128214; แนะนำการใช้งาน</a>';
+        mobileMenuHtml += '<a href="#" data-page="user-guide" class="nav-link text-warm-700 hover:text-accent block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 pl-6 border-l-2 border-transparent">&#128214; แนะนำการใช้งาน</a>';
       }
 
       if (mainMenu) mainMenu.innerHTML = menuHtml;
@@ -3613,16 +3613,14 @@
       let authHtml = '';
 
       if (appState.currentUser) {
-        authHtml = `
-        <span class="bg-sage text-white inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium shadow-sm mr-3">สวัสดี, ${appState.currentUser.FullName}</span>
-        <button id="logout-btn" class="bg-warm-100 text-warm-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-warm-200 border border-warm-200 transition-smooth">ออกจากระบบ</button>
-      `;
+        authHtml = '<span class="bg-sage text-white inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium shadow-sm mr-3">สวัสดี, ' + (appState.currentUser.FullName || '') + '</span>' +
+          '<button id="logout-btn" class="bg-warm-100 text-warm-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-warm-200 border border-warm-200 transition-smooth">ออกจากระบบ</button>';
       } else {
-        authHtml = `<button id="login-btn" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-400 shadow-sm transition-smooth">เข้าสู่ระบบ</button>`;
+        authHtml = '<button id="login-btn" class="bg-accent text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-accent-400 shadow-sm transition-smooth">เข้าสู่ระบบ</button>';
       }
 
       if (authContainer) authContainer.innerHTML = authHtml;
-      if (mobileAuthContainer) mobileAuthContainer.innerHTML = `<div class="px-5">${authHtml.replace('id="logout-btn"', 'id="mobile-logout-btn"').replace('id="login-btn"', 'id="mobile-login-btn"')}</div>`;
+      if (mobileAuthContainer) mobileAuthContainer.innerHTML = '<div class="px-5">' + authHtml.replace('id="logout-btn"', 'id="mobile-logout-btn"').replace('id="login-btn"', 'id="mobile-login-btn"') + '</div>';
     }
 
     function openLoginModal() {
