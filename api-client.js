@@ -6,6 +6,20 @@
 // 🔧 แก้ไข URL นี้เป็น URL ของ Web App ที่ deploy แล้ว
 const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwzR7m5mBxeM8CYnYUFUEHtlOUw3WGyHcfS8ZAMEcX1lMoXWK9bXsu1FuuXWx6d_Tzz0A/exec';
 
+// 🔍 ตรวจสอบว่ากำลังรันอยู่บน Google Apps Script โดยตรงหรือไม่
+const isNativeGAS = (function () {
+    try {
+        const host = window.location.hostname || '';
+        if (host.includes('googleusercontent.com') || host.includes('script.google.com')) {
+            return true;
+        }
+        if (window.google && window.google.script && window.google.script.run && typeof window.google.script.run.withSuccessHandler === 'function') {
+            return true;
+        }
+    } catch (e) {}
+    return false;
+})();
+
 /**
  * Send API request to Google Apps Script
  * @param {string} action - Function name to call
@@ -13,6 +27,23 @@ const API_BASE_URL = 'https://script.google.com/macros/s/AKfycbwzR7m5mBxeM8CYnYU
  * @returns {Promise<Object>} Response from API
  */
 async function callAPI(action, params = {}) {
+    // 🟢 กรณีรันบน Google Apps Script โดยตรง: เรียกผ่าน google.script.run ตรงๆ (ไม่มี CORS 100%)
+    if (isNativeGAS && window.google && window.google.script && window.google.script.run) {
+        return new Promise((resolve) => {
+            google.script.run
+                .withSuccessHandler((result) => resolve(result))
+                .withFailureHandler((err) => {
+                    console.error(`GAS API Error (${action}):`, err);
+                    resolve({
+                        success: false,
+                        message: 'GAS Error: ' + (err.message || String(err))
+                    });
+                })
+                .routeApiCall(action, params);
+        });
+    }
+
+    // 🔵 กรณีรันบน GitHub Pages หรือ Server ภายนอก: ส่ง fetch ข้ามโดเมนตามปกติ
     try {
         const response = await fetch(API_BASE_URL, {
             method: 'POST',
@@ -206,238 +237,240 @@ async function runAPI(apiFunc, successHandler, failureHandler = null) {
 }
 
 // =================================================================
-// SHIM: google.script.run Compatibility Layer
+// SHIM: google.script.run Compatibility Layer (ใช้งานเฉพาะเมื่อรันบน GitHub Pages)
 // =================================================================
 
-window.google = window.google || {};
-window.google.script = window.google.script || {};
+if (!isNativeGAS) {
+    window.google = window.google || {};
+    window.google.script = window.google.script || {};
 
-(function () {
-    function createRunnerResult(successHandler = null, failureHandler = null) {
-        return new Proxy({}, {
-            get(target, prop) {
-                if (prop === 'withSuccessHandler') {
-                    return (handler) => createRunnerResult(handler, failureHandler);
-                }
-
-                if (prop === 'withFailureHandler') {
-                    return (handler) => createRunnerResult(successHandler, handler);
-                }
-
-                return async function (...args) {
-                    try {
-                        let params = {};
-                        const funcName = prop;
-
-                        switch (funcName) {
-                            case 'login':
-                                params = { credentials: args[0] };
-                                break;
-                            case 'saveUser':
-                                params = { userData: args[0], callerId: args[1] };
-                                break;
-                            case 'saveGroup':
-                                params = { groupData: args[0], callerId: args[1] };
-                                break;
-                            case 'deleteUser':
-                                params = { UserId: args[0], callerId: args[1] };
-                                break;
-                            case 'deleteGroup':
-                                params = { GroupId: args[0], callerId: args[1] };
-                                break;
-                            case 'deleteFile':
-                                params = { fileId: args[0], deletedBy: args[1], callerId: args[2] };
-                                break;
-                            case 'deleteMultipleFiles':
-                                params = { fileIds: args[0], deletedBy: args[1], callerId: args[2] };
-                                break;
-                            case 'permanentDeleteFile':
-                                params = { recycleId: args[0], callerId: args[1] };
-                                break;
-                            case 'permanentDeleteMultipleFiles':
-                                params = { recycleIds: args[0], callerId: args[1] };
-                                break;
-                            case 'emptyRecycleBin':
-                                params = { callerId: args[0] };
-                                break;
-                            case 'restoreFile':
-                                params = { recycleId: args[0], callerId: args[1] };
-                                break;
-                            case 'restoreMultipleFiles':
-                                params = { recycleIds: args[0], callerId: args[1] };
-                                break;
-                            case 'requestDeleteFile':
-                                params = { fileId: args[0], requestedBy: args[1], reason: args[2] };
-                                break;
-                            case 'approveDeleteRequest':
-                                params = { requestId: args[0], approvedBy: args[1] };
-                                break;
-                            case 'rejectDeleteRequest':
-                                params = { requestId: args[0], rejectedBy: args[1] };
-                                break;
-                            case 'getDeleteRequests':
-                                params = { userId: args[0] };
-                                break;
-                            case 'saveThemeSetting':
-                                params = { theme: args[0], callerId: args[1] };
-                                break;
-                            case 'saveTableMode':
-                                params = { mode: args[0], callerId: args[1] };
-                                break;
-                            case 'saveTableAppearance':
-                                params = { settings: args[0], callerId: args[1] };
-                                break;
-                            case 'recordDownloadAndGetFileUrl':
-                                params = { fileId: args[0], driveFileId: args[1], score: args[2] };
-                                break;
-                            case 'previewFile':
-                                params = { driveFileId: args[0] };
-                                break;
-                            case 'getFileForPrint':
-                                params = { driveFileId: args[0] };
-                                break;
-                            case 'incrementDownload':
-                                params = { fileId: args[0] };
-                                break;
-                            case 'uploadFiles':
-                                params = { formObject: args[0] };
-                                break;
-                            case 'processImportFolder':
-                                params = { importData: args[0] };
-                                break;
-                            case 'importFromDriveBatch':
-                                params = {
-                                    groupId: args[0],
-                                    mainFolderId: args[1],
-                                    userId: args[2],
-                                    coopId: args[3],
-                                    importSessionId: args[4],
-                                    startIndex: args[5],
-                                    importMode: args[6],
-                                    skipFileNames: args[7],
-                                    replaceFiles: args[8]
-                                };
-                                break;
-                            case 'getImportProgress':
-                                params = { importSessionId: args[0] };
-                                break;
-                            case 'cancelImport':
-                                params = {};
-                                break;
-                            case 'checkImportDuplicates':
-                                params = { mainFolderId: args[0], coopId: args[1] };
-                                break;
-                            case 'getFileTypesByCooperative':
-                                params = { coopId: args[0] };
-                                break;
-                            case 'saveCoopDriveLink':
-                                params = { coopName: args[0], folderUrl: args[1] };
-                                break;
-                            case 'cleanDuplicateFiles':
-                                params = {};
-                                break;
-                            // ✅ Document Requests (ขอรับบริการข้อมูล)
-                            case 'getDocumentRequests':
-                                params = { userId: args[0] };
-                                break;
-                            case 'createDocumentRequest':
-                                params = { requestData: args[0], userId: args[1] };
-                                break;
-                            case 'getRequestDetail':
-                                params = { requestId: args[0], userId: args[1] };
-                                break;
-                            case 'replyToRequest':
-                                params = { requestId: args[0], message: args[1], linkedFileId: args[2], userId: args[3] };
-                                break;
-                            case 'updateRequestStatus':
-                                params = { requestId: args[0], status: args[1], linkedFileId: args[2], userId: args[3] };
-                                break;
-                            case 'deleteDocumentRequest':
-                                params = { requestId: args[0], userId: args[1] };
-                                break;
-                            case 'getFilesForReference':
-                                params = { userId: args[0] };
-                                break;
-                            case 'saveTemplate':
-                                params = { templateData: args[0], callerId: args[1] };
-                                break;
-                            case 'deleteTemplate':
-                                params = { templateId: args[0], callerId: args[1] };
-                                break;
-                            case 'downloadTemplate':
-                                params = { driveFileId: args[0] };
-                                break;
-                            case 'importCpdTemplate':
-                                params = { cpdData: args[0], callerId: args[1] };
-                                break;
-                            case 'getPendingDeleteRequestsByFileIds':
-                                params = { fileIds: args[0] };
-                                break;
-                            case 'getFileTypesByCooperative':
-                                params = { coopId: args[0] };
-                                break;
-                            // ✅ Title Edit Requests (ระบบเสนอแก้ไขชื่อเรื่อง)
-                            case 'requestTitleEdit':
-                                params = {
-                                    fileId: args[0],
-                                    oldTitle: args[1],
-                                    newTitle: args[2],
-                                    oldSubTitle: args[3],
-                                    newSubTitle: args[4],
-                                    userId: args[5],
-                                    requesterName: args[6],
-                                    reason: args[7],
-                                    oldHoldType: args[8],
-                                    newHoldType: args[9],
-                                    oldHoldDate: args[10],
-                                    newHoldDate: args[11]
-                                };
-                                break;
-                            case 'getTitleEditRequests':
-                                params = {};
-                                break;
-                             case 'approveTitleEditRequest':
-                                 params = { requestId: args[0], approverId: args[1] };
-                                 break;
-                             case 'rejectTitleEditRequest':
-                                 params = { requestId: args[0], approverId: args[1] };
-                                 break;
-                             case 'approveTitleEditRequestsBatch':
-                                 params = { requestIds: args[0], approverId: args[1] };
-                                 break;
-                             case 'rejectTitleEditRequestsBatch':
-                                 params = { requestIds: args[0], approverId: args[1] };
-                                 break;
-                            case 'getActivitySummary':
-                                params = { dateFrom: args[0], dateTo: args[1] };
-                                break;
-                            case 'getActivityLogs':
-                                params = { filters: args[0] };
-                                break;
-                            default:
-                                if (args.length > 0) {
-                                    params = { args };
-                                }
-                        }
-
-                        // Security: Removed console.log to prevent exposing sensitive data
-                        const result = await callAPI(funcName, params);
-
-                        if (successHandler) {
-                            successHandler(result);
-                        }
-                    } catch (error) {
-                        console.error(`[API SHIM] Error in ${prop}:`, error);
-                        if (failureHandler) {
-                            failureHandler(error);
-                        }
+    (function () {
+        function createRunnerResult(successHandler = null, failureHandler = null) {
+            return new Proxy({}, {
+                get(target, prop) {
+                    if (prop === 'withSuccessHandler') {
+                        return (handler) => createRunnerResult(handler, failureHandler);
                     }
-                };
-            }
-        });
-    }
 
-    window.google.script.run = createRunnerResult();
+                    if (prop === 'withFailureHandler') {
+                        return (handler) => createRunnerResult(successHandler, handler);
+                    }
 
-    // API Client shim loaded
-})();
+                    return async function (...args) {
+                        try {
+                            let params = {};
+                            const funcName = prop;
+
+                            switch (funcName) {
+                                case 'login':
+                                    params = { credentials: args[0] };
+                                    break;
+                                case 'saveUser':
+                                    params = { userData: args[0], callerId: args[1] };
+                                    break;
+                                case 'saveGroup':
+                                    params = { groupData: args[0], callerId: args[1] };
+                                    break;
+                                case 'deleteUser':
+                                    params = { UserId: args[0], callerId: args[1] };
+                                    break;
+                                case 'deleteGroup':
+                                    params = { GroupId: args[0], callerId: args[1] };
+                                    break;
+                                case 'deleteFile':
+                                    params = { fileId: args[0], deletedBy: args[1], callerId: args[2] };
+                                    break;
+                                case 'deleteMultipleFiles':
+                                    params = { fileIds: args[0], deletedBy: args[1], callerId: args[2] };
+                                    break;
+                                case 'permanentDeleteFile':
+                                    params = { recycleId: args[0], callerId: args[1] };
+                                    break;
+                                case 'permanentDeleteMultipleFiles':
+                                    params = { recycleIds: args[0], callerId: args[1] };
+                                    break;
+                                case 'emptyRecycleBin':
+                                    params = { callerId: args[0] };
+                                    break;
+                                case 'restoreFile':
+                                    params = { recycleId: args[0], callerId: args[1] };
+                                    break;
+                                case 'restoreMultipleFiles':
+                                    params = { recycleIds: args[0], callerId: args[1] };
+                                    break;
+                                case 'requestDeleteFile':
+                                    params = { fileId: args[0], requestedBy: args[1], reason: args[2] };
+                                    break;
+                                case 'approveDeleteRequest':
+                                    params = { requestId: args[0], approvedBy: args[1] };
+                                    break;
+                                case 'rejectDeleteRequest':
+                                    params = { requestId: args[0], rejectedBy: args[1] };
+                                    break;
+                                case 'getDeleteRequests':
+                                    params = { userId: args[0] };
+                                    break;
+                                case 'saveThemeSetting':
+                                    params = { theme: args[0], callerId: args[1] };
+                                    break;
+                                case 'saveTableMode':
+                                    params = { mode: args[0], callerId: args[1] };
+                                    break;
+                                case 'saveTableAppearance':
+                                    params = { settings: args[0], callerId: args[1] };
+                                    break;
+                                case 'recordDownloadAndGetFileUrl':
+                                    params = { fileId: args[0], driveFileId: args[1], score: args[2] };
+                                    break;
+                                case 'previewFile':
+                                    params = { driveFileId: args[0] };
+                                    break;
+                                case 'getFileForPrint':
+                                    params = { driveFileId: args[0] };
+                                    break;
+                                case 'incrementDownload':
+                                    params = { fileId: args[0] };
+                                    break;
+                                case 'uploadFiles':
+                                    params = { formObject: args[0] };
+                                    break;
+                                case 'processImportFolder':
+                                    params = { importData: args[0] };
+                                    break;
+                                case 'importFromDriveBatch':
+                                    params = {
+                                        groupId: args[0],
+                                        mainFolderId: args[1],
+                                        userId: args[2],
+                                        coopId: args[3],
+                                        importSessionId: args[4],
+                                        startIndex: args[5],
+                                        importMode: args[6],
+                                        skipFileNames: args[7],
+                                        replaceFiles: args[8]
+                                    };
+                                    break;
+                                case 'getImportProgress':
+                                    params = { importSessionId: args[0] };
+                                    break;
+                                case 'cancelImport':
+                                    params = {};
+                                    break;
+                                case 'checkImportDuplicates':
+                                    params = { mainFolderId: args[0], coopId: args[1] };
+                                    break;
+                                case 'getFileTypesByCooperative':
+                                    params = { coopId: args[0] };
+                                    break;
+                                case 'saveCoopDriveLink':
+                                    params = { coopName: args[0], folderUrl: args[1] };
+                                    break;
+                                case 'cleanDuplicateFiles':
+                                    params = {};
+                                    break;
+                                // ✅ Document Requests (ขอรับบริการข้อมูล)
+                                case 'getDocumentRequests':
+                                    params = { userId: args[0] };
+                                    break;
+                                case 'createDocumentRequest':
+                                    params = { requestData: args[0], userId: args[1] };
+                                    break;
+                                case 'getRequestDetail':
+                                    params = { requestId: args[0], userId: args[1] };
+                                    break;
+                                case 'replyToRequest':
+                                    params = { requestId: args[0], message: args[1], linkedFileId: args[2], userId: args[3] };
+                                    break;
+                                case 'updateRequestStatus':
+                                    params = { requestId: args[0], status: args[1], linkedFileId: args[2], userId: args[3] };
+                                    break;
+                                case 'deleteDocumentRequest':
+                                    params = { requestId: args[0], userId: args[1] };
+                                    break;
+                                case 'getFilesForReference':
+                                    params = { userId: args[0] };
+                                    break;
+                                case 'saveTemplate':
+                                    params = { templateData: args[0], callerId: args[1] };
+                                    break;
+                                case 'deleteTemplate':
+                                    params = { templateId: args[0], callerId: args[1] };
+                                    break;
+                                case 'downloadTemplate':
+                                    params = { driveFileId: args[0] };
+                                    break;
+                                case 'importCpdTemplate':
+                                    params = { cpdData: args[0], callerId: args[1] };
+                                    break;
+                                case 'getPendingDeleteRequestsByFileIds':
+                                    params = { fileIds: args[0] };
+                                    break;
+                                case 'getFileTypesByCooperative':
+                                    params = { coopId: args[0] };
+                                    break;
+                                // ✅ Title Edit Requests (ระบบเสนอแก้ไขชื่อเรื่อง)
+                                case 'requestTitleEdit':
+                                    params = {
+                                        fileId: args[0],
+                                        oldTitle: args[1],
+                                        newTitle: args[2],
+                                        oldSubTitle: args[3],
+                                        newSubTitle: args[4],
+                                        userId: args[5],
+                                        requesterName: args[6],
+                                        reason: args[7],
+                                        oldHoldType: args[8],
+                                        newHoldType: args[9],
+                                        oldHoldDate: args[10],
+                                        newHoldDate: args[11]
+                                    };
+                                    break;
+                                case 'getTitleEditRequests':
+                                    params = {};
+                                    break;
+                                case 'approveTitleEditRequest':
+                                    params = { requestId: args[0], approverId: args[1] };
+                                    break;
+                                case 'rejectTitleEditRequest':
+                                    params = { requestId: args[0], approverId: args[1] };
+                                    break;
+                                case 'approveTitleEditRequestsBatch':
+                                    params = { requestIds: args[0], approverId: args[1] };
+                                    break;
+                                case 'rejectTitleEditRequestsBatch':
+                                    params = { requestIds: args[0], approverId: args[1] };
+                                    break;
+                                case 'getActivitySummary':
+                                    params = { dateFrom: args[0], dateTo: args[1] };
+                                    break;
+                                case 'getActivityLogs':
+                                    params = { filters: args[0] };
+                                    break;
+                                default:
+                                    if (args.length > 0) {
+                                        params = { args };
+                                    }
+                            }
+
+                            // Security: Removed console.log to prevent exposing sensitive data
+                            const result = await callAPI(funcName, params);
+
+                            if (successHandler) {
+                                successHandler(result);
+                            }
+                        } catch (error) {
+                            console.error(`[API SHIM] Error in ${prop}:`, error);
+                            if (failureHandler) {
+                                failureHandler(error);
+                            }
+                        }
+                    };
+                }
+            });
+        }
+
+        window.google.script.run = createRunnerResult();
+
+        // API Client shim loaded
+    })();
+}
