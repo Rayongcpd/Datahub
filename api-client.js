@@ -21,7 +21,31 @@ const isNativeGAS = (function () {
 })();
 
 /**
- * Send API request to Google Apps Script
+ * Configuration for Auto-Retry and Connection Resilience
+ */
+const API_RETRY_CONFIG = {
+    defaultMaxRetries: 5,         // ทั่วไปลองสูงสุด 5 ครั้ง
+    initialLoadMaxRetries: 25,    // โหลดครั้งแรก (getInitialData) ลองสูงสุด 25 ครั้งจนกว่า GAS จะพร้อม
+    initialDelayMs: 1500,         // เริ่มต้นหน่วงเวลา 1.5 วินาที
+    backoffFactor: 1.4,           // ตัวคูณเวลาหน่วง
+    maxDelayMs: 7000,             // หน่วงเวลาสูงสุดไม่เกิน 7 วินาที
+    requestTimeoutMs: 30000       // Timeout ต่อ request 30 วินาที
+};
+
+// Global resolver for manual immediate retry
+let activeManualRetryResolver = null;
+window.retryConnectionNow = function () {
+    if (typeof activeManualRetryResolver === 'function') {
+        const resolver = activeManualRetryResolver;
+        activeManualRetryResolver = null;
+        resolver();
+        return true;
+    }
+    return false;
+};
+
+/**
+ * Send API request to Google Apps Script with Smart Auto-Retry
  * @param {string} action - Function name to call
  * @param {Object} params - Parameters to pass
  * @returns {Promise<Object>} Response from API
@@ -43,33 +67,119 @@ async function callAPI(action, params = {}) {
         });
     }
 
-    // 🔵 กรณีรันบน GitHub Pages หรือ Server ภายนอก: ส่ง fetch ข้ามโดเมนตามปกติ
-    try {
-        const response = await fetch(API_BASE_URL, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'text/plain',
-            },
-            body: JSON.stringify({
-                action: action,
-                params: params
-            })
-        });
+    // 🔵 กรณีรันบน GitHub Pages: พยายามเชื่อมต่อและ Auto-Retry จนกว่าจะได้
+    const isCriticalBootstrap = (action === 'getInitialData');
+    const maxRetries = isCriticalBootstrap ? API_RETRY_CONFIG.initialLoadMaxRetries : API_RETRY_CONFIG.defaultMaxRetries;
+    let attempt = 0;
+    let lastError = null;
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    while (attempt < maxRetries) {
+        attempt++;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), API_RETRY_CONFIG.requestTimeoutMs);
+
+        try {
+            // ป้องกัน Cache และปัญหา redirect 302 ค้างของบราวเซอร์
+            const requestUrl = `${API_BASE_URL}${API_BASE_URL.includes('?') ? '&' : '?'}_t=${Date.now()}_${attempt}`;
+
+            const response = await fetch(requestUrl, {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                redirect: 'follow',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify({
+                    action: action,
+                    params: params,
+                    _attempt: attempt,
+                    _timestamp: Date.now()
+                }),
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            // หาก Apps Script ส่งข้อมูลกลับมาสำเร็จ
+            if (data && typeof data === 'object') {
+                if (attempt > 1) {
+                    console.info(`%c[Datahub API] เชื่อมต่อสำเร็จในครั้งที่ ${attempt} (${action})`, 'color: #10b981; font-weight: bold;');
+                    window.dispatchEvent(new CustomEvent('datahub:connection-recovered', {
+                        detail: { action, attempt }
+                    }));
+                }
+                return data;
+            } else {
+                throw new Error('รูปแบบข้อมูลจากเซิร์ฟเวอร์ไม่ถูกต้อง');
+            }
+
+        } catch (error) {
+            clearTimeout(timeoutId);
+            lastError = error;
+            const isAbort = error.name === 'AbortError';
+            const errorMsg = isAbort ? 'การเชื่อมต่อหมดเวลา (Timeout)' : (error.message || String(error));
+
+            console.warn(`[Datahub API] การเรียก ${action} ครั้งที่ ${attempt}/${maxRetries} ไม่สำเร็จ: ${errorMsg}`);
+
+            if (attempt < maxRetries) {
+                // คำนวณเวลารอแบบ Exponential Backoff + Jitter
+                const calculatedDelay = Math.min(
+                    API_RETRY_CONFIG.maxDelayMs,
+                    API_RETRY_CONFIG.initialDelayMs * Math.pow(API_RETRY_CONFIG.backoffFactor, attempt - 1)
+                );
+                const jitter = Math.floor(Math.random() * 400);
+                const delayMs = Math.round(calculatedDelay + jitter);
+
+                // แจ้ง UI ให้ทราบเพื่อแสดงสถานะหรือนับถอยหลัง
+                window.dispatchEvent(new CustomEvent('datahub:connection-retry', {
+                    detail: {
+                        action: action,
+                        attempt: attempt,
+                        maxRetries: maxRetries,
+                        delayMs: delayMs,
+                        isCriticalBootstrap: isCriticalBootstrap,
+                        error: errorMsg
+                    }
+                }));
+
+                // รอหน่วงเวลา หรือถ้าผู้ใช้กด "ลองทันที" ให้ resolve ทันที
+                await new Promise((resolve) => {
+                    const timer = setTimeout(() => {
+                        activeManualRetryResolver = null;
+                        resolve();
+                    }, delayMs);
+
+                    activeManualRetryResolver = () => {
+                        clearTimeout(timer);
+                        resolve();
+                    };
+                });
+            }
         }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(`API Error (${action}):`, error);
-        return {
-            success: false,
-            message: 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + error.message
-        };
     }
+
+    // กรณีพยายามจนครบแล้วยังไม่ได้
+    console.error(`[Datahub API] ล้มเหลวหลังจากพยายาม ${maxRetries} ครั้ง (${action}):`, lastError);
+    window.dispatchEvent(new CustomEvent('datahub:connection-failed', {
+        detail: {
+            action: action,
+            attempts: maxRetries,
+            error: lastError ? (lastError.message || String(lastError)) : 'Unknown error',
+            isCriticalBootstrap: isCriticalBootstrap
+        }
+    }));
+
+    return {
+        success: false,
+        message: `ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้หลังจากพยายาม ${maxRetries} ครั้ง: ` + (lastError ? lastError.message : 'Unknown')
+    };
 }
 
 // =================================================================

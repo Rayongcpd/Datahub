@@ -555,20 +555,78 @@
 
 
   <div id="loading-overlay"
-    class="fixed inset-0 bg-white/95 z-[100] flex flex-col items-center justify-center hidden">
+    class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[100] flex flex-col items-center justify-center p-4 transition-all duration-300">
 
-    <!-- โลโก้ -->
-    <img src="https://cpd.go.th/images/logo_cpd_big.png" alt="โลโก้สหกรณ์" class="w-24 h-24 mb-6 object-contain">
+    <div class="flex flex-col items-center max-w-sm w-full text-center">
+      <!-- โลโก้พร้อมวงแหวนสถานะ -->
+      <div class="relative mb-4">
+        <img src="https://cpd.go.th/images/logo_cpd_big.png" alt="โลโก้สหกรณ์" class="w-20 h-20 object-contain drop-shadow-sm">
+        <div id="loading-spinner-ring" class="absolute -inset-2 border-2 border-accent/20 border-t-accent rounded-full animate-spin"></div>
+      </div>
 
-    <!-- ข้อความโหลดแบบมินิมอล -->
-    <div class="text-warm-500 text-sm font-medium tracking-wide animate-pulse">
-      กำลังโหลดข้อมูล...
+      <!-- หัวข้อระบบ -->
+      <h3 class="text-warm-800 font-semibold text-base mb-1">คลังไฟล์เอกสารสหกรณ์</h3>
+      
+      <!-- ข้อความโหลดสถานะ -->
+      <div id="loading-status-text" class="text-warm-600 text-sm font-medium transition-all">
+        กำลังเชื่อมต่อและโหลดข้อมูลระบบ...
+      </div>
+
+      <!-- แถบโหลด -->
+      <div class="mt-4 w-56 h-1.5 bg-warm-200 rounded-full overflow-hidden">
+        <div id="loading-progress-bar" class="h-full bg-accent rounded-full transition-all duration-300 animate-[shimmer_1.5s_infinite]" style="width: 50%;"></div>
+      </div>
+
+      <!-- การ์ดสถานะพยายามเชื่อมต่อใหม่ (แสดงเมื่อระบบกำลัง Auto-Retry) -->
+      <div id="loading-retry-card" class="hidden mt-5 w-full bg-amber-50/95 border border-amber-200 rounded-2xl p-4 shadow-sm text-left transition-all">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold text-amber-900" id="loading-retry-heading">กำลังพยายามเชื่อมต่อใหม่...</p>
+              <span id="loading-retry-badge" class="text-[10px] font-bold bg-amber-200/90 text-amber-900 px-2 py-0.5 rounded-full">ครั้งที่ 1</span>
+            </div>
+            <p id="loading-retry-subtext" class="text-[11px] text-amber-700 mt-1 leading-relaxed">
+              Google Apps Script กำลังเตรียมเซิร์ฟเวอร์ จะลองใหม่อัตโนมัติใน <span id="loading-retry-countdown" class="font-bold text-amber-900">2</span> วินาที
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2.5 border-t border-amber-200/70 flex items-center justify-between gap-2">
+          <span class="text-[11px] text-warm-500">ไม่ต้องรีเฟรชหน้าจอ ระบบจะเชื่อมต่อให้อัตโนมัติ</span>
+          <button type="button" onclick="window.retryConnectionNow && window.retryConnectionNow()" class="inline-flex items-center gap-1 px-3 py-1 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white rounded-lg text-xs font-medium shadow-sm transition-all">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            ลองทันที
+          </button>
+        </div>
+      </div>
+
+      <!-- การ์ดข้อผิดพลาดเมื่อพยายามจนครบแล้วยังไม่ได้ (แสดงปุ่มให้ผู้ใช้ลองใหม่) -->
+      <div id="loading-failed-card" class="hidden mt-5 w-full bg-red-50 border border-red-200 rounded-2xl p-4 shadow-sm text-center transition-all">
+        <div class="w-10 h-10 mx-auto rounded-full bg-red-100 flex items-center justify-center text-red-600 mb-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        </div>
+        <p class="text-xs font-semibold text-red-900">ยังไม่สามารถเชื่อมต่อฐานข้อมูลได้ในขณะนี้</p>
+        <p id="loading-failed-reason" class="text-[11px] text-red-700 mt-1">สัญญาณเครือข่ายหรือเซิร์ฟเวอร์ Google ตอบรับช้าผิดปกติ</p>
+        <button type="button" onclick="window.startInitialLoad && window.startInitialLoad()" class="mt-3 inline-flex items-center gap-1.5 px-4 py-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          ลองเชื่อมต่อใหม่อีกครั้ง
+        </button>
+      </div>
+
     </div>
+  </div>
 
-    <!-- แถบโหลด -->
-    <div class="mt-4 w-48 h-1 bg-warm-200 rounded-full overflow-hidden">
-      <div class="h-full bg-accent rounded-full animate-[shimmer_1.5s_infinite]" style="width: 60%;"></div>
-    </div>
+  <!-- แถบลอยแจ้งเตือนการเชื่อมต่อใหม่ขณะใช้งานในระบบ (Non-Bootstrap Floating Pill) -->
+  <div id="datahub-retry-pill" class="fixed top-4 left-1/2 -translate-x-1/2 z-[110] hidden items-center gap-2.5 px-4 py-2 bg-warm-900/90 backdrop-blur-md text-white text-xs font-medium rounded-full shadow-xl border border-warm-700 transition-all duration-300">
+    <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+    <span id="datahub-retry-pill-text">กำลังพยายามเชื่อมต่อใหม่...</span>
+    <button type="button" onclick="window.retryConnectionNow && window.retryConnectionNow()" class="ml-1 px-2.5 py-0.5 bg-amber-500 hover:bg-amber-600 text-warm-950 font-semibold rounded-full text-[11px] transition-all">ลองทันที</button>
   </div>
 
 
@@ -3394,19 +3452,104 @@
               </span>`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // =================================================================
+    // CONNECTION RESILIENCE & INITIAL LOAD
+    // =================================================================
+    window.startInitialLoad = function() {
+      const retryCard = document.getElementById('loading-retry-card');
+      const failedCard = document.getElementById('loading-failed-card');
+      const statusText = document.getElementById('loading-status-text');
+      if (retryCard) retryCard.classList.add('hidden');
+      if (failedCard) failedCard.classList.add('hidden');
+      if (statusText) statusText.textContent = 'กำลังเชื่อมต่อและโหลดข้อมูลระบบ...';
       showLoading();
+
       google.script.run
         .withSuccessHandler(onInitialDataSuccess)
         .withFailureHandler(onFailure)
         .getInitialData();
+    };
 
+    // Listeners for Smart Auto-Retry events from api-client.js
+    window.addEventListener('datahub:connection-retry', (e) => {
+      const { action, attempt, maxRetries, delayMs, isCriticalBootstrap } = e.detail;
+      const overlay = document.getElementById('loading-overlay');
+      const isOverlayVisible = overlay && !overlay.classList.contains('hidden');
+
+      if (isOverlayVisible || isCriticalBootstrap) {
+        const retryCard = document.getElementById('loading-retry-card');
+        const retryBadge = document.getElementById('loading-retry-badge');
+        const retryCountdown = document.getElementById('loading-retry-countdown');
+        const statusText = document.getElementById('loading-status-text');
+
+        if (retryCard) retryCard.classList.remove('hidden');
+        if (retryBadge) retryBadge.textContent = `ครั้งที่ ${attempt}/${maxRetries}`;
+        if (statusText) statusText.textContent = `เซิร์ฟเวอร์กำลังเตรียมความพร้อม... (ครั้งที่ ${attempt})`;
+
+        let secondsLeft = Math.ceil(delayMs / 1000);
+        if (retryCountdown) retryCountdown.textContent = secondsLeft;
+
+        clearInterval(window._retryCountdownInterval);
+        window._retryCountdownInterval = setInterval(() => {
+          secondsLeft--;
+          if (retryCountdown) retryCountdown.textContent = Math.max(1, secondsLeft);
+          if (secondsLeft <= 0) clearInterval(window._retryCountdownInterval);
+        }, 1000);
+      } else {
+        const pill = document.getElementById('datahub-retry-pill');
+        const pillText = document.getElementById('datahub-retry-pill-text');
+        if (pill) {
+          pill.classList.remove('hidden');
+          pill.classList.add('flex');
+        }
+        if (pillText) {
+          pillText.textContent = `กำลังส่งข้อมูลใหม่ (${attempt}/${maxRetries})...`;
+        }
+      }
+    });
+
+    window.addEventListener('datahub:connection-recovered', (e) => {
+      clearInterval(window._retryCountdownInterval);
+      const retryCard = document.getElementById('loading-retry-card');
+      if (retryCard) retryCard.classList.add('hidden');
+
+      const pill = document.getElementById('datahub-retry-pill');
+      if (pill) {
+        pill.classList.add('hidden');
+        pill.classList.remove('flex');
+      }
+
+      showToast('เชื่อมต่อฐานข้อมูลสำเร็จเรียบร้อย', 'success');
+    });
+
+    window.addEventListener('datahub:connection-failed', (e) => {
+      clearInterval(window._retryCountdownInterval);
+      const { isCriticalBootstrap, error } = e.detail;
+      if (isCriticalBootstrap) {
+        const retryCard = document.getElementById('loading-retry-card');
+        const failedCard = document.getElementById('loading-failed-card');
+        const failedReason = document.getElementById('loading-failed-reason');
+        if (retryCard) retryCard.classList.add('hidden');
+        if (failedCard) failedCard.classList.remove('hidden');
+        if (failedReason && error) failedReason.textContent = error;
+      } else {
+        const pill = document.getElementById('datahub-retry-pill');
+        if (pill) {
+          pill.classList.add('hidden');
+          pill.classList.remove('flex');
+        }
+        showToast('การเชื่อมต่อขัดข้อง: ' + error, 'error');
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      window.startInitialLoad();
       setupEventListeners();
       lucide.createIcons();
     });
 
     function onInitialDataSuccess(response) {
-      if (response.success) {
+      if (response && response.success) {
         appState.allGroups = response.data.groups;
         appState.allFiles = response.data.files;
         appState.allTypes = response.data.types;
@@ -3429,8 +3572,6 @@
           const fields = ['title', 'subtitle', 'hold', 'type', 'p-title', 'p-subtitle', 'p-hold', 'p-type'];
 
           fields.forEach(field => {
-            // Apply saved setting or default fallback logic could be here if needed 
-            // but CSS :root has reasonable defaults, so we only override if value exists
             if (settings[`${field}Size`]) document.documentElement.style.setProperty(`--${field}-size`, settings[`${field}Size`]);
             if (settings[`${field}Color`]) document.documentElement.style.setProperty(`--${field}-color`, settings[`${field}Color`]);
             if (settings[`${field}Weight`]) document.documentElement.style.setProperty(`--${field}-weight`, settings[`${field}Weight`]);
@@ -3451,15 +3592,22 @@
 
         renderAll();
 
-        // ✅ เพิ่ม 2 บรรทัดนี้
         populateImportGroups();
         populateImportUsers();
         populateCoopLists();
 
+        hideLoading();
       } else {
-        showToast(response.message, 'error');
+        const errorMsg = (response && response.message) ? response.message : 'ไม่สามารถโหลดข้อมูลระบบได้';
+        showToast(errorMsg, 'error');
+
+        const retryCard = document.getElementById('loading-retry-card');
+        const failedCard = document.getElementById('loading-failed-card');
+        const failedReason = document.getElementById('loading-failed-reason');
+        if (retryCard) retryCard.classList.add('hidden');
+        if (failedCard) failedCard.classList.remove('hidden');
+        if (failedReason) failedReason.textContent = errorMsg;
       }
-      hideLoading();
     }
 
     function populateCoopLists() {
@@ -3468,19 +3616,21 @@
       if (adminList) adminList.innerHTML = '';
       if (userList) userList.innerHTML = '';
       appState.allCoops.forEach(c => {
-        // เราจะแสดงชื่อเต็มให้ผู้ใช้เลือก แต่มี CoopID ใน data attribute (datalist doesn't preserve data-id on selection)
-        // ดังนั้น เราจะ lookup โดยชื่อเมื่ออ่านค่าจาก input
         const option = `<option value="${c.CoopName}">`;
         if (adminList) adminList.innerHTML += option;
         if (userList) userList.innerHTML += option;
       });
     }
 
-
-
     function onFailure(error) {
-      hideLoading();
-      showToast('เกิดข้อผิดพลาด: ' + error.message, 'error');
+      const errorMsg = (error && error.message) ? error.message : String(error);
+      const retryCard = document.getElementById('loading-retry-card');
+      const failedCard = document.getElementById('loading-failed-card');
+      const failedReason = document.getElementById('loading-failed-reason');
+      if (retryCard) retryCard.classList.add('hidden');
+      if (failedCard) failedCard.classList.remove('hidden');
+      if (failedReason) failedReason.textContent = errorMsg;
+      showToast('เกิดข้อผิดพลาด: ' + errorMsg, 'error');
       console.error(error);
     }
 
