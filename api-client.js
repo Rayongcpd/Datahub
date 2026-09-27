@@ -29,7 +29,8 @@ const API_RETRY_CONFIG = {
     initialDelayMs: 1500,         // เริ่มต้นหน่วงเวลา 1.5 วินาที
     backoffFactor: 1.4,           // ตัวคูณเวลาหน่วง
     maxDelayMs: 7000,             // หน่วงเวลาสูงสุดไม่เกิน 7 วินาที
-    requestTimeoutMs: 30000       // Timeout ต่อ request 30 วินาที
+    requestTimeoutMs: 30000,      // Timeout ต่อ request ทั่วไป 30 วินาที
+    heavyRequestTimeoutMs: 120000 // Timeout สำหรับงานสแกนโฟลเดอร์/ตรวจสอบไฟล์/นำเข้า 120 วินาที
 };
 
 // Global resolver for manual immediate retry
@@ -70,13 +71,17 @@ async function callAPI(action, params = {}) {
     // 🔵 กรณีรันบน GitHub Pages: พยายามเชื่อมต่อและ Auto-Retry จนกว่าจะได้
     const isCriticalBootstrap = (action === 'getInitialData');
     const maxRetries = isCriticalBootstrap ? API_RETRY_CONFIG.initialLoadMaxRetries : API_RETRY_CONFIG.defaultMaxRetries;
+    const HEAVY_ACTIONS = ['checkImportDuplicates', 'importFromDriveBatch', 'processImportFolder', 'uploadFiles'];
+    const currentTimeoutMs = HEAVY_ACTIONS.includes(action) 
+        ? (API_RETRY_CONFIG.heavyRequestTimeoutMs || 120000) 
+        : API_RETRY_CONFIG.requestTimeoutMs;
     let attempt = 0;
     let lastError = null;
 
     while (attempt < maxRetries) {
         attempt++;
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), API_RETRY_CONFIG.requestTimeoutMs);
+        const timeoutId = setTimeout(() => controller.abort(), currentTimeoutMs);
 
         try {
             // ป้องกัน Cache และปัญหา redirect 302 ค้างของบราวเซอร์

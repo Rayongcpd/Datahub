@@ -8515,468 +8515,287 @@ function renderUsersTable() {
         confirmButtonColor: '#b85c5c',
         allowOutsideClick: false,
       }).then(result => {
-        if (!result.isConfirmed) return;
-        showLoading();
-        google.script.run
-          .withSuccessHandler(res => {
-            hideLoading();
-            if (res.success) {
-              showToast(res.message, 'success');
-              const req = (appState.activeTitleRequests || []).find(r => r.RequestID === requestId);
-              if (req) {
-                delete appState.pendingTitleEditRequests[req.FileID];
-              }
-              renderTitleRequestsTable();
-              renderAll();
-            } else {
-              showToast(res.message, 'error');
-            }
-          })
-          .withFailureHandler(err => {
-            hideLoading();
-            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
-          })
-          .rejectTitleEditRequest(requestId, appState.currentUser.UserID);
-      });
+        if (!result.i    function filterFileDropdown() {
+      const searchTerm = document.getElementById('req-reply-file-search').value.toLowerCase();
+      const filtered = referenceFilesData.filter(f => f.Title.toLowerCase().includes(searchTerm)).slice(0, 50);
+      renderFileDropdown(filtered);
     }
 
-    /**
-     * เลือก/ยกเลิกเลือก กล่อง Checkbox ทั้งตาราง
-     */
-    function toggleSelectAllTitleRequests(master) {
-      const checkboxes = document.querySelectorAll('.title-request-checkbox');
-      checkboxes.forEach(cb => {
-        cb.checked = master.checked;
-      });
-      onTitleRequestCheckChange();
-    }
-
-    /**
-     * ตรวจจับการเปลี่ยนแปลงของการเลือก Checkbox เพื่อเปิด/ปิดปุ่ม Bulk Actions
-     */
-    function onTitleRequestCheckChange() {
-      const checkboxes = document.querySelectorAll('.title-request-checkbox');
-      const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
-      
-      const bulkActions = document.getElementById('title-requests-bulk-actions');
-      const countLabel = document.getElementById('title-requests-selected-count');
-      const selectAllCheckbox = document.getElementById('title-requests-select-all');
-
-      if (checkedBoxes.length > 0) {
-        if (bulkActions) {
-          bulkActions.classList.remove('hidden');
-          bulkActions.classList.add('flex');
-        }
-        if (countLabel) countLabel.textContent = checkedBoxes.length;
-      } else {
-        if (bulkActions) {
-          bulkActions.classList.remove('flex');
-          bulkActions.classList.add('hidden');
-        }
+    function selectFileReference(id, title) {
+      const fileInput = document.getElementById('req-reply-file');
+      const fileText = document.getElementById('req-reply-file-text');
+      if (fileInput) fileInput.value = id;
+      if (fileText) {
+        fileText.textContent = id ? title : '📎 อ้างอิงไฟล์';
+        fileText.className = id ? 'truncate text-accent font-medium w-36 inline-block' : 'truncate text-warm-400 w-36 inline-block';
       }
 
-      // ปรับปรุงปุ่ม Select All ให้สะท้อนความเป็นจริง
-      if (selectAllCheckbox) {
-        selectAllCheckbox.checked = checkedBoxes.length === checkboxes.length && checkboxes.length > 0;
+      const dropdown = document.getElementById('req-reply-file-dropdown');
+      const icon = document.getElementById('req-reply-file-icon');
+      if (dropdown && !dropdown.classList.contains('hidden')) {
+        dropdown.classList.add('hidden');
+        dropdown.classList.remove('flex');
+        if (icon) icon.classList.add('rotate-180');
       }
     }
 
-    /**
-     * อนุมัติรายการที่เลือกทั้งหมดแบบกลุ่ม
-     */
-    function approveSelectedTitleRequests() {
-      if (!appState.currentUser || appState.currentUser.Role !== 'admin') {
-        showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
+    document.addEventListener('click', function (event) {
+      const container = document.getElementById('req-reply-file-container');
+      const dropdown = document.getElementById('req-reply-file-dropdown');
+      const icon = document.getElementById('req-reply-file-icon');
+      if (container && !container.contains(event.target)) {
+        if (dropdown && !dropdown.classList.contains('hidden')) {
+          dropdown.classList.add('hidden');
+          dropdown.classList.remove('flex');
+          if (icon) icon.classList.add('rotate-180');
+        }
+      }
+    });
+
+    function sendRequestReply() {
+      const msgInput = document.getElementById('req-reply-message');
+      const fileInput = document.getElementById('req-reply-file');
+
+      if (!msgInput || !fileInput) {
+        showToast('ไม่พบช่องกรอกข้อความ', 'error');
         return;
       }
 
-      const checkboxes = document.querySelectorAll('.title-request-checkbox');
-      const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
-      const requestIds = checkedBoxes.map(cb => cb.value);
+      const message = msgInput.value.trim();
+      const linkedFileId = fileInput.value;
 
-      if (requestIds.length === 0) {
-        showToast('กรุณาเลือกรายการที่ต้องการอนุมัติ', 'warning');
+      if (!message && !linkedFileId) {
+        showToast('กรุณาพิมพ์ข้อความหรือเลือกไฟล์อ้างอิง', 'warning');
         return;
       }
 
-      // ดึงรายละเอียดข้อมูลที่เลือกเพื่อแสดงสรุปให้ผู้ใช้
-      const selectedReqs = (appState.activeTitleRequests || []).filter(r => requestIds.includes(r.RequestID));
-      const summaryHtml = selectedReqs.map(r => {
-        let oldHoldText = '';
-        if (r.OldHoldType || r.OldHoldDate) {
-          const formattedOldDate = r.OldHoldDate ? formatDateThaiJS(r.OldHoldDate) : '';
-          const oldStatusText = r.OldHoldType ? r.OldHoldType + ' ' : '';
-          oldHoldText = ` (${oldStatusText}${formattedOldDate})`.trim();
-        }
-        let newHoldText = '';
-        if (r.NewHoldType || r.NewHoldDate) {
-          const formattedNewDate = r.NewHoldDate ? formatDateThaiJS(r.NewHoldDate) : '';
-          const newStatusText = r.NewHoldType ? r.NewHoldType + ' ' : '';
-          newHoldText = ` (${newStatusText}${formattedNewDate})`.trim();
-        }
+      // ✅ Optimistic UI Update - แสดงข้อความทันทีก่อน server ตอบกลับ
+      const chatEl = document.getElementById('req-detail-chat');
+      if (!chatEl) return;
 
-        return `<div class="p-2 border-b border-warm-100 text-left text-xs">
-          <div class="font-semibold text-warm-700 leading-tight">${escapeHtml(r.OldTitle)}${oldHoldText ? `<span class="text-warm-400 font-normal"> ${escapeHtml(oldHoldText)}</span>` : ''}</div>
-          <div class="text-accent font-semibold mt-1 flex items-center gap-1">
-            <svg class="w-3 h-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
-            ${escapeHtml(r.NewTitle)}${newHoldText ? `<span class="text-accent/80 font-normal"> ${escapeHtml(newHoldText)}</span>` : (oldHoldText ? `<span class="text-red-500 font-normal italic"> (ลบสถานะ/วันที่)</span>` : '')}
+      const tempId = 'temp-msg-' + Date.now();
+
+      // สร้าง element ข้อความชั่วคราว
+      const tempMsgHtml = `
+        <div id="${tempId}" class="flex justify-end opacity-70">
+          <div class="max-w-xs bg-accent text-white rounded-lg px-4 py-2">
+            <p class="text-xs text-warm-400 mb-1">${appState.currentUser.FullName || 'คุณ'}</p>
+            <p class="text-sm">${message || '📎 แนบไฟล์'}</p>
+            <p class="text-xs text-warm-400 mt-1 flex items-center gap-1">
+              <i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i>
+              กำลังส่ง...
+            </p>
           </div>
         </div>`;
-      }).join('');
 
-      Swal.fire({
-        title: `อนุมัติคำขอที่เลือก ${requestIds.length} รายการ?`,
-        html: `<div class="max-h-60 overflow-y-auto border border-warm-200 rounded-lg divide-y bg-warm-50/30 mb-2">${summaryHtml}</div>
-               <p class="text-xs text-warm-500 text-left mt-2">ระบบจะนำไปปรับปรุงชื่อไฟล์ในคลังเอกสารทันที</p>`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: '✅ อนุมัติทั้งหมด',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#5a7c5a',
-        allowOutsideClick: false,
-      }).then(result => {
-        if (!result.isConfirmed) return;
-        showLoading();
-        google.script.run
-          .withSuccessHandler(res => {
-            hideLoading();
-            if (res.success) {
-              showToast(res.message, 'success');
-              
-              // อัปเดตข้อมูลไฟล์และ pending requests ใน state ทันที
-              selectedReqs.forEach(r => {
-                const f = appState.allFiles.find(file => file.FileID === r.FileID);
-                if (f) {
-                  f.Title = r.NewTitle;
-                  f.SubTitle = r.NewSubTitle;
-                  f.HoldType = r.NewHoldType;
-                  f.HoldDate = r.NewHoldDate;
-                }
-                delete appState.pendingTitleEditRequests[r.FileID];
-              });
-              
-              renderTitleRequestsTable();
-              renderAll(); // อัปเดตตารางไฟล์และตัวเลขหน้ารวม
-            } else {
-              showToast(res.message, 'error');
-            }
-          })
-          .withFailureHandler(err => {
-            hideLoading();
-            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
-          })
-          .approveTitleEditRequestsBatch(requestIds, appState.currentUser.UserID);
-      });
-    }
+      chatEl.insertAdjacentHTML('beforeend', tempMsgHtml);
+      lucide.createIcons();
+      chatEl.scrollTop = chatEl.scrollHeight;
 
-    /**
-     * ปฏิเสธรายการที่เลือกทั้งหมดแบบกลุ่ม
-     */
-    function rejectSelectedTitleRequests() {
-      if (!appState.currentUser || appState.currentUser.Role !== 'admin') {
-        showToast('เฉพาะผู้ดูแลระบบเท่านั้น', 'error');
-        return;
+      // ✅ เคลียร์ input ทันที
+      msgInput.value = '';
+      fileInput.value = '';
+
+      const fileText = document.getElementById('req-reply-file-text');
+      if (fileText) {
+        fileText.textContent = '📎 อ้างอิงไฟล์';
+        fileText.className = 'truncate text-warm-400 w-36 inline-block';
       }
 
-      const checkboxes = document.querySelectorAll('.title-request-checkbox');
-      const checkedBoxes = Array.from(checkboxes).filter(cb => cb.checked);
-      const requestIds = checkedBoxes.map(cb => cb.value);
+      // ✅ Disable ปุ่มชั่วคราว
+      const sendBtn = document.querySelector('#request-detail-modal button[onclick="sendRequestReply()"]');
+      if (sendBtn) sendBtn.disabled = true;
 
-      if (requestIds.length === 0) {
-        showToast('กรุณาเลือกรายการที่ต้องการปฏิเสธ', 'warning');
-        return;
-      }
-
-      const selectedReqs = (appState.activeTitleRequests || []).filter(r => requestIds.includes(r.RequestID));
-      const summaryHtml = selectedReqs.map(r => {
-        return `<div class="p-2 border-b border-warm-100 text-left text-xs">
-          <div class="font-medium text-warm-600 leading-tight">${escapeHtml(r.OldTitle)}</div>
-        </div>`;
-      }).join('');
-
-      Swal.fire({
-        title: `ปฏิเสธคำขอที่เลือก ${requestIds.length} รายการ?`,
-        html: `<div class="max-h-60 overflow-y-auto border border-warm-200 rounded-lg divide-y bg-warm-50/30 mb-2">${summaryHtml}</div>
-               <p class="text-xs text-red-500 text-left mt-2">คำขอเสนอแก้ไขที่เลือกทั้งหมดนี้จะถูกปฏิเสธและไม่นำไปแก้ไข</p>`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: '❌ ปฏิเสธทั้งหมด',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#b85c5c',
-        allowOutsideClick: false,
-      }).then(result => {
-        if (!result.isConfirmed) return;
-        showLoading();
-        google.script.run
-          .withSuccessHandler(res => {
-            hideLoading();
-            if (res.success) {
-              showToast(res.message, 'success');
-              selectedReqs.forEach(r => {
-                delete appState.pendingTitleEditRequests[r.FileID];
-              });
-              renderTitleRequestsTable();
-              renderAll();
-            } else {
-              showToast(res.message, 'error');
-            }
-          })
-          .withFailureHandler(err => {
-            hideLoading();
-            showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
-          })
-          .rejectTitleEditRequestsBatch(requestIds, appState.currentUser.UserID);
-      });
-    }
-
-    // ✅ ADMIN: Render Delete Requests Table (อัปเดต auto-refresh หลังอนุมัติ)
-    // =================================================================
-    function renderDeleteRequestsTable() {
-      showLoading();
       google.script.run
         .withSuccessHandler(res => {
-          hideLoading();
-          const tbody = document.getElementById('delete-requests-table-body');
-          tbody.innerHTML = '';
+          // ✅ คืนสถานะปุ่ม
+          if (sendBtn) sendBtn.disabled = false;
 
-          if (!res.success || res.data.length === 0) {
-            tbody.innerHTML = `
-     <tr>
-      <td colspan="6" class="text-center py-6 text-warm-500">
-       ไม่มีคำขอ
-      </td>
-     </tr>`;
-            return;
+          if (res.success) {
+            // ✅ ลบข้อความชั่วคราว แล้ว force refresh เพื่อดึงข้อความจริงจาก server
+            const tempEl = document.getElementById(tempId);
+            if (tempEl) tempEl.remove();
+            forceRefreshChat(); // ✅ ใช้ force refresh
+          } else {
+            // ✅ ถ้า error ลบข้อความชั่วคราวออก และแจ้งเตือน
+            const tempEl = document.getElementById(tempId);
+            if (tempEl) tempEl.remove();
+            showToast(res.message, 'error');
           }
-
-          res.data.forEach(req => {
-            const user = appState.allUsers.find(u => u.UserID === req.UserID);
-            const file = appState.allFiles.find(f => f.FileID === req.FileID);
-
-            const row = `
-     <tr>
-      <td class="px-4 py-2">${file ? file.Title : '(ไม่พบไฟล์ในระบบ)'}</td>
-      <td class="px-4 py-2">${user ? user.FullName : '-'}</td>
-      <td class="px-4 py-2">${req.Reason || '-'}</td>
-      <td class="px-4 py-2">${req.RequestDate || '-'}</td>
-      <td class="px-4 py-2 text-center">
-       <span class="inline-block px-2 py-1 rounded text-xs font-medium ${req.Status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                req.Status === 'approved' ? 'bg-sage/10 text-warm-600' :
-                  req.Status === 'rejected' ? 'bg-brick/10 text-brick' :
-                    'bg-warm-100 text-warm-800'
-              }">${req.Status}</span>
-      </td>
-      <td class="px-4 py-2 text-center">
-       ${req.Status === 'pending'
-                ? `
-          <button class="approve-btn text-sage hover:text-green-900 mr-3 font-medium" data-id="${req.RequestID}">
-           ✅ อนุมัติ
-          </button>
-          <button class="reject-btn text-brick hover:text-brick font-medium" data-id="${req.RequestID}">
-           ❌ ปฏิเสธ
-          </button>`
-                : '-'
-              }
-      </td>
-     </tr>`;
-            tbody.innerHTML += row;
-          });
         })
-        .withFailureHandler(onFailure)
-        .getDeleteRequests();
+        .withFailureHandler(err => {
+          // ✅ ลบข้อความชั่วคราวเมื่อ error
+          const tempEl = document.getElementById(tempId);
+          if (tempEl) tempEl.remove();
+          if (sendBtn) sendBtn.disabled = false;
+          showToast('เกิดข้อผิดพลาด: ' + (err.message || err), 'error');
+        })
+        .replyToRequest(currentRequestId, message, linkedFileId, appState.currentUser.UserID);
     }
 
-
-    // =================================================================
-    // ✅ ADMIN: Recycle Bin Functions
-    // =================================================================
-
-    function renderRecycleBinTable() {
+    function updateRequestStatus(status) {
       showLoading();
       google.script.run
         .withSuccessHandler(res => {
           hideLoading();
-          // Security: console logs removed
-          const tbody = document.getElementById('recycle-bin-table-body');
-          tbody.innerHTML = '';
 
-          // Safe check for response
-          if (!res || !res.success || !res.data || res.data.length === 0) {
-            // Security: console log removed
-            tbody.innerHTML = `
-              <tr>
-                <td colspan="8" class="text-center py-8 text-warm-500">
-                  <div class="flex flex-col items-center">
-                    <span class="text-4xl mb-2">🗑️</span>
-                    <p>ถังขยะว่างเปล่า</p>
-                    ${res && res.message ? `<p class="text-brick text-sm mt-2">${res.message}</p>` : ''}
+          if (res.success) {
+            // ✅ ถ้าเสร็จสิ้น แสดง popup พร้อมเวลาที่ใช้ดำเนินการ
+            if (status === 'completed' && res.processingTime) {
+              Swal.fire({
+                title: '✅ ดำเนินการเสร็จสิ้น!',
+                html: `
+                  <div class="text-center">
+                    <p class="text-warm-600 mb-3">คำขอนี้ได้รับการดำเนินการเรียบร้อยแล้ว</p>
+                    <div class="bg-accent-muted rounded-lg p-4 inline-block">
+                      <p class="text-sm text-accent mb-1">⏱️ ระยะเวลาดำเนินการ</p>
+                      <p class="text-2xl font-bold text-accent">${res.processingTime.text}</p>
+                    </div>
                   </div>
-                </td>
-              </tr>`;
-            return;
-          }
-
-          res.data.forEach(file => {
-            const sourceLabels = {
-              'manual': 'ลบด้วยตนเอง',
-              'auto_delete': 'Auto Delete',
-              'request_approve': 'อนุมัติคำขอ'
-            };
-            const sourceLabel = sourceLabels[file.DeleteSource] || file.DeleteSource;
-
-            const daysRemaining = file.DaysRemaining;
-            let expiryBadge = '';
-            if (daysRemaining <= 30) {
-              expiryBadge = `<span class="px-2 py-1 text-xs font-medium bg-brick/10 text-brick rounded">⚠️ อีก ${daysRemaining} วัน</span>`;
-            } else if (daysRemaining <= 90) {
-              expiryBadge = `<span class="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">📅 อีก ${daysRemaining} วัน</span>`;
+                `,
+                icon: 'success',
+                confirmButtonColor: '#16a34a',
+                confirmButtonText: 'ตกลง'
+              });
             } else {
-              expiryBadge = `<span class="px-2 py-1 text-xs font-medium bg-sage/10 text-warm-600 rounded">📅 อีก ${daysRemaining} วัน</span>`;
+              showToast(res.message, 'success');
             }
 
-            const row = `
-              <tr class="hover:bg-brick/10 border-b">
-                <td class="px-3 py-3">
-                  <input type="checkbox" class="recycle-checkbox w-4 h-4 text-brick border-warm-200 rounded" 
-                    value="${file.RecycleID}" onchange="updateRecycleBulkButtons()">
-                </td>
-                <td class="px-4 py-3">
-                  <div class="font-medium text-warm-700">${file.Title}</div>
-                  ${file.SubTitle ? `<div class="text-sm text-warm-500">${file.SubTitle}</div>` : ''}
-                </td>
-                <td class="px-4 py-3 text-sm text-warm-600">${file.GroupName || '-'}</td>
-                <td class="px-4 py-3 text-sm text-warm-600">${file.DeletedBy || '-'}</td>
-                <td class="px-4 py-3 text-sm text-warm-600">${file.DeletedDate || '-'}</td>
-                <td class="px-4 py-3">
-                  <span class="px-2 py-1 text-xs font-medium ${file.DeleteSource === 'auto_delete' ? 'bg-accent-muted text-blue-800' : 'bg-warm-100 text-warm-800'} rounded">${sourceLabel}</span>
-                </td>
-                <td class="px-4 py-3 text-center">${expiryBadge}</td>
-                <td class="px-4 py-3 text-center">
-                  <button onclick="handleRestoreFile('${file.RecycleID}')" 
-                    class="text-sage hover:text-warm-600 font-medium mr-3" title="กู้คืน">
-                    🔄 กู้คืน
-                  </button>
-                  <button onclick="handlePermanentDelete('${file.RecycleID}')" 
-                    class="text-brick hover:text-brick font-medium" title="ลบถาวร">
-                    ❌ ลบถาวร
-                  </button>
-                </td>
-              </tr>`;
-            tbody.innerHTML += row;
-          });
+            showRequestDetail(currentRequestId);
+            renderDocumentRequests();
+          } else {
+            showToast(res.message, 'error');
+          }
         })
         .withFailureHandler(onFailure)
-        .getRecycleBinFiles();
+        .updateRequestStatus(currentRequestId, status, '', appState.currentUser.UserID);
     }
 
-    function toggleSelectAllRecycle(checkbox) {
-      const checkboxes = document.querySelectorAll('.recycle-checkbox');
-      checkboxes.forEach(cb => cb.checked = checkbox.checked);
-      updateRecycleBulkButtons();
-    }
-
-    function updateRecycleBulkButtons() {
-      const checked = document.querySelectorAll('.recycle-checkbox:checked');
-      const count = checked.length;
-
-      const restoreBtn = document.getElementById('restore-selected-btn');
-      const deleteBtn = document.getElementById('delete-selected-btn');
-
-      if (count > 0) {
-        restoreBtn.classList.remove('hidden');
-        deleteBtn.classList.remove('hidden');
-        document.getElementById('restore-selected-count').textContent = count;
-        document.getElementById('delete-selected-count').textContent = count;
-      } else {
-        restoreBtn.classList.add('hidden');
-        deleteBtn.classList.add('hidden');
-      }
-    }
-
-    function handleRestoreFile(recycleId) {
+    function markRequestCompleted() {
       Swal.fire({
-        title: 'กู้คืนไฟล์นี้?',
-        text: 'ไฟล์จะถูกย้ายกลับไปยังรายการไฟล์หลัก',
+        title: 'ปิดคำขอเอกสาร?',
+        text: 'ยืนยันว่าคำขอนี้ดำเนินการเสร็จสิ้นแล้ว',
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#16a34a',
         cancelButtonColor: '#6b7280',
-        confirmButtonText: 'กู้คืน',
+        confirmButtonText: 'ยืนยัน เสร็จสิ้น',
         cancelButtonText: 'ยกเลิก'
       }).then(result => {
         if (result.isConfirmed) {
-          showLoading();
-          google.script.run
-            .withSuccessHandler(res => {
-              hideLoading();
-              showToast(res.message, res.success ? 'success' : 'error');
-              if (res.success) {
-                renderRecycleBinTable();
-                google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
-              }
-            })
-            .withFailureHandler(onFailure)
-            .restoreFile(recycleId, appState.currentUser.UserID);
+          updateRequestStatus('completed');
         }
       });
     }
 
-    function handlePermanentDelete(recycleId) {
+    // Make deleteRequest global accessible if needed, or just define it here like others
+    function deleteRequest(requestId) {
       Swal.fire({
-        title: 'ลบไฟล์ถาวร?',
-        text: 'การกระทำนี้ไม่สามารถย้อนกลับได้!',
+        title: 'ยืนยันการลบคำขอ?',
+        text: "การลบนี้จะลบแค่ 'คำขอ' และ 'ข้อความสนทนา' เท่านั้น ไม่ได้ลบไฟล์ที่อัพโหลด ไฟล์ยังคงค้นหาได้ในหน้าแรก",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'ลบถาวร',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6b6560',
+        confirmButtonText: 'ลบคำขอ',
         cancelButtonText: 'ยกเลิก'
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           showLoading();
           google.script.run
             .withSuccessHandler(res => {
               hideLoading();
-              showToast(res.message, res.success ? 'success' : 'error');
               if (res.success) {
-                renderRecycleBinTable();
+                showToast('ลบคำขอเรียบร้อยแล้ว', 'success');
+                closeRequestDetailModal();
+                // Refresh list
+                renderDocumentRequests();
+              } else {
+                showToast(res.message, 'error');
               }
             })
             .withFailureHandler(onFailure)
-            .permanentDeleteFile(recycleId, appState.currentUser.UserID);
+            .deleteDocumentRequest(requestId, appState.currentUser.UserID);
         }
       });
     }
+    document.body.addEventListener('click', e => {
+      const approveBtn = e.target.closest('.approve-btn');
+      const rejectBtn = e.target.closest('.reject-btn');
 
-    function handleBulkRestore() {
-      const checked = document.querySelectorAll('.recycle-checkbox:checked');
-      if (checked.length === 0) return;
+      // ✅ เมื่อกด “อนุมัติ”
+      if (approveBtn) {
+        // ✅ ตรวจสอบว่าล็อกอินอยู่หรือไม่
+        if (!appState.currentUser || !appState.currentUser.UserID) {
+          showToast('กรุณาเข้าสู่ระบบใหม่', 'error');
+          navigate('home');
+          return;
+        }
 
-      const recycleIds = Array.from(checked).map(cb => cb.value);
+        Swal.fire({
+          title: 'ยืนยันการอนุมัติ?',
+          text: 'ระบบจะลบไฟล์นี้ออกจากระบบถาวร',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'อนุมัติ',
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#16a34a',
+          cancelButtonColor: '#d33'
+        }).then(result => {
+          if (result.isConfirmed) {
+            showLoading();
+            google.script.run
+              .withSuccessHandler(res => {
+                hideLoading();
+                showToast(res.message, res.success ? 'success' : 'error');
 
-      Swal.fire({
-        title: `กู้คืน ${recycleIds.length} รายการ?`,
-        text: 'ไฟล์ทั้งหมดจะถูกย้ายกลับไปยังรายการไฟล์หลัก',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#16a34a',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'กู้คืนทั้งหมด',
-        cancelButtonText: 'ยกเลิก'
-      }).then(result => {
-        if (result.isConfirmed) {
-          showLoading();
-          google.script.run
-            .withSuccessHandler(res => {
-              hideLoading();
-              showToast(res.message, res.success ? 'success' : 'error');
-              if (res.success) {
-                renderRecycleBinTable();
-                google.script.run.withSuccessHandler(onInitialDataSuccess).getInitialData();
-              }
-            })
-            .withFailureHandler(onFailure)
-            .restoreMultipleFiles(recycleIds, appState.currentUser.UserID);
+                if (res.success) {
+                  // ✅ โหลดข้อมูลทั้งหมดใหม่ เพื่อให้ตาราง home/group/admin อัปเดตทันที
+                  google.script.run
+                    .withSuccessHandler(onInitialDataSuccess)
+                    .getInitialData();
+                }
+
+                // ✅ โหลดตารางคำขอใหม่ทันที
+                renderDeleteRequestsTable();
+              })
+              .withFailureHandler(onFailure)
+              .approveDeleteRequest(approveBtn.dataset.id, appState.currentUser.UserID);
+          }
+        });
+      }
+
+      // ✅ เมื่อกด “ปฏิเสธ”
+      if (rejectBtn) {
+        // ✅ ตรวจสอบว่าล็อกอินอยู่หรือไม่
+        if (!appState.currentUser || !appState.currentUser.UserID) {
+          showToast('กรุณาเข้าสู่ระบบใหม่', 'error');
+          navigate('home');
+          return;
+        }
+
+        Swal.fire({
+          title: 'ปฏิเสธคำขอนี้?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'ปฏิเสธ',
+          cancelButtonText: 'ยกเลิก',
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6'
+        }).then(result => {
+          if (result.isConfirmed) {
+            showLoading();
+            google.script.run
+              .withSuccessHandler(res => {
+                hideLoading();
+                showToast(res.message, res.success ? 'success' : 'error');
+
+                if (res.success) {
+                  // ✅ โหลดข้อมูลใหม่เช่นกัน (เพื่อรีเฟรชหน้า admin-files)
+                  google.script.run
+                    .withSuccessHandler(onInitialDataSuccess)
+                    .getInitialData();
+                }ds, appState.currentUser.UserID);
         }
       });
     }
@@ -9564,7 +9383,7 @@ function renderUsersTable() {
         fileText.textContent = id ? title : '📎 อ้างอิงไฟล์';
         fileText.className = id ? 'truncate text-accent font-medium w-36 inline-block' : 'truncate text-warm-400 w-36 inline-block';
       }
-      
+
       const dropdown = document.getElementById('req-reply-file-dropdown');
       const icon = document.getElementById('req-reply-file-icon');
       if (dropdown && !dropdown.classList.contains('hidden')) {
@@ -9574,7 +9393,7 @@ function renderUsersTable() {
       }
     }
 
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
       const container = document.getElementById('req-reply-file-container');
       const dropdown = document.getElementById('req-reply-file-dropdown');
       const icon = document.getElementById('req-reply-file-icon');
@@ -9590,12 +9409,12 @@ function renderUsersTable() {
     function sendRequestReply() {
       const msgInput = document.getElementById('req-reply-message');
       const fileInput = document.getElementById('req-reply-file');
-      
+
       if (!msgInput || !fileInput) {
         showToast('ไม่พบช่องกรอกข้อความ', 'error');
         return;
       }
-      
+
       const message = msgInput.value.trim();
       const linkedFileId = fileInput.value;
 
@@ -9607,7 +9426,7 @@ function renderUsersTable() {
       // ✅ Optimistic UI Update - แสดงข้อความทันทีก่อน server ตอบกลับ
       const chatEl = document.getElementById('req-detail-chat');
       if (!chatEl) return;
-      
+
       const tempId = 'temp-msg-' + Date.now();
 
       // สร้าง element ข้อความชั่วคราว
@@ -9630,7 +9449,7 @@ function renderUsersTable() {
       // ✅ เคลียร์ input ทันที
       msgInput.value = '';
       fileInput.value = '';
-      
+
       const fileText = document.getElementById('req-reply-file-text');
       if (fileText) {
         fileText.textContent = '📎 อ้างอิงไฟล์';
@@ -9667,6 +9486,11 @@ function renderUsersTable() {
         })
         .replyToRequest(currentRequestId, message, linkedFileId, appState.currentUser.UserID);
     }
+
+
+
+
+
 
     function updateRequestStatus(status) {
       showLoading();
@@ -9722,7 +9546,6 @@ function renderUsersTable() {
         }
       });
     }
-
     // Make deleteRequest global accessible if needed, or just define it here like others
     function deleteRequest(requestId) {
       Swal.fire({
@@ -10735,8 +10558,10 @@ function renderUsersTable() {
     // BULK IMPORT FOR ALL COOPERATIVES
     // =================================================================
     let allCoopsDupCheckResults = [];
+    let lastFailedBulkCheckCoops = [];
+    let isBulkCheckingCancelled = false;
 
-    async function handleCheckAllCoops() {
+    async function handleCheckAllCoops(customCoopsList = null) {
       // 1. ตรวจสอบผู้บันทึกก่อนเริ่มการตรวจสอบ เพื่อไม่ให้เสียเวลารอการตรวจสอบฟรีหากลืมเลือก
       const userSelect = document.getElementById('import-user');
       let userId = userSelect ? userSelect.value.trim() : '';
@@ -10759,41 +10584,101 @@ function renderUsersTable() {
         return;
       }
 
-      const coopsWithLink = appState.allCoops.filter(c => c.FolderURL && c.FolderURL.trim() !== '');
-      if (coopsWithLink.length === 0) {
-        showToast('ไม่พบสหกรณ์ที่มีการบันทึกลิงก์ Google Drive', 'warning');
+      // ถ้าส่ง customCoopsList เข้ามา (กรณี retry เฉพาะสหกรณ์ที่ผิดพลาด) ให้ตรวจเฉพาะชุดนั้น
+      // ถ้าไม่ได้ส่ง ให้ตรวจทุกสหกรณ์ที่มีลิงก์ Google Drive
+      const isRetryingFailedOnly = Array.isArray(customCoopsList) && customCoopsList.length > 0;
+      const targetCoops = isRetryingFailedOnly 
+        ? customCoopsList 
+        : appState.allCoops.filter(c => c.FolderURL && c.FolderURL.trim() !== '');
+
+      if (targetCoops.length === 0) {
+        showToast(isRetryingFailedOnly ? 'ไม่มีรายการสหกรณ์ที่ต้องตรวจสอบซ้ำ' : 'ไม่พบสหกรณ์ที่มีการบันทึกลิงก์ Google Drive', 'warning');
         return;
       }
 
       const btn = document.getElementById('check-all-coops-btn');
-      const originalHtml = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังตรวจสอบ...';
+      const originalHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังตรวจสอบ...';
+      }
 
-      allCoopsDupCheckResults = [];
-      
-      let totalNew = 0;
-      let totalUpdated = 0;
-      let totalExisting = 0;
-      
-      // ใช้ Swal.fire เพื่อให้ Swal.update ทำงานได้
+      // ถ้าเป็นการตรวจใหม่ทั้งหมด ให้เคลียร์ผลลัพธ์เก่า แต่ถ้าเป็นการ retry ให้เก็บของเดิมไว้
+      if (!isRetryingFailedOnly) {
+        allCoopsDupCheckResults = [];
+      }
+      lastFailedBulkCheckCoops = [];
+      isBulkCheckingCancelled = false;
+
+      let totalNew = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalNew || 0), 0);
+      let totalUpdated = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalUpdated || 0), 0);
+      let totalExisting = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalExisting || 0), 0);
+      let successCount = allCoopsDupCheckResults.length;
+      let failedCoops = [];
+
+      // ใช้ Swal.fire พร้อมแสดงข้อมูล Real-time และปุ่มหยุดชั่วคราว/ยกเลิก
       Swal.fire({
-        title: 'กำลังตรวจสอบข้อมูล...',
-        html: 'กำลังเตรียมการตรวจสอบ...',
+        title: isRetryingFailedOnly ? 'กำลังตรวจซ้ำสหกรณ์ที่ขัดข้อง...' : 'กำลังตรวจสอบข้อมูลรวม...',
+        html: `
+          <div class="text-left space-y-3 mt-2">
+            <div class="flex items-center justify-between text-xs text-warm-600 font-medium">
+              <span id="bulk-check-coop-name" class="font-bold text-warm-800 truncate max-w-[280px]">กำลังเตรียมการ...</span>
+              <span id="bulk-check-pct">0%</span>
+            </div>
+            <div class="w-full bg-warm-200 rounded-full h-3 overflow-hidden">
+              <div id="bulk-check-bar" class="bg-accent h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-center text-xs mt-3">
+              <div class="bg-sage/10 border border-sage/20 rounded p-2">
+                <span class="text-warm-500 block text-[11px]">ตรวจสำเร็จ</span>
+                <span id="bulk-check-count-success" class="font-bold text-sage text-sm">${successCount}</span>
+              </div>
+              <div class="bg-amber-50 border border-amber-200 rounded p-2">
+                <span class="text-warm-500 block text-[11px]">ไฟล์ใหม่/อัปเดต</span>
+                <span id="bulk-check-count-files" class="font-bold text-amber-600 text-sm">${totalNew + totalUpdated}</span>
+              </div>
+              <div class="bg-brick/10 border border-brick/20 rounded p-2">
+                <span class="text-warm-500 block text-[11px]">ขัดข้อง/ข้าม</span>
+                <span id="bulk-check-count-failed" class="font-bold text-brick text-sm">0</span>
+              </div>
+            </div>
+            <div id="bulk-check-status-log" class="text-[11px] text-warm-500 italic mt-2 truncate">เริ่มการตรวจสอบ...</div>
+          </div>
+        `,
         allowOutsideClick: false,
         allowEscapeKey: false,
-        didOpen: () => {
-          Swal.showLoading();
+        showConfirmButton: false,
+        showCancelButton: true,
+        cancelButtonText: '⏹️ หยุดการตรวจ (ข้อมูลที่ตรวจแล้วจะคงอยู่)',
+        cancelButtonColor: '#9c948c'
+      }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.cancel) {
+          isBulkCheckingCancelled = true;
         }
       });
-      
-      for (let i = 0; i < coopsWithLink.length; i++) {
-        const coop = coopsWithLink[i];
-        
-        Swal.update({
-          title: 'กำลังตรวจสอบข้อมูล...',
-          html: `กำลังตรวจสอบสหกรณ์:<br><b>${coop.CoopName}</b><br>(${i + 1}/${coopsWithLink.length})`
-        });
+
+      for (let i = 0; i < targetCoops.length; i++) {
+        if (isBulkCheckingCancelled) {
+          console.warn('User cancelled bulk check');
+          break;
+        }
+
+        const coop = targetCoops[i];
+        const progressPct = Math.round(((i) / targetCoops.length) * 100);
+
+        // อัปเดต UI Real-time
+        const coopNameEl = document.getElementById('bulk-check-coop-name');
+        const pctEl = document.getElementById('bulk-check-pct');
+        const barEl = document.getElementById('bulk-check-bar');
+        const logEl = document.getElementById('bulk-check-status-log');
+        const successEl = document.getElementById('bulk-check-count-success');
+        const filesEl = document.getElementById('bulk-check-count-files');
+        const failedEl = document.getElementById('bulk-check-count-failed');
+
+        if (coopNameEl) coopNameEl.textContent = `[${i + 1}/${targetCoops.length}] ${coop.CoopName}`;
+        if (pctEl) pctEl.textContent = `${progressPct}%`;
+        if (barEl) barEl.style.width = `${progressPct}%`;
+        if (logEl) logEl.textContent = `กำลังตรวจ: ${coop.CoopName}`;
 
         let folderId = "";
         try {
@@ -10803,45 +10688,93 @@ function renderUsersTable() {
           if (folderId.includes('?')) {
             folderId = folderId.split('?')[0];
           }
-        } catch(e) {
+        } catch (e) {
           console.warn('Invalid URL for coop', coop.CoopName);
+          failedCoops.push({ coop: coop, reason: 'URL โฟลเดอร์ไม่ถูกต้อง' });
+          if (failedEl) failedEl.textContent = failedCoops.length;
           continue; 
         }
-        
-        try {
-          const result = await new Promise((resolve, reject) => {
-            google.script.run
-              .withSuccessHandler(resolve)
-              .withFailureHandler(reject)
-              .checkImportDuplicates(folderId, coop.CoopID);
-          });
-          
-          if (result && result.success) {
-            result.coop = coop; 
-            result.folderId = folderId;
-            allCoopsDupCheckResults.push(result);
-            totalNew += result.totalNew;
-            totalUpdated += result.totalUpdated;
-            totalExisting += result.totalExisting;
+
+        // Auto-Retry สูงสุด 2 ครั้งต่อสหกรณ์ ป้องกันปัญหา API สะดุดหรือติด rate limit ชั่วขณะ
+        let coopResult = null;
+        let lastErrReason = '';
+
+        for (let attempt = 1; attempt <= 2; attempt++) {
+          if (isBulkCheckingCancelled) break;
+
+          if (attempt > 1) {
+            if (logEl) logEl.textContent = `⚠️ กำลังลองใหม่อีกครั้ง (${attempt}/2) สำหรับ ${coop.CoopName}...`;
+            await new Promise(r => setTimeout(r, 1500));
           }
-        } catch (err) {
-          console.error('Error checking coop', coop.CoopName, err);
+
+          try {
+            const result = await new Promise((resolve, reject) => {
+              google.script.run
+                .withSuccessHandler(resolve)
+                .withFailureHandler(reject)
+                .checkImportDuplicates(folderId, coop.CoopID);
+            });
+
+            if (result && result.success) {
+              coopResult = result;
+              break;
+            } else {
+              lastErrReason = result?.message || 'การตอบกลับจากเซิร์ฟเวอร์ไม่สมบูรณ์';
+            }
+          } catch (err) {
+            lastErrReason = err?.message || String(err);
+          }
         }
+
+        if (coopResult) {
+          coopResult.coop = coop; 
+          coopResult.folderId = folderId;
+
+          // ลบผลลัพธ์เก่าของสหกรณ์นี้ออกถ้าเป็นการ retry
+          const existingIdx = allCoopsDupCheckResults.findIndex(r => String(r.coop.CoopID) === String(coop.CoopID));
+          if (existingIdx !== -1) {
+            allCoopsDupCheckResults[existingIdx] = coopResult;
+          } else {
+            allCoopsDupCheckResults.push(coopResult);
+          }
+
+          // Recalculate totals
+          totalNew = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalNew || 0), 0);
+          totalUpdated = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalUpdated || 0), 0);
+          totalExisting = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalExisting || 0), 0);
+          successCount = allCoopsDupCheckResults.length;
+
+          if (successEl) successEl.textContent = successCount;
+          if (filesEl) filesEl.textContent = totalNew + totalUpdated;
+        } else {
+          console.error('Error checking coop', coop.CoopName, lastErrReason);
+          failedCoops.push({ coop: coop, folderId: folderId, reason: lastErrReason });
+          if (failedEl) failedEl.textContent = failedCoops.length;
+        }
+
+        // เว้นวรรค 350ms ระหว่างสหกรณ์เพื่อไม่ให้เกิน Quota ของ Google Apps Script / Drive
+        await new Promise(r => setTimeout(r, 350));
       }
-      
-      btn.disabled = false;
-      btn.innerHTML = originalHtml;
+
+      lastFailedBulkCheckCoops = failedCoops;
+
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      }
       lucide.createIcons();
 
-      if (allCoopsDupCheckResults.length > 0) {
-        // แสดงปุ่มนำเข้าข้อมูลรวมเพื่อให้สามารถกดนำเข้าได้ตลอดเวลาโดยไม่ต้องรันตรวจใหม่
-        const importAllBtn = document.getElementById('import-all-coops-btn');
-        if (importAllBtn) importAllBtn.style.display = 'flex';
+      // แสดงปุ่มนำเข้าข้อมูลรวมถ้ามีผลการตรวจสอบอย่างน้อย 1 สหกรณ์
+      const importAllBtn = document.getElementById('import-all-coops-btn');
+      if (allCoopsDupCheckResults.length > 0 && importAllBtn) {
+        importAllBtn.style.display = 'flex';
+      }
 
-        // Generate file list HTML
+      // แสดงสรุปผลลัพธ์สุดท้าย
+      if (allCoopsDupCheckResults.length > 0) {
         let fileListHtml = '';
         if (totalNew > 0 || totalUpdated > 0) {
-          fileListHtml += `<div class="mt-4 max-h-64 overflow-y-auto border border-warm-200 rounded p-3 text-sm text-warm-700 bg-warm-50 space-y-3">`;
+          fileListHtml += `<div class="mt-4 max-h-56 overflow-y-auto border border-warm-200 rounded p-3 text-sm text-warm-700 bg-warm-50 space-y-3">`;
           allCoopsDupCheckResults.forEach(res => {
             if (res.totalNew > 0 || res.totalUpdated > 0) {
               fileListHtml += `<div>`;
@@ -10862,9 +10795,32 @@ function renderUsersTable() {
           fileListHtml += `</div>`;
         }
 
+        let failedNoticeHtml = '';
+        if (failedCoops.length > 0) {
+          failedNoticeHtml = `
+            <div class="mt-3 p-3 bg-brick/10 border border-brick/20 rounded-md text-left text-xs">
+              <div class="flex items-center justify-between font-bold text-brick mb-1">
+                <span>⚠️ ตรวจไม่สำเร็จ ${failedCoops.length} สหกรณ์ (ระบบข้ามให้อัตโนมัติ):</span>
+              </div>
+              <ul class="list-disc pl-4 text-warm-600 space-y-0.5 max-h-24 overflow-y-auto">
+                ${failedCoops.map(f => `<li><strong>${f.coop.CoopName}</strong>: <span class="text-warm-500">${f.reason || 'เชื่อมต่อไม่ได้'}</span></li>`).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        const dialogButtons = {
+          confirmButtonText: '🚀 นำเข้าทั้งหมดเดี๋ยวนี้',
+          showDenyButton: failedCoops.length > 0,
+          denyButtonText: `🔄 ลองตรวจเฉพาะ ${failedCoops.length} สหกรณ์ที่ขัดข้องอีกครั้ง`,
+          denyButtonColor: '#c27b53',
+          showCancelButton: true,
+          cancelButtonText: 'ปิด'
+        };
+
         Swal.fire({
-          title: 'ผลการตรวจสอบทุกสหกรณ์',
-          width: '600px',
+          title: isBulkCheckingCancelled ? 'ผลการตรวจสอบ (หยุดก่อนกำหนด)' : 'ผลการตรวจสอบข้อมูลรวม',
+          width: '640px',
           html: `
             <div class="text-left space-y-2 mt-2">
               <p>ตรวจสอบสำเร็จ: <b>${allCoopsDupCheckResults.length}</b> สหกรณ์</p>
@@ -10873,25 +10829,50 @@ function renderUsersTable() {
               <p class="text-warm-500">⚪ ไฟล์ที่มีอยู่แล้ว (ซ้ำ): <b>${totalExisting}</b> ไฟล์</p>
             </div>
             ${fileListHtml}
+            ${failedNoticeHtml}
           `,
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonText: '🚀 นำเข้าทั้งหมดเดี๋ยวนี้',
-          cancelButtonText: 'ปิด'
+          icon: failedCoops.length > 0 ? 'warning' : 'success',
+          ...dialogButtons
         }).then((result) => {
           if (result.isConfirmed) {
-            // ดีเลย์เล็กน้อยเพื่อให้ Popup เก่าปิดสนิทก่อนเปิด Popup ใหม่
             setTimeout(() => {
               startBulkImportAllCoops();
             }, 300);
-          } else {
-            const importAllBtn = document.getElementById('import-all-coops-btn');
-            if (importAllBtn) importAllBtn.style.display = 'flex';
+          } else if (result.isDenied) {
+            setTimeout(() => {
+              handleCheckAllCoops(failedCoops.map(f => f.coop));
+            }, 300);
           }
         });
       } else {
-        Swal.close();
-        showToast('ตรวจสอบไม่สำเร็จ หรือไม่พบไฟล์ใหม่ในโฟลเดอร์ใดเลย', 'warning');
+        // กรณีไม่มีสหกรณ์ใดตรวจผ่านเลย
+        let failedNoticeHtml = '';
+        if (failedCoops.length > 0) {
+          failedNoticeHtml = `
+            <div class="mt-3 p-3 bg-brick/10 border border-brick/20 rounded-md text-left text-xs">
+              <p class="font-bold text-brick mb-1">สาเหตุที่ตรวจไม่สำเร็จ:</p>
+              <ul class="list-disc pl-4 text-warm-600 space-y-0.5 max-h-36 overflow-y-auto">
+                ${failedCoops.map(f => `<li><strong>${f.coop.CoopName}</strong>: <span class="text-warm-500">${f.reason || 'เชื่อมต่อไม่ได้'}</span></li>`).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        Swal.fire({
+          title: 'การตรวจสอบไม่สำเร็จ',
+          html: `
+            <p class="text-sm text-warm-600">ไม่สามารถตรวจสอบไฟล์จากสหกรณ์ใดได้เลย กรุณาตรวจสอบสิทธิ์การเข้าถึง Google Drive หรือลองใหม่อีกครั้ง</p>
+            ${failedNoticeHtml}
+          `,
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonText: '🔄 ลองใหม่อีกครั้ง',
+          cancelButtonText: 'ปิด'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            handleCheckAllCoops();
+          }
+        });
       }
     }
 
@@ -10999,41 +10980,54 @@ function renderUsersTable() {
         `;
 
         while (!isDone) {
-          try {
-            const importRes = await new Promise((resolve, reject) => {
-              google.script.run
-                .withSuccessHandler(resolve)
-                .withFailureHandler(reject)
-                .importFromDriveBatch(
-                  coop.GroupID,
-                  result.folderId,
-                  userId,
-                  coop.CoopID,
-                  sessionId,
-                  startIndex,
-                  'new_and_replace', 
-                  skipFileNames,
-                  replaceFiles
-                );
-            });
+          let batchSuccess = false;
+          let retryBatchCount = 0;
 
-            if (importRes && importRes.success) {
-              startIndex = importRes.nextIndex;
-              isDone = importRes.done;
-              
-              let coopPct = importRes.percent || 0;
-              if (isDone) coopPct = 100;
-              
-              let pct = Math.min(100, Math.round(((i * 100) + coopPct) / totalCoops));
-              
-              document.getElementById('bulk-import-progress-bar').style.width = `${pct}%`;
-              document.getElementById('bulk-import-progress-text').textContent = `${pct}%`;
-            } else {
-              console.error('Import batch error', importRes);
-              isDone = true; 
+          while (!batchSuccess && retryBatchCount < 3) {
+            try {
+              const importRes = await new Promise((resolve, reject) => {
+                google.script.run
+                  .withSuccessHandler(resolve)
+                  .withFailureHandler(reject)
+                  .importFromDriveBatch(
+                    coop.GroupID,
+                    result.folderId,
+                    userId,
+                    coop.CoopID,
+                    sessionId,
+                    startIndex,
+                    'new_and_replace', 
+                    skipFileNames,
+                    replaceFiles
+                  );
+              });
+
+              if (importRes && importRes.success) {
+                startIndex = importRes.nextIndex;
+                isDone = importRes.done;
+                
+                let coopPct = importRes.percent || 0;
+                if (isDone) coopPct = 100;
+                
+                let pct = Math.min(100, Math.round(((i * 100) + coopPct) / totalCoops));
+                
+                document.getElementById('bulk-import-progress-bar').style.width = `${pct}%`;
+                document.getElementById('bulk-import-progress-text').textContent = `${pct}%`;
+                batchSuccess = true;
+              } else {
+                retryBatchCount++;
+                console.warn(`[Bulk Import] Batch error (${coop.CoopName}), retrying attempt ${retryBatchCount}...`, importRes);
+                if (retryBatchCount < 3) await new Promise(r => setTimeout(r, 2000));
+              }
+            } catch (err) {
+              retryBatchCount++;
+              console.warn(`[Bulk Import] Network error (${coop.CoopName}), retrying attempt ${retryBatchCount}...`, err);
+              if (retryBatchCount < 3) await new Promise(r => setTimeout(r, 2000));
             }
-          } catch (err) {
-            console.error('Network error during bulk import', err);
+          }
+
+          if (!batchSuccess) {
+            console.error(`[Bulk Import] Failed to process batch for ${coop.CoopName} after 3 attempts, moving to next coop.`);
             isDone = true;
           }
         }
@@ -11581,7 +11575,10 @@ function renderUsersTable() {
       }
 
       let html = '<div class="space-y-3">';
-      drafts.forEach((draft, idx) => {
+      drafts.forEach((draft) => {
+        // ค้นหาดัชนีที่แท้จริงใน appState.cpdDrafts เพื่อป้องกัน index คลาดเคลื่อนเมื่อมีการค้นหาหรือกรอง
+        const origIdx = appState.cpdDrafts.findIndex(d => (d.fileId && d.fileId === draft.fileId) || d === draft);
+        const idx = origIdx !== -1 ? origIdx : appState.cpdDrafts.indexOf(draft);
         const isImported = draft.alreadyImported;
         const fileIcon = draft.fileType === 'PDF' ? 'file-text' : 'file-edit';
         const fileColor = draft.fileType === 'PDF' ? 'text-red-500 bg-red-50' : 'text-blue-500 bg-blue-50';
@@ -11698,8 +11695,8 @@ function renderUsersTable() {
             const imported = appState.cpdDrafts.filter(d => d.alreadyImported).length;
             const statsEl = document.getElementById('cpd-stats-text');
             if (statsEl) {
-              const total = appState.cpdDrafts.length;
-              statsEl.querySelector('span.text-green-600 strong').textContent = imported;
+              const strongEl = statsEl.querySelector('span.text-green-600 strong');
+              if (strongEl) strongEl.textContent = imported;
             }
 
             showToast('นำเข้า "' + draft.title + '" สำเร็จ!', 'success');
