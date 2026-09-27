@@ -3519,6 +3519,12 @@
         pill.classList.remove('flex');
       }
 
+      // หากมี Modal อื่นเปิดทำงานอยู่ (เช่น กล่องตรวจสอบข้อมูลรวม) จะไม่ยิง Toast เพื่อป้องกันการปิด Modal
+      if (Swal.isVisible() && !Swal.isToast()) {
+        console.log('[Datahub API] เชื่อมต่อฐานข้อมูลสำเร็จเรียบร้อย (มี Modal แสดงอยู่ ไม่ยิง Toast ซ้ำ)');
+        return;
+      }
+
       showToast('เชื่อมต่อฐานข้อมูลสำเร็จเรียบร้อย', 'success');
     });
 
@@ -6004,6 +6010,11 @@ function renderUsersTable() {
     function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
 
     function showToast(message, type = 'success') {
+      // ป้องกันไม่ให้ Toast ไปทำลาย SweetAlert modal หรือ Progress popup ที่กำลังเปิดทำงานอยู่
+      if (Swal.isVisible() && !Swal.isToast()) {
+        console.log(`[Toast ${type}]:`, message);
+        return;
+      }
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -10773,10 +10784,11 @@ function renderUsersTable() {
       }
 
       const btn = document.getElementById('check-all-coops-btn');
-      const originalHtml = btn ? btn.innerHTML : '';
+      const originalHtml = btn ? btn.innerHTML : '📊 ตรวจสอบข้อมูลรวม';
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังตรวจสอบ...';
+        btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังเตรียมตรวจ...';
+        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
 
       // ถ้าเป็นการตรวจใหม่ทั้งหมด ให้เคลียร์ผลลัพธ์เก่า แต่ถ้าเป็นการ retry ให้เก็บของเดิมไว้
@@ -10792,96 +10804,97 @@ function renderUsersTable() {
       let successCount = allCoopsDupCheckResults.length;
       let failedCoops = [];
 
-      // ใช้ Swal.fire พร้อมแสดงข้อมูล Real-time และปุ่มหยุดชั่วคราว/ยกเลิก
-      Swal.fire({
-        title: isRetryingFailedOnly ? 'กำลังตรวจซ้ำสหกรณ์ที่ขัดข้อง...' : 'กำลังตรวจสอบข้อมูลรวม...',
-        html: `
-          <div class="text-left space-y-3 mt-2">
-            <div class="flex items-center justify-between text-xs text-warm-600 font-medium">
-              <span id="bulk-check-coop-name" class="font-bold text-warm-800 truncate max-w-[280px]">กำลังเตรียมการ...</span>
-              <span id="bulk-check-pct">0%</span>
-            </div>
-            <div class="w-full bg-warm-200 rounded-full h-3 overflow-hidden">
-              <div id="bulk-check-bar" class="bg-accent h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
-            </div>
-            <div class="grid grid-cols-3 gap-2 text-center text-xs mt-3">
-              <div class="bg-sage/10 border border-sage/20 rounded p-2">
-                <span class="text-warm-500 block text-[11px]">ตรวจสำเร็จ</span>
-                <span id="bulk-check-count-success" class="font-bold text-sage text-sm">${successCount}</span>
+      try {
+        // ใช้ Swal.fire พร้อมแสดงข้อมูล Real-time และปุ่มหยุดชั่วคราว/ยกเลิก
+        Swal.fire({
+          title: isRetryingFailedOnly ? 'กำลังตรวจซ้ำสหกรณ์ที่ขัดข้อง...' : 'กำลังตรวจสอบข้อมูลรวม...',
+          html: `
+            <div class="text-left space-y-3 mt-2">
+              <div class="flex items-center justify-between text-xs text-warm-600 font-medium">
+                <span id="bulk-check-coop-name" class="font-bold text-warm-800 truncate max-w-[280px]">กำลังเตรียมการ...</span>
+                <span id="bulk-check-pct">0%</span>
               </div>
-              <div class="bg-amber-50 border border-amber-200 rounded p-2">
-                <span class="text-warm-500 block text-[11px]">ไฟล์ใหม่/อัปเดต</span>
-                <span id="bulk-check-count-files" class="font-bold text-amber-600 text-sm">${totalNew + totalUpdated}</span>
+              <div class="w-full bg-warm-200 rounded-full h-3 overflow-hidden">
+                <div id="bulk-check-bar" class="bg-accent h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
               </div>
-              <div class="bg-brick/10 border border-brick/20 rounded p-2">
-                <span class="text-warm-500 block text-[11px]">ขัดข้อง/ข้าม</span>
-                <span id="bulk-check-count-failed" class="font-bold text-brick text-sm">0</span>
+              <div class="grid grid-cols-3 gap-2 text-center text-xs mt-3">
+                <div class="bg-sage/10 border border-sage/20 rounded p-2">
+                  <span class="text-warm-500 block text-[11px]">ตรวจสำเร็จ</span>
+                  <span id="bulk-check-count-success" class="font-bold text-sage text-sm">${successCount}</span>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded p-2">
+                  <span class="text-warm-500 block text-[11px]">ไฟล์ใหม่/อัปเดต</span>
+                  <span id="bulk-check-count-files" class="font-bold text-amber-600 text-sm">${totalNew + totalUpdated}</span>
+                </div>
+                <div class="bg-brick/10 border border-brick/20 rounded p-2">
+                  <span class="text-warm-500 block text-[11px]">ขัดข้อง/ข้าม</span>
+                  <span id="bulk-check-count-failed" class="font-bold text-brick text-sm">0</span>
+                </div>
               </div>
+              <div id="bulk-check-status-log" class="text-[11px] text-warm-500 italic mt-2 truncate">เริ่มการตรวจสอบ...</div>
             </div>
-            <div id="bulk-check-status-log" class="text-[11px] text-warm-500 italic mt-2 truncate">เริ่มการตรวจสอบ...</div>
-          </div>
-        `,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        showCancelButton: true,
-        cancelButtonText: '⏹️ หยุดการตรวจ (ข้อมูลที่ตรวจแล้วจะคงอยู่)',
-        cancelButtonColor: '#9c948c'
-      }).then((result) => {
-        if (result.dismiss === Swal.DismissReason.cancel) {
-          isBulkCheckingCancelled = true;
-        }
-      });
-
-      for (let i = 0; i < targetCoops.length; i++) {
-        if (isBulkCheckingCancelled) {
-          console.warn('User cancelled bulk check');
-          break;
-        }
-
-        const coop = targetCoops[i];
-        const progressPct = Math.round(((i) / targetCoops.length) * 100);
-
-        // อัปเดต UI Real-time
-        const coopNameEl = document.getElementById('bulk-check-coop-name');
-        const pctEl = document.getElementById('bulk-check-pct');
-        const barEl = document.getElementById('bulk-check-bar');
-        const logEl = document.getElementById('bulk-check-status-log');
-        const successEl = document.getElementById('bulk-check-count-success');
-        const filesEl = document.getElementById('bulk-check-count-files');
-        const failedEl = document.getElementById('bulk-check-count-failed');
-
-        if (coopNameEl) coopNameEl.textContent = `[${i + 1}/${targetCoops.length}] ${coop.CoopName}`;
-        if (pctEl) pctEl.textContent = `${progressPct}%`;
-        if (barEl) barEl.style.width = `${progressPct}%`;
-        if (logEl) logEl.textContent = `กำลังตรวจ: ${coop.CoopName}`;
-
-        let folderId = "";
-        try {
-          const urlObj = new URL(coop.FolderURL);
-          const pathParts = urlObj.pathname.split('/');
-          folderId = pathParts[pathParts.length - 1];
-          if (folderId.includes('?')) {
-            folderId = folderId.split('?')[0];
+          `,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          showCancelButton: true,
+          cancelButtonText: '⏹️ หยุดการตรวจ (ข้อมูลที่ตรวจแล้วจะคงอยู่)',
+          cancelButtonColor: '#9c948c'
+        }).then((result) => {
+          if (result.dismiss === Swal.DismissReason.cancel) {
+            isBulkCheckingCancelled = true;
           }
-        } catch (e) {
-          console.warn('Invalid URL for coop', coop.CoopName);
-          failedCoops.push({ coop: coop, reason: 'URL โฟลเดอร์ไม่ถูกต้อง' });
-          if (failedEl) failedEl.textContent = failedCoops.length;
-          continue; 
-        }
+        });
 
-        // Auto-Retry สูงสุด 2 ครั้งต่อสหกรณ์ ป้องกันปัญหา API สะดุดหรือติด rate limit ชั่วขณะ
-        let coopResult = null;
-        let lastErrReason = '';
-
-        for (let attempt = 1; attempt <= 2; attempt++) {
-          if (isBulkCheckingCancelled) break;
-
-          if (attempt > 1) {
-            if (logEl) logEl.textContent = `⚠️ กำลังลองใหม่อีกครั้ง (${attempt}/2) สำหรับ ${coop.CoopName}...`;
-            await new Promise(r => setTimeout(r, 1500));
+        for (let i = 0; i < targetCoops.length; i++) {
+          if (isBulkCheckingCancelled) {
+            console.warn('[Bulk Check] User cancelled bulk check');
+            break;
           }
+
+          const coop = targetCoops[i];
+          const progressPct = Math.round(((i) / targetCoops.length) * 100);
+
+          // อัปเดตข้อความบนปุ่มแบบ Real-time เสมอ ผู้ใช้จะเห็นทันทีว่าทำงานอยู่
+          if (btn) {
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> ตรวจ [${i + 1}/${targetCoops.length}]...`;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+          }
+
+          // อัปเดต UI Real-time ใน Modal (ถ้ายังเปิดอยู่)
+          const coopNameEl = document.getElementById('bulk-check-coop-name');
+          const pctEl = document.getElementById('bulk-check-pct');
+          const barEl = document.getElementById('bulk-check-bar');
+          const logEl = document.getElementById('bulk-check-status-log');
+          const successEl = document.getElementById('bulk-check-count-success');
+          const filesEl = document.getElementById('bulk-check-count-files');
+          const failedEl = document.getElementById('bulk-check-count-failed');
+
+          if (coopNameEl) coopNameEl.textContent = `[${i + 1}/${targetCoops.length}] ${coop.CoopName}`;
+          if (pctEl) pctEl.textContent = `${progressPct}%`;
+          if (barEl) barEl.style.width = `${progressPct}%`;
+          if (logEl) logEl.textContent = `กำลังตรวจ: ${coop.CoopName}`;
+
+          // ดึง Drive Folder ID ด้วย Regex ที่รองรับทุกรูปแบบ URL รวมถึง trailing slash และ query params
+          let folderId = "";
+          if (coop.FolderURL) {
+            const match = coop.FolderURL.match(/[-\w]{25,}/);
+            if (match) {
+              folderId = match[0];
+            }
+          }
+
+          if (!folderId) {
+            console.warn('[Bulk Check] Invalid URL for coop', coop.CoopName, coop.FolderURL);
+            failedCoops.push({ coop: coop, reason: 'ไม่พบ ID โฟลเดอร์ Google Drive ที่ถูกต้อง' });
+            if (failedEl) failedEl.textContent = failedCoops.length;
+            continue; 
+          }
+
+          console.log(`[Bulk Check ${i + 1}/${targetCoops.length}] กำลังตรวจ: ${coop.CoopName} (Folder ID: ${folderId})`);
+
+          let coopResult = null;
+          let lastErrReason = '';
 
           try {
             const result = await new Promise((resolve, reject) => {
@@ -10893,162 +10906,161 @@ function renderUsersTable() {
 
             if (result && result.success) {
               coopResult = result;
-              break;
             } else {
               lastErrReason = result?.message || 'การตอบกลับจากเซิร์ฟเวอร์ไม่สมบูรณ์';
             }
           } catch (err) {
             lastErrReason = err?.message || String(err);
           }
-        }
 
-        if (coopResult) {
-          coopResult.coop = coop; 
-          coopResult.folderId = folderId;
+          if (coopResult) {
+            coopResult.coop = coop; 
+            coopResult.folderId = folderId;
 
-          // ลบผลลัพธ์เก่าของสหกรณ์นี้ออกถ้าเป็นการ retry
-          const existingIdx = allCoopsDupCheckResults.findIndex(r => String(r.coop.CoopID) === String(coop.CoopID));
-          if (existingIdx !== -1) {
-            allCoopsDupCheckResults[existingIdx] = coopResult;
+            // ลบผลลัพธ์เก่าของสหกรณ์นี้ออกถ้าเป็นการ retry
+            const existingIdx = allCoopsDupCheckResults.findIndex(r => String(r.coop.CoopID) === String(coop.CoopID));
+            if (existingIdx !== -1) {
+              allCoopsDupCheckResults[existingIdx] = coopResult;
+            } else {
+              allCoopsDupCheckResults.push(coopResult);
+            }
+
+            // Recalculate totals
+            totalNew = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalNew || 0), 0);
+            totalUpdated = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalUpdated || 0), 0);
+            totalExisting = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalExisting || 0), 0);
+            successCount = allCoopsDupCheckResults.length;
+
+            if (successEl) successEl.textContent = successCount;
+            if (filesEl) filesEl.textContent = totalNew + totalUpdated;
           } else {
-            allCoopsDupCheckResults.push(coopResult);
+            console.error('[Bulk Check] Error checking coop', coop.CoopName, lastErrReason);
+            failedCoops.push({ coop: coop, folderId: folderId, reason: lastErrReason });
+            if (failedEl) failedEl.textContent = failedCoops.length;
           }
 
-          // Recalculate totals
-          totalNew = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalNew || 0), 0);
-          totalUpdated = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalUpdated || 0), 0);
-          totalExisting = allCoopsDupCheckResults.reduce((s, r) => s + (r.totalExisting || 0), 0);
-          successCount = allCoopsDupCheckResults.length;
-
-          if (successEl) successEl.textContent = successCount;
-          if (filesEl) filesEl.textContent = totalNew + totalUpdated;
-        } else {
-          console.error('Error checking coop', coop.CoopName, lastErrReason);
-          failedCoops.push({ coop: coop, folderId: folderId, reason: lastErrReason });
-          if (failedEl) failedEl.textContent = failedCoops.length;
+          // เว้นวรรค 350ms ระหว่างสหกรณ์เพื่อไม่ให้เกิน Quota ของ Google Apps Script / Drive
+          await new Promise(r => setTimeout(r, 350));
         }
 
-        // เว้นวรรค 350ms ระหว่างสหกรณ์เพื่อไม่ให้เกิน Quota ของ Google Apps Script / Drive
-        await new Promise(r => setTimeout(r, 350));
-      }
+        lastFailedBulkCheckCoops = failedCoops;
 
-      lastFailedBulkCheckCoops = failedCoops;
+        // แสดงปุ่มนำเข้าข้อมูลรวมถ้ามีผลการตรวจสอบอย่างน้อย 1 สหกรณ์
+        const importAllBtn = document.getElementById('import-all-coops-btn');
+        if (allCoopsDupCheckResults.length > 0 && importAllBtn) {
+          importAllBtn.style.display = 'flex';
+        }
 
-      if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
-      }
-      lucide.createIcons();
-
-      // แสดงปุ่มนำเข้าข้อมูลรวมถ้ามีผลการตรวจสอบอย่างน้อย 1 สหกรณ์
-      const importAllBtn = document.getElementById('import-all-coops-btn');
-      if (allCoopsDupCheckResults.length > 0 && importAllBtn) {
-        importAllBtn.style.display = 'flex';
-      }
-
-      // แสดงสรุปผลลัพธ์สุดท้าย
-      if (allCoopsDupCheckResults.length > 0) {
-        let fileListHtml = '';
-        if (totalNew > 0 || totalUpdated > 0) {
-          fileListHtml += `<div class="mt-4 max-h-56 overflow-y-auto border border-warm-200 rounded p-3 text-sm text-warm-700 bg-warm-50 space-y-3">`;
-          allCoopsDupCheckResults.forEach(res => {
-            if (res.totalNew > 0 || res.totalUpdated > 0) {
-              fileListHtml += `<div>`;
-              fileListHtml += `<p class="font-bold text-warm-700 border-b border-warm-200 mb-1 pb-1">${res.coop.CoopName}</p>`;
-              if (res.totalNew > 0) {
-                res.newFiles.forEach(f => {
-                  fileListHtml += `<p class="text-sage truncate ml-2">🟢 [ใหม่] ${f.fileName}</p>`;
-                });
+        // แสดงสรุปผลลัพธ์สุดท้าย
+        if (allCoopsDupCheckResults.length > 0) {
+          let fileListHtml = '';
+          if (totalNew > 0 || totalUpdated > 0) {
+            fileListHtml += `<div class="mt-4 max-h-56 overflow-y-auto border border-warm-200 rounded p-3 text-sm text-warm-700 bg-warm-50 space-y-3">`;
+            allCoopsDupCheckResults.forEach(res => {
+              if (res.totalNew > 0 || res.totalUpdated > 0) {
+                fileListHtml += `<div>`;
+                fileListHtml += `<p class="font-bold text-warm-700 border-b border-warm-200 mb-1 pb-1">${res.coop.CoopName}</p>`;
+                if (res.totalNew > 0) {
+                  res.newFiles.forEach(f => {
+                    fileListHtml += `<p class="text-sage truncate ml-2">🟢 [ใหม่] ${f.fileName}</p>`;
+                  });
+                }
+                if (res.totalUpdated > 0) {
+                  res.updatedFiles.forEach(f => {
+                    fileListHtml += `<p class="text-warning truncate ml-2">🔄 [อัปเดต] ${f.fileName}</p>`;
+                  });
+                }
+                fileListHtml += `</div>`;
               }
-              if (res.totalUpdated > 0) {
-                res.updatedFiles.forEach(f => {
-                  fileListHtml += `<p class="text-warning truncate ml-2">🔄 [อัปเดต] ${f.fileName}</p>`;
-                });
-              }
-              fileListHtml += `</div>`;
+            });
+            fileListHtml += `</div>`;
+          }
+
+          let failedNoticeHtml = '';
+          if (failedCoops.length > 0) {
+            failedNoticeHtml = `
+              <div class="mt-3 p-3 bg-brick/10 border border-brick/20 rounded-md text-left text-xs">
+                <div class="flex items-center justify-between font-bold text-brick mb-1">
+                  <span>⚠️ ตรวจไม่สำเร็จ ${failedCoops.length} สหกรณ์ (ระบบข้ามให้อัตโนมัติ):</span>
+                </div>
+                <ul class="list-disc pl-4 text-warm-600 space-y-0.5 max-h-24 overflow-y-auto">
+                  ${failedCoops.map(f => `<li><strong>${f.coop.CoopName}</strong>: <span class="text-warm-500">${f.reason || 'เชื่อมต่อไม่ได้'}</span></li>`).join('')}
+                </ul>
+              </div>
+            `;
+          }
+
+          const dialogButtons = {
+            confirmButtonText: '🚀 นำเข้าทั้งหมดเดี๋ยวนี้',
+            showDenyButton: failedCoops.length > 0,
+            denyButtonText: `🔄 ลองตรวจเฉพาะ ${failedCoops.length} สหกรณ์ที่ขัดข้องอีกครั้ง`,
+            denyButtonColor: '#c27b53',
+            showCancelButton: true,
+            cancelButtonText: 'ปิด'
+          };
+
+          Swal.fire({
+            title: isBulkCheckingCancelled ? 'ผลการตรวจสอบ (หยุดก่อนกำหนด)' : 'ผลการตรวจสอบข้อมูลรวม',
+            width: '640px',
+            html: `
+              <div class="text-left space-y-2 mt-2">
+                <p>ตรวจสอบสำเร็จ: <b>${allCoopsDupCheckResults.length}</b> สหกรณ์</p>
+                <p class="text-sage">🟢 ไฟล์ใหม่พร้อมนำเข้า: <b>${totalNew}</b> ไฟล์</p>
+                <p class="text-warning">🔄 ไฟล์ที่ต้องอัปเดต: <b>${totalUpdated}</b> ไฟล์</p>
+                <p class="text-warm-500">⚪ ไฟล์ที่มีอยู่แล้ว (ซ้ำ): <b>${totalExisting}</b> ไฟล์</p>
+              </div>
+              ${fileListHtml}
+              ${failedNoticeHtml}
+            `,
+            icon: failedCoops.length > 0 ? 'warning' : 'success',
+            ...dialogButtons
+          }).then((result) => {
+            if (result.isConfirmed) {
+              setTimeout(() => {
+                startBulkImportAllCoops();
+              }, 300);
+            } else if (result.isDenied) {
+              setTimeout(() => {
+                handleCheckAllCoops(failedCoops.map(f => f.coop));
+              }, 300);
             }
           });
-          fileListHtml += `</div>`;
-        }
-
-        let failedNoticeHtml = '';
-        if (failedCoops.length > 0) {
-          failedNoticeHtml = `
-            <div class="mt-3 p-3 bg-brick/10 border border-brick/20 rounded-md text-left text-xs">
-              <div class="flex items-center justify-between font-bold text-brick mb-1">
-                <span>⚠️ ตรวจไม่สำเร็จ ${failedCoops.length} สหกรณ์ (ระบบข้ามให้อัตโนมัติ):</span>
+        } else {
+          // กรณีไม่มีสหกรณ์ใดตรวจผ่านเลย
+          let failedNoticeHtml = '';
+          if (failedCoops.length > 0) {
+            failedNoticeHtml = `
+              <div class="mt-3 p-3 bg-brick/10 border border-brick/20 rounded-md text-left text-xs">
+                <p class="font-bold text-brick mb-1">สาเหตุที่ตรวจไม่สำเร็จ:</p>
+                <ul class="list-disc pl-4 text-warm-600 space-y-0.5 max-h-36 overflow-y-auto">
+                  ${failedCoops.map(f => `<li><strong>${f.coop.CoopName}</strong>: <span class="text-warm-500">${f.reason || 'เชื่อมต่อไม่ได้'}</span></li>`).join('')}
+                </ul>
               </div>
-              <ul class="list-disc pl-4 text-warm-600 space-y-0.5 max-h-24 overflow-y-auto">
-                ${failedCoops.map(f => `<li><strong>${f.coop.CoopName}</strong>: <span class="text-warm-500">${f.reason || 'เชื่อมต่อไม่ได้'}</span></li>`).join('')}
-              </ul>
-            </div>
-          `;
-        }
-
-        const dialogButtons = {
-          confirmButtonText: '🚀 นำเข้าทั้งหมดเดี๋ยวนี้',
-          showDenyButton: failedCoops.length > 0,
-          denyButtonText: `🔄 ลองตรวจเฉพาะ ${failedCoops.length} สหกรณ์ที่ขัดข้องอีกครั้ง`,
-          denyButtonColor: '#c27b53',
-          showCancelButton: true,
-          cancelButtonText: 'ปิด'
-        };
-
-        Swal.fire({
-          title: isBulkCheckingCancelled ? 'ผลการตรวจสอบ (หยุดก่อนกำหนด)' : 'ผลการตรวจสอบข้อมูลรวม',
-          width: '640px',
-          html: `
-            <div class="text-left space-y-2 mt-2">
-              <p>ตรวจสอบสำเร็จ: <b>${allCoopsDupCheckResults.length}</b> สหกรณ์</p>
-              <p class="text-sage">🟢 ไฟล์ใหม่พร้อมนำเข้า: <b>${totalNew}</b> ไฟล์</p>
-              <p class="text-warning">🔄 ไฟล์ที่ต้องอัปเดต: <b>${totalUpdated}</b> ไฟล์</p>
-              <p class="text-warm-500">⚪ ไฟล์ที่มีอยู่แล้ว (ซ้ำ): <b>${totalExisting}</b> ไฟล์</p>
-            </div>
-            ${fileListHtml}
-            ${failedNoticeHtml}
-          `,
-          icon: failedCoops.length > 0 ? 'warning' : 'success',
-          ...dialogButtons
-        }).then((result) => {
-          if (result.isConfirmed) {
-            setTimeout(() => {
-              startBulkImportAllCoops();
-            }, 300);
-          } else if (result.isDenied) {
-            setTimeout(() => {
-              handleCheckAllCoops(failedCoops.map(f => f.coop));
-            }, 300);
+            `;
           }
-        });
-      } else {
-        // กรณีไม่มีสหกรณ์ใดตรวจผ่านเลย
-        let failedNoticeHtml = '';
-        if (failedCoops.length > 0) {
-          failedNoticeHtml = `
-            <div class="mt-3 p-3 bg-brick/10 border border-brick/20 rounded-md text-left text-xs">
-              <p class="font-bold text-brick mb-1">สาเหตุที่ตรวจไม่สำเร็จ:</p>
-              <ul class="list-disc pl-4 text-warm-600 space-y-0.5 max-h-36 overflow-y-auto">
-                ${failedCoops.map(f => `<li><strong>${f.coop.CoopName}</strong>: <span class="text-warm-500">${f.reason || 'เชื่อมต่อไม่ได้'}</span></li>`).join('')}
-              </ul>
-            </div>
-          `;
-        }
 
-        Swal.fire({
-          title: 'การตรวจสอบไม่สำเร็จ',
-          html: `
-            <p class="text-sm text-warm-600">ไม่สามารถตรวจสอบไฟล์จากสหกรณ์ใดได้เลย กรุณาตรวจสอบสิทธิ์การเข้าถึง Google Drive หรือลองใหม่อีกครั้ง</p>
-            ${failedNoticeHtml}
-          `,
-          icon: 'error',
-          showCancelButton: true,
-          confirmButtonText: '🔄 ลองใหม่อีกครั้ง',
-          cancelButtonText: 'ปิด'
-        }).then((res) => {
-          if (res.isConfirmed) {
-            handleCheckAllCoops();
-          }
-        });
+          Swal.fire({
+            title: 'การตรวจสอบไม่สำเร็จ',
+            html: `
+              <p class="text-sm text-warm-600">ไม่สามารถตรวจสอบไฟล์จากสหกรณ์ใดได้เลย กรุณาตรวจสอบสิทธิ์การเข้าถึง Google Drive หรือลองใหม่อีกครั้ง</p>
+              ${failedNoticeHtml}
+            `,
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: '🔄 ลองใหม่อีกครั้ง',
+            cancelButtonText: 'ปิด'
+          }).then((res) => {
+            if (res.isConfirmed) {
+              handleCheckAllCoops();
+            }
+          });
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }
+        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
     }
 
