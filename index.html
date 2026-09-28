@@ -3403,6 +3403,14 @@
   </div>
 
   <script>
+    // Polyfill / Safe helper สำหรับ SweetAlert2 ในการตรวจสถานะ Toast
+    if (typeof Swal !== 'undefined' && typeof Swal.isToast !== 'function') {
+      Swal.isToast = function() {
+        const popup = typeof Swal.getPopup === 'function' ? Swal.getPopup() : null;
+        return !!(popup && popup.classList && popup.classList.contains('swal2-toast'));
+      };
+    }
+
     // =================================================================
     // APP STATE & INITIALIZATION
     // =================================================================
@@ -3520,7 +3528,10 @@
       }
 
       // หากมี Modal อื่นเปิดทำงานอยู่ (เช่น กล่องตรวจสอบข้อมูลรวม) จะไม่ยิง Toast เพื่อป้องกันการปิด Modal
-      if (Swal.isVisible() && !Swal.isToast()) {
+      const swalPopup = typeof Swal !== 'undefined' && typeof Swal.getPopup === 'function' ? Swal.getPopup() : null;
+      const isModalVisible = typeof Swal !== 'undefined' && Swal.isVisible && Swal.isVisible() && 
+                             swalPopup && !swalPopup.classList.contains('swal2-toast') && !swalPopup.classList.contains('swal2-hide');
+      if (isModalVisible) {
         console.log('[Datahub API] เชื่อมต่อฐานข้อมูลสำเร็จเรียบร้อย (มี Modal แสดงอยู่ ไม่ยิง Toast ซ้ำ)');
         return;
       }
@@ -3544,7 +3555,14 @@
           pill.classList.add('hidden');
           pill.classList.remove('flex');
         }
-        showToast('การเชื่อมต่อขัดข้อง: ' + error, 'error');
+        const swalPopup = typeof Swal !== 'undefined' && typeof Swal.getPopup === 'function' ? Swal.getPopup() : null;
+        const isModalVisible = typeof Swal !== 'undefined' && Swal.isVisible && Swal.isVisible() && 
+                               swalPopup && !swalPopup.classList.contains('swal2-toast') && !swalPopup.classList.contains('swal2-hide');
+        if (isModalVisible) {
+          console.warn('[Datahub API] การเชื่อมต่อขัดข้อง (มี Modal แสดงอยู่ ไม่ยิง Toast ซ้ำ):', error);
+        } else {
+          showToast('การเชื่อมต่อขัดข้อง: ' + error, 'error');
+        }
       }
     });
 
@@ -6010,9 +6028,11 @@ function renderUsersTable() {
     function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
 
     function showToast(message, type = 'success') {
-      // ป้องกันไม่ให้ Toast ไปทำลาย SweetAlert modal หรือ Progress popup ที่กำลังเปิดทำงานอยู่
-      if (Swal.isVisible() && !Swal.isToast()) {
-        console.log(`[Toast ${type}]:`, message);
+      // หากมี Modal แบบ Loading/Progress กำลังทำงานอยู่จริง ไม่ให้ Toast ไปปิดทับ Modal
+      const popup = typeof Swal !== 'undefined' && typeof Swal.getPopup === 'function' ? Swal.getPopup() : null;
+      const isModal = popup && !popup.classList.contains('swal2-toast') && !popup.classList.contains('swal2-hide');
+      if (typeof Swal !== 'undefined' && Swal.isVisible && Swal.isVisible() && isModal && Swal.isLoading()) {
+        console.log(`[Toast ${type} (Modal active)]`, message);
         return;
       }
       Swal.fire({
